@@ -100,6 +100,12 @@
 // Performance profiler
 #include "hts/profiler.hpp"
 
+// Graph serialization
+#include "hts/graph_serializer.hpp"
+
+// CUDA utilities
+#include "hts/cuda_utils.hpp"
+
 // Logging utilities
 #include "hts/logger.hpp"
 

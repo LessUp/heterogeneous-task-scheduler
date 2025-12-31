@@ -181,6 +181,8 @@ MIT License
 ./build/task_groups           # 任务组管理
 ./build/profiling             # 性能分析
 ./build/scheduling_policies   # 调度策略对比
+./build/graph_visualization  # 任务图可视化
+./build/gpu_computation      # GPU 计算示例
 ```
 
 ## 高级功能
@@ -235,4 +237,43 @@ std::cout << scheduler.profiler().generate_report();
 // 程序化访问
 auto summary = scheduler.profiler().generate_summary();
 std::cout << "Parallelism: " << summary.parallelism << "x\n";
+```
+
+### 任务图序列化
+
+```cpp
+#include <hts/graph_serializer.hpp>
+
+// 导出为 JSON
+std::string json = hts::GraphSerializer::to_json(scheduler.graph());
+hts::GraphSerializer::save_to_file(scheduler.graph(), "graph.json");
+
+// 导出为 DOT (Graphviz)
+std::string dot = hts::GraphSerializer::to_dot(scheduler.graph());
+hts::GraphSerializer::save_dot_file(scheduler.graph(), "graph.dot");
+// 可视化: dot -Tpng graph.dot -o graph.png
+```
+
+### CUDA 工具
+
+```cpp
+#include <hts/cuda_utils.hpp>
+
+// 检查 CUDA 可用性
+if (hts::CudaUtils::is_available()) {
+    std::cout << hts::CudaUtils::device_info_string();
+}
+
+// RAII 设备内存
+hts::DeviceMemory<float> d_data(1024);
+d_data.copy_from_host(host_data.data());
+
+// RAII 锁页内存
+hts::PinnedMemory<float> pinned(1024);
+
+// 作用域设备切换
+{
+    hts::ScopedDevice device(0);
+    // 在 GPU 0 上操作
+}
 ```

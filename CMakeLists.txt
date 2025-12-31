@@ -82,3 +82,9 @@ target_link_libraries(profiling PRIVATE hts_lib)
 
 add_executable(scheduling_policies examples/scheduling_policies.cpp)
 target_link_libraries(scheduling_policies PRIVATE hts_lib)
+
+add_executable(graph_visualization examples/graph_visualization.cpp)
+target_link_libraries(graph_visualization PRIVATE hts_lib)
+
+add_executable(gpu_computation examples/gpu_computation.cu)
+target_link_libraries(gpu_computation PRIVATE hts_lib)
