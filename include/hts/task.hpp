@@ -54,6 +54,24 @@ public:
     /// Set execution time
     void set_execution_time(std::chrono::nanoseconds time) { exec_time_ = time; }
     
+    /// Get task priority
+    TaskPriority priority() const { return priority_; }
+    
+    /// Set task priority
+    void set_priority(TaskPriority priority) { priority_ = priority; }
+    
+    /// Get task name (for debugging)
+    const std::string& name() const { return name_; }
+    
+    /// Set task name
+    void set_name(const std::string& name) { name_ = name; }
+    
+    /// Check if task is cancelled
+    bool is_cancelled() const { return cancelled_.load(); }
+    
+    /// Cancel the task
+    void cancel() { cancelled_ = true; }
+    
     /// Check if CPU function is set
     bool has_cpu_function() const { return static_cast<bool>(cpu_func_); }
     
@@ -74,6 +92,9 @@ private:
     CpuFunction cpu_func_;
     GpuFunction gpu_func_;
     std::chrono::nanoseconds exec_time_{0};
+    TaskPriority priority_{TaskPriority::Normal};
+    std::string name_;
+    std::atomic<bool> cancelled_{false};
     mutable std::mutex func_mutex_;
 };
 

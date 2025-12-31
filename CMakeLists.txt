@@ -60,3 +60,16 @@ target_link_libraries(hts_tests PRIVATE
 )
 include(GoogleTest)
 gtest_discover_tests(hts_tests)
+
+# Examples
+add_executable(simple_dag examples/simple_dag.cpp)
+target_link_libraries(simple_dag PRIVATE hts_lib)
+
+add_executable(parallel_pipeline examples/parallel_pipeline.cpp)
+target_link_libraries(parallel_pipeline PRIVATE hts_lib)
+
+add_executable(error_handling examples/error_handling.cpp)
+target_link_libraries(error_handling PRIVATE hts_lib)
+
+add_executable(fluent_api examples/fluent_api.cpp)
+target_link_libraries(fluent_api PRIVATE hts_lib)

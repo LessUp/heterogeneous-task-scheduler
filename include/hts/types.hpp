@@ -26,7 +26,16 @@ enum class TaskState {
     Running,    ///< Currently executing
     Completed,  ///< Successfully completed
     Failed,     ///< Execution failed
-    Blocked     ///< Blocked due to upstream failure
+    Blocked,    ///< Blocked due to upstream failure
+    Cancelled   ///< Cancelled by user
+};
+
+/// Task priority (higher value = higher priority)
+enum class TaskPriority {
+    Low = 0,
+    Normal = 1,
+    High = 2,
+    Critical = 3
 };
 
 /// Unique task identifier
@@ -73,6 +82,8 @@ struct SchedulerConfig {
     size_t cpu_thread_count = 4;
     size_t gpu_stream_count = 4;
     bool allow_memory_growth = true;
+    size_t max_retry_count = 0;  ///< Max retries for failed tasks (0 = no retry)
+    std::chrono::milliseconds retry_delay{100};  ///< Delay between retries
 };
 
 /// Execution statistics

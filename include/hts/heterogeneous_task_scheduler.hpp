@@ -88,6 +88,12 @@
 // Main scheduler
 #include "hts/scheduler.hpp"
 
+// Fluent task builder
+#include "hts/task_builder.hpp"
+
+// Logging utilities
+#include "hts/logger.hpp"
+
 namespace hts {
 
 /**

@@ -35,6 +35,8 @@ ctest --output-on-failure
 
 ## 使用示例
 
+### 基本用法
+
 ```cpp
 #include <hts/heterogeneous_task_scheduler.hpp>
 #include <iostream>
@@ -76,28 +78,68 @@ int main() {
     scheduler.graph().add_dependency(task1->id(), task2->id());
     scheduler.graph().add_dependency(task1->id(), task3->id());
     
-    // 设置错误回调
-    scheduler.set_error_callback([](hts::TaskId id, const std::string& msg) {
-        std::cerr << "Task " << id << " failed: " << msg << "\n";
-    });
-    
-    // 同步执行
+    // 执行
     scheduler.execute();
-    
-    // 或异步执行
-    // auto future = scheduler.execute_async();
-    // future.get();
-    
-    // 获取统计信息
-    auto stats = scheduler.get_stats();
-    std::cout << "Total time: " << stats.total_time.count() / 1e6 << " ms\n";
-    std::cout << "Memory used: " << stats.memory_stats.used_bytes << " bytes\n";
-    
-    // 生成时间线 JSON
-    std::string timeline = scheduler.generate_timeline_json();
     
     return 0;
 }
+```
+
+### Fluent Builder API
+
+```cpp
+#include <hts/heterogeneous_task_scheduler.hpp>
+
+int main() {
+    hts::Scheduler scheduler;
+    hts::TaskBuilder builder(scheduler.graph());
+    
+    auto init = builder
+        .name("Initialize")
+        .device(hts::DeviceType::CPU)
+        .priority(hts::TaskPriority::High)
+        .cpu([](hts::TaskContext& ctx) {
+            // 初始化逻辑
+        })
+        .build();
+    
+    auto compute = builder
+        .name("Compute")
+        .after(init)  // 依赖 init 任务
+        .cpu([](hts::TaskContext& ctx) {
+            // 计算逻辑
+        })
+        .build();
+    
+    scheduler.execute();
+    return 0;
+}
+```
+
+### 错误处理
+
+```cpp
+scheduler.set_error_callback([](hts::TaskId id, const std::string& msg) {
+    std::cerr << "Task " << id << " failed: " << msg << "\n";
+});
+```
+
+### 日志系统
+
+```cpp
+#include <hts/logger.hpp>
+
+// 设置日志级别
+hts::Logger::instance().set_level(hts::LogLevel::Debug);
+
+// 使用宏记录日志
+HTS_LOG_INFO("Processing {} items", count);
+HTS_LOG_ERROR("Failed to allocate memory");
+
+// 自定义日志回调
+hts::Logger::instance().set_callback([](hts::LogLevel level, const std::string& msg) {
+    // 自定义日志处理
+});
 ```
 
 ## 架构
@@ -126,3 +168,14 @@ int main() {
 ## 许可证
 
 MIT License
+
+## 示例程序
+
+构建后可以运行以下示例：
+
+```bash
+./build/simple_dag          # 简单 DAG 执行
+./build/parallel_pipeline   # 并行流水线
+./build/error_handling      # 错误处理演示
+./build/fluent_api          # Fluent Builder API
+```
