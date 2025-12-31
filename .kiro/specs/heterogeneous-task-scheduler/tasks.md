@@ -43,11 +43,11 @@
     - **Property 7: Memory Pool Growth**
     - **Validates: Requirements 3.4**
 
-- [ ] 4. Checkpoint - Ensure all tests pass
+- [x] 4. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 5. Implement TaskGraph with cycle detection
-  - [ ] 5.1 Implement TaskGraph core structure
+- [x] 5. Implement TaskGraph with cycle detection
+  - [x] 5.1 Implement TaskGraph core structure
     - Implement add_task() with unique ID generation
     - Implement adjacency list and reverse adjacency storage
     - Implement get_successors() and get_predecessors()
@@ -55,7 +55,7 @@
   - [ ]* 5.2 Write property test for Dependency Recording Round Trip
     - **Property 3: Dependency Recording Round Trip**
     - **Validates: Requirements 1.2**
-  - [ ] 5.3 Implement cycle detection using DFS
+  - [x] 5.3 Implement cycle detection using DFS
     - Implement has_cycle() private method
     - Implement add_dependency() with cycle check
     - Implement validate() method
@@ -63,13 +63,13 @@
   - [ ]* 5.4 Write property test for Cycle Detection
     - **Property 2: Cycle Detection**
     - **Validates: Requirements 1.3, 1.5**
-  - [ ] 5.5 Implement topological sort and root task retrieval
+  - [x] 5.5 Implement topological sort and root task retrieval
     - Implement topological_sort() using Kahn's algorithm
     - Implement get_root_tasks()
     - _Requirements: 2.2_
 
-- [ ] 6. Implement DependencyManager
-  - [ ] 6.1 Implement DependencyManager core functionality
+- [x] 6. Implement DependencyManager
+  - [x] 6.1 Implement DependencyManager core functionality
     - Implement constructor from TaskGraph
     - Implement mark_completed() with notification to dependents
     - Implement mark_failed() with blocking of dependents
@@ -82,7 +82,7 @@
     - **Property 5: Failure Propagation**
     - **Validates: Requirements 2.5**
 
-- [ ] 7. Checkpoint - Ensure all tests pass
+- [x] 7. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 8. Implement StreamManager
