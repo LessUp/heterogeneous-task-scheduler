@@ -73,3 +73,12 @@ target_link_libraries(error_handling PRIVATE hts_lib)
 
 add_executable(fluent_api examples/fluent_api.cpp)
 target_link_libraries(fluent_api PRIVATE hts_lib)
+
+add_executable(task_groups examples/task_groups.cpp)
+target_link_libraries(task_groups PRIVATE hts_lib)
+
+add_executable(profiling examples/profiling.cpp)
+target_link_libraries(profiling PRIVATE hts_lib)
+
+add_executable(scheduling_policies examples/scheduling_policies.cpp)
+target_link_libraries(scheduling_policies PRIVATE hts_lib)
