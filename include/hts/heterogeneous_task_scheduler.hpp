@@ -91,6 +91,15 @@
 // Fluent task builder
 #include "hts/task_builder.hpp"
 
+// Task groups
+#include "hts/task_group.hpp"
+
+// Scheduling policies
+#include "hts/scheduling_policy.hpp"
+
+// Performance profiler
+#include "hts/profiler.hpp"
+
 // Logging utilities
 #include "hts/logger.hpp"
 

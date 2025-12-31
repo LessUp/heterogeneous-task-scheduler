@@ -174,8 +174,65 @@ MIT License
 构建后可以运行以下示例：
 
 ```bash
-./build/simple_dag          # 简单 DAG 执行
-./build/parallel_pipeline   # 并行流水线
-./build/error_handling      # 错误处理演示
-./build/fluent_api          # Fluent Builder API
+./build/simple_dag            # 简单 DAG 执行
+./build/parallel_pipeline     # 并行流水线
+./build/error_handling        # 错误处理演示
+./build/fluent_api            # Fluent Builder API
+./build/task_groups           # 任务组管理
+./build/profiling             # 性能分析
+./build/scheduling_policies   # 调度策略对比
+```
+
+## 高级功能
+
+### 任务组
+
+```cpp
+hts::TaskGroup workers("Workers", scheduler.graph());
+
+// 批量创建任务
+for (int i = 0; i < 4; ++i) {
+    auto task = workers.add_task(hts::DeviceType::CPU);
+    task->set_cpu_function([i](hts::TaskContext& ctx) {
+        // 处理第 i 个分片
+    });
+}
+
+// 设置依赖关系
+workers.depends_on(init_task);  // 所有 worker 依赖 init
+workers.then(final_task);       // final 依赖所有 worker
+
+// 批量操作
+workers.set_priority(hts::TaskPriority::High);
+workers.cancel();  // 取消所有任务
+```
+
+### 调度策略
+
+```cpp
+// 使用 GPU 优先策略
+scheduler.set_policy(std::make_unique<hts::GpuFirstPolicy>());
+
+// 可用策略:
+// - DefaultSchedulingPolicy: 基于负载的默认策略
+// - GpuFirstPolicy: GPU 优先
+// - CpuFirstPolicy: CPU 优先
+// - RoundRobinPolicy: 轮询
+// - ShortestJobFirstPolicy: 短作业优先
+```
+
+### 性能分析
+
+```cpp
+// 启用性能分析
+scheduler.set_profiling(true);
+
+scheduler.execute();
+
+// 生成报告
+std::cout << scheduler.profiler().generate_report();
+
+// 程序化访问
+auto summary = scheduler.profiler().generate_summary();
+std::cout << "Parallelism: " << summary.parallelism << "x\n";
 ```

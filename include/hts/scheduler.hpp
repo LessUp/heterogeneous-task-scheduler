@@ -5,6 +5,8 @@
 #include "hts/dependency_manager.hpp"
 #include "hts/memory_pool.hpp"
 #include "hts/execution_engine.hpp"
+#include "hts/scheduling_policy.hpp"
+#include "hts/profiler.hpp"
 #include <memory>
 #include <future>
 #include <functional>
@@ -54,6 +56,20 @@ public:
     
     /// Get configuration
     const SchedulerConfig& config() const { return config_; }
+    
+    /// Set scheduling policy
+    void set_policy(std::unique_ptr<SchedulingPolicy> policy);
+    
+    /// Get current policy name
+    const char* policy_name() const;
+    
+    /// Get profiler
+    Profiler& profiler() { return profiler_; }
+    const Profiler& profiler() const { return profiler_; }
+    
+    /// Enable/disable profiling
+    void set_profiling(bool enabled) { profiling_enabled_ = enabled; }
+    bool profiling_enabled() const { return profiling_enabled_; }
 
 private:
     SchedulerConfig config_;
@@ -65,6 +81,10 @@ private:
     ErrorCallback error_callback_;
     mutable ExecutionStats stats_;
     mutable ExecutionTimeline timeline_;
+    
+    std::unique_ptr<SchedulingPolicy> policy_;
+    Profiler profiler_;
+    bool profiling_enabled_ = false;
     
     std::mutex execution_mutex_;
     std::atomic<bool> executing_{false};

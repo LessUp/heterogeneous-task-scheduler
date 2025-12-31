@@ -7,6 +7,7 @@ namespace hts {
 
 Scheduler::Scheduler(const SchedulerConfig& config)
     : config_(config)
+    , policy_(std::make_unique<DefaultSchedulingPolicy>())
 {
     memory_pool_ = std::make_unique<MemoryPool>(
         config.memory_pool_size, 
@@ -47,6 +48,11 @@ void Scheduler::execute_internal() {
     
     executing_ = true;
     
+    // Start profiling if enabled
+    if (profiling_enabled_) {
+        profiler_.start();
+    }
+    
     // Initialize dependency manager
     dep_manager_ = std::make_unique<DependencyManager>(graph_);
     
@@ -65,6 +71,10 @@ void Scheduler::execute_internal() {
         if (task) {
             DeviceType device = select_device(*task);
             auto start = std::chrono::high_resolution_clock::now();
+            
+            if (profiling_enabled_) {
+                profiler_.record_task_start(id, task->name(), device);
+            }
             
             task_futures[id] = engine_->execute_task(task, device);
         }
@@ -89,6 +99,10 @@ void Scheduler::execute_internal() {
                         auto start = end - task->execution_time();
                         record_timeline_event(id, task->actual_device(), start, end, TaskState::Completed);
                         stats_.task_times[id] = task->execution_time();
+                        
+                        if (profiling_enabled_) {
+                            profiler_.record_task_end(id, TaskState::Completed);
+                        }
                     }
                 } catch (const std::exception& e) {
                     on_task_failed(id, e.what());
@@ -96,6 +110,10 @@ void Scheduler::execute_internal() {
                     if (task) {
                         auto end = std::chrono::high_resolution_clock::now();
                         record_timeline_event(id, task->actual_device(), end, end, TaskState::Failed);
+                        
+                        if (profiling_enabled_) {
+                            profiler_.record_task_end(id, TaskState::Failed);
+                        }
                     }
                 }
                 
@@ -115,6 +133,11 @@ void Scheduler::execute_internal() {
                 auto task = graph_.get_task(id);
                 if (task && task->state() == TaskState::Pending) {
                     DeviceType device = select_device(*task);
+                    
+                    if (profiling_enabled_) {
+                        profiler_.record_task_start(id, task->name(), device);
+                    }
+                    
                     task_futures[id] = engine_->execute_task(task, device);
                 }
             }
@@ -135,46 +158,16 @@ void Scheduler::execute_internal() {
     stats_.gpu_utilization = engine_->get_gpu_load();
     stats_.memory_stats = memory_pool_->get_stats();
     
+    // Stop profiling
+    if (profiling_enabled_) {
+        profiler_.stop();
+    }
+    
     executing_ = false;
 }
 
 DeviceType Scheduler::select_device(const Task& task) {
-    DeviceType preferred = task.preferred_device();
-    
-    if (preferred != DeviceType::Any) {
-        // Check if task has the required function
-        if (preferred == DeviceType::CPU && !task.has_cpu_function()) {
-            if (task.has_gpu_function()) {
-                return DeviceType::GPU;
-            }
-            throw std::runtime_error("Task " + std::to_string(task.id()) + 
-                                     " has no CPU function");
-        }
-        if (preferred == DeviceType::GPU && !task.has_gpu_function()) {
-            if (task.has_cpu_function()) {
-                return DeviceType::CPU;
-            }
-            throw std::runtime_error("Task " + std::to_string(task.id()) + 
-                                     " has no GPU function");
-        }
-        return preferred;
-    }
-    
-    // Load-based selection for "Any" preference
-    double cpu_load = engine_->get_cpu_load();
-    double gpu_load = engine_->get_gpu_load();
-    
-    // Prefer GPU if both functions available and GPU is less loaded
-    if (task.has_gpu_function() && task.has_cpu_function()) {
-        return (gpu_load <= cpu_load) ? DeviceType::GPU : DeviceType::CPU;
-    }
-    
-    // Use whichever is available
-    if (task.has_gpu_function()) return DeviceType::GPU;
-    if (task.has_cpu_function()) return DeviceType::CPU;
-    
-    throw std::runtime_error("Task " + std::to_string(task.id()) + 
-                             " has no execution function");
+    return policy_->select_device(task, engine_->get_cpu_load(), engine_->get_gpu_load());
 }
 
 void Scheduler::on_task_completed(TaskId id) {
@@ -244,3 +237,12 @@ std::string Scheduler::generate_timeline_json() const {
 }
 
 } // namespace hts
+
+
+void Scheduler::set_policy(std::unique_ptr<SchedulingPolicy> policy) {
+    policy_ = std::move(policy);
+}
+
+const char* Scheduler::policy_name() const {
+    return policy_ ? policy_->name() : "None";
+}
