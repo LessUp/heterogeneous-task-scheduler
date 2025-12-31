@@ -112,19 +112,19 @@
     - **Property 8: Concurrent Execution**
     - **Validates: Requirements 4.2, 4.3, 4.4, 5.4**
 
-- [ ] 10. Implement Scheduler
-  - [ ] 10.1 Implement Scheduler core with configuration
+- [x] 10. Implement Scheduler
+  - [x] 10.1 Implement Scheduler core with configuration
     - Implement constructor with SchedulerConfig
     - Initialize MemoryPool, ExecutionEngine, DependencyManager
     - Implement graph() accessor
     - _Requirements: 3.1, 8.1_
-  - [ ] 10.2 Implement device selection and load balancing
+  - [x] 10.2 Implement device selection and load balancing
     - Implement select_device() with load-based selection for Any tasks
     - _Requirements: 5.2, 5.3_
   - [ ]* 10.3 Write property test for Load Balancing
     - **Property 9: Load Balancing**
     - **Validates: Requirements 5.2, 5.3**
-  - [ ] 10.4 Implement synchronous and asynchronous execution
+  - [x] 10.4 Implement synchronous and asynchronous execution
     - Implement execute() blocking method
     - Implement execute_async() returning future
     - Implement schedule_ready_tasks() internal method
@@ -133,11 +133,11 @@
     - **Property 14: Execution Mode Correctness**
     - **Validates: Requirements 8.3, 8.4, 8.5**
 
-- [ ] 11. Checkpoint - Ensure all tests pass
+- [x] 11. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 12. Implement Error Handling
-  - [ ] 12.1 Implement error callback and TaskError structure
+- [x] 12. Implement Error Handling
+  - [x] 12.1 Implement error callback and TaskError structure
     - Implement set_error_callback()
     - Implement TaskError with all required fields
     - Wire error propagation through ExecutionEngine
@@ -145,15 +145,15 @@
   - [ ]* 12.2 Write property test for Error Propagation
     - **Property 10: Error Propagation**
     - **Validates: Requirements 6.1, 6.2, 6.3, 6.4**
-  - [ ] 12.3 Implement graceful shutdown
+  - [x] 12.3 Implement graceful shutdown
     - Implement destructor with in-flight task completion
     - _Requirements: 6.5_
   - [ ]* 12.4 Write property test for Graceful Shutdown
     - **Property 11: Graceful Shutdown**
     - **Validates: Requirements 6.5**
 
-- [ ] 13. Implement Performance Monitoring
-  - [ ] 13.1 Implement execution time tracking
+- [x] 13. Implement Performance Monitoring
+  - [x] 13.1 Implement execution time tracking
     - Add timing instrumentation to task execution
     - Implement ExecutionStats structure
     - Implement get_stats() method
@@ -161,7 +161,7 @@
   - [ ]* 13.2 Write property test for Statistics Accuracy
     - **Property 12: Statistics Accuracy**
     - **Validates: Requirements 7.1, 7.2, 7.3, 7.5**
-  - [ ] 13.3 Implement timeline generation
+  - [x] 13.3 Implement timeline generation
     - Implement TimelineEvent and ExecutionTimeline structures
     - Implement generate_timeline_json() method
     - _Requirements: 7.4_
@@ -169,18 +169,18 @@
     - **Property 13: Timeline Generation**
     - **Validates: Requirements 7.4**
 
-- [ ] 14. Final integration and wiring
-  - [ ] 14.1 Create public header with complete API
+- [x] 14. Final integration and wiring
+  - [x] 14.1 Create public header with complete API
     - Create heterogeneous_task_scheduler.hpp with all public types
     - Add documentation comments
     - _Requirements: 8.1_
-  - [ ] 14.2 Write integration tests
+  - [x] 14.2 Write integration tests
     - Test complete task graph execution
     - Test CPU-GPU concurrent execution
     - Test error scenarios end-to-end
     - _Requirements: All_
 
-- [ ] 15. Final checkpoint - Ensure all tests pass
+- [x] 15. Final checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes
