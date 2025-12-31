@@ -6,28 +6,28 @@
 
 ## Tasks
 
-- [-] 1. Set up project structure and core types
+- [x] 1. Set up project structure and core types
   - Create CMakeLists.txt with CUDA support and Rapidcheck dependency
   - Create directory structure: src/, include/, tests/
   - Define core enums (DeviceType, TaskState) and forward declarations
   - Set up Google Test and Rapidcheck testing framework
   - _Requirements: 1.1, 8.1_
 
-- [ ] 2. Implement Task and TaskContext classes
-  - [ ] 2.1 Implement Task class with ID, state, device preference, and function storage
+- [x] 2. Implement Task and TaskContext classes
+  - [x] 2.1 Implement Task class with ID, state, device preference, and function storage
     - Implement constructor, getters, and setters
     - Support lambda functions for CPU and GPU execution
     - _Requirements: 1.1, 1.4, 5.1, 8.2_
   - [ ]* 2.2 Write property test for Task creation invariants
     - **Property 1: Task Creation Invariants**
     - **Validates: Requirements 1.1, 1.4, 5.1, 8.2**
-  - [ ] 2.3 Implement TaskContext class for memory allocation and data passing
+  - [x] 2.3 Implement TaskContext class for memory allocation and data passing
     - Implement allocate_gpu_memory, free_gpu_memory
     - Implement get_input, set_output template methods
     - _Requirements: 3.2, 3.3_
 
-- [ ] 3. Implement MemoryPool
-  - [ ] 3.1 Implement MemoryPool with buddy system allocator
+- [x] 3. Implement MemoryPool
+  - [x] 3.1 Implement MemoryPool with buddy system allocator
     - Implement constructor with configurable initial size
     - Implement allocate() and free() methods
     - Implement block splitting and coalescing
@@ -35,7 +35,7 @@
   - [ ]* 3.2 Write property test for Memory Pool round trip
     - **Property 6: Memory Pool Round Trip**
     - **Validates: Requirements 3.1, 3.2, 3.3, 3.5**
-  - [ ] 3.3 Implement MemoryStats tracking
+  - [x] 3.3 Implement MemoryStats tracking
     - Track total_bytes, used_bytes, peak_bytes, allocation_count
     - Implement fragmentation_ratio calculation
     - _Requirements: 3.5, 7.5_
