@@ -2,6 +2,47 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] - 2024-12-31
+
+### Added
+
+#### Synchronization
+- `TaskFuture<T>` - Type-safe result retrieval from tasks
+- `TaskBarrier` - Synchronization points between task phases
+- `BarrierGroup` - Multiple barrier management
+
+#### Retry Policies
+- `RetryPolicy` - Base class for retry strategies
+- `NoRetryPolicy` - No retry (default)
+- `FixedRetryPolicy` - Fixed delay between retries
+- `ExponentialBackoffPolicy` - Exponential delay growth
+- `JitteredBackoffPolicy` - Randomized exponential backoff
+- `ConditionalRetryPolicy` - Error-type based retry decisions
+- `RetryPolicyFactory` - Convenient policy creation
+
+#### Event System
+- `EventSystem` - Pub/sub for scheduler events
+- `Event` - Event data structure with timestamps
+- `ScopedSubscription` - RAII subscription management
+- Events: TaskCreated, TaskStarted, TaskCompleted, TaskFailed, etc.
+
+#### Resource Management
+- `ResourceLimiter` - Concurrent resource usage limits
+- `Semaphore` - Counting semaphore implementation
+- `SemaphoreGuard` - RAII semaphore acquisition
+- `ResourceSlotGuard` - RAII resource slot management
+- CPU/GPU task limits, memory limits, total task limits
+
+### Examples
+- `advanced_features` - Demonstrates events, barriers, retry policies
+
+### Tests
+- `test_task_future.cpp` - TaskFuture tests
+- `test_task_barrier.cpp` - TaskBarrier tests
+- `test_event_system.cpp` - EventSystem tests
+- `test_retry_policy.cpp` - RetryPolicy tests
+- `test_resource_limiter.cpp` - ResourceLimiter tests
+
 ## [1.0.0] - 2024-12-31
 
 ### Added
