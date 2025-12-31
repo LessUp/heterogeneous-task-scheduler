@@ -88,3 +88,6 @@ target_link_libraries(graph_visualization PRIVATE hts_lib)
 
 add_executable(gpu_computation examples/gpu_computation.cu)
 target_link_libraries(gpu_computation PRIVATE hts_lib)
+
+add_executable(advanced_features examples/advanced_features.cpp)
+target_link_libraries(advanced_features PRIVATE hts_lib)

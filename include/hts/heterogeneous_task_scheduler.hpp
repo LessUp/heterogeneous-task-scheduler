@@ -109,13 +109,28 @@
 // Logging utilities
 #include "hts/logger.hpp"
 
+// Task futures for result retrieval
+#include "hts/task_future.hpp"
+
+// Task barriers for synchronization
+#include "hts/task_barrier.hpp"
+
+// Retry policies
+#include "hts/retry_policy.hpp"
+
+// Event system
+#include "hts/event_system.hpp"
+
+// Resource limiting
+#include "hts/resource_limiter.hpp"
+
 namespace hts {
 
 /**
  * @brief Library version information
  */
 constexpr int VERSION_MAJOR = 1;
-constexpr int VERSION_MINOR = 0;
+constexpr int VERSION_MINOR = 1;
 constexpr int VERSION_PATCH = 0;
 
 /**

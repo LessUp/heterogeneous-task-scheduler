@@ -277,3 +277,116 @@ hts::PinnedMemory<float> pinned(1024);
     // 在 GPU 0 上操作
 }
 ```
+
+### 事件系统
+
+```cpp
+#include <hts/event_system.hpp>
+
+hts::EventSystem events;
+
+// 订阅任务事件
+auto sub = events.subscribe(hts::EventType::TaskCompleted, [](const hts::Event& e) {
+    std::cout << "Task " << e.task_id << " completed\n";
+});
+
+// 订阅所有事件
+events.subscribe_all([](const hts::Event& e) {
+    std::cout << hts::EventSystem::event_type_name(e.type) << "\n";
+});
+
+// RAII 订阅管理
+{
+    hts::ScopedSubscription scoped(events, sub);
+    // 订阅在作用域结束时自动取消
+}
+```
+
+### 任务屏障
+
+```cpp
+#include <hts/task_barrier.hpp>
+
+// 创建屏障同步点
+hts::TaskBarrier barrier("phase1_complete", scheduler.graph());
+
+// 添加前置任务
+for (auto& task : phase1_tasks) {
+    barrier.add_predecessor(task);
+}
+
+// 添加后续任务
+for (auto& task : phase2_tasks) {
+    barrier.add_successor(task);
+}
+
+// 等待屏障
+barrier.wait();
+```
+
+### 重试策略
+
+```cpp
+#include <hts/retry_policy.hpp>
+
+// 固定延迟重试
+auto fixed = hts::RetryPolicyFactory::fixed(3, std::chrono::milliseconds{100});
+
+// 指数退避
+auto exponential = hts::RetryPolicyFactory::exponential(5);
+
+// 带抖动的指数退避
+auto jittered = hts::RetryPolicyFactory::jittered(5);
+
+// 条件重试（仅重试瞬态错误）
+auto conditional = hts::ConditionalRetryPolicy::transient_errors(
+    hts::RetryPolicyFactory::exponential(5));
+```
+
+### 资源限制
+
+```cpp
+#include <hts/resource_limiter.hpp>
+
+hts::ResourceLimiter::Limits limits;
+limits.max_concurrent_cpu_tasks = 4;
+limits.max_concurrent_gpu_tasks = 2;
+limits.max_memory_bytes = 1024 * 1024 * 1024;  // 1 GB
+
+hts::ResourceLimiter limiter(limits);
+
+// 获取资源槽
+if (limiter.acquire_cpu_slot()) {
+    // 执行任务
+    limiter.release_cpu_slot();
+}
+
+// RAII 资源管理
+{
+    hts::ResourceSlotGuard guard(limiter, hts::DeviceType::CPU);
+    // 资源在作用域结束时自动释放
+}
+```
+
+### 任务结果获取
+
+```cpp
+#include <hts/task_future.hpp>
+
+hts::TaskFuture<int> future(task);
+
+// 在任务中设置结果
+task->set_cpu_function([&future](hts::TaskContext& ctx) {
+    int result = compute();
+    future.set_value(result);
+});
+
+// 获取结果
+scheduler.execute();
+int value = future.get();  // 阻塞直到结果可用
+
+// 非阻塞检查
+if (auto result = future.try_get()) {
+    std::cout << "Result: " << *result << "\n";
+}
+```
