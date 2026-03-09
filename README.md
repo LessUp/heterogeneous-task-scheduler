@@ -1,5 +1,9 @@
 # Heterogeneous Task Scheduler (HTS)
 
+[![Docs](https://img.shields.io/badge/Docs-GitHub%20Pages-blue?logo=github)](https://lessup.github.io/heterogeneous-task-scheduler/)
+
+简体中文 | [English](README.en.md)
+
 一个 C++ 框架，用于在 CPU 和 GPU 之间调度和执行任务 DAG（有向无环图）。
 
 ## 特性
