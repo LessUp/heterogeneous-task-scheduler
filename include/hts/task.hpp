@@ -42,6 +42,9 @@ public:
     /// Get preferred device
     DeviceType preferred_device() const { return preferred_device_; }
     
+    /// Set preferred device
+    void set_preferred_device(DeviceType device) { preferred_device_ = device; }
+    
     /// Get actual device (set after scheduling)
     DeviceType actual_device() const { return actual_device_; }
     

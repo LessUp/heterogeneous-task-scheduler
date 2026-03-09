@@ -17,6 +17,7 @@ size_t MemoryPool::round_up_power_of_two(size_t size) {
 
 MemoryPool::MemoryPool(size_t initial_size_bytes, bool allow_growth)
     : pool_size_(round_up_power_of_two(initial_size_bytes))
+    , base_pool_size_(pool_size_)
     , allow_growth_(allow_growth)
 {
     cudaError_t err = cudaMalloc(&base_ptr_, pool_size_);
@@ -224,26 +225,30 @@ void MemoryPool::reset() {
     allocated_blocks_.clear();
     free_lists_.clear();
     
+    // Free additional regions first
+    for (void* region : additional_regions_) {
+        cudaFree(region);
+    }
+    additional_regions_.clear();
+    
+    // Restore pool_size_ to original base region size
+    pool_size_ = base_pool_size_;
+    
+    stats_.total_bytes = pool_size_;
     stats_.used_bytes = 0;
     stats_.allocation_count = 0;
     stats_.free_count = 0;
     stats_.fragmentation_ratio = 0.0;
     
-    // Re-initialize with base region only
+    // Re-initialize free list with base region only
     if (base_ptr_) {
         MemoryBlock block;
         block.ptr = base_ptr_;
-        block.size = pool_size_ - (stats_.total_bytes - pool_size_);
+        block.size = pool_size_;
         block.offset = 0;
         block.in_use = false;
-        free_lists_[block.size].push_back(block);
+        free_lists_[pool_size_].push_back(block);
     }
-    
-    // Free additional regions
-    for (void* region : additional_regions_) {
-        cudaFree(region);
-    }
-    additional_regions_.clear();
     
     cv_.notify_all();
 }

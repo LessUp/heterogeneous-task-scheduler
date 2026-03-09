@@ -92,9 +92,6 @@ private:
     /// Internal execution implementation
     void execute_internal();
     
-    /// Schedule all ready tasks
-    void schedule_ready_tasks();
-    
     /// Select device for task execution
     DeviceType select_device(const Task& task);
     

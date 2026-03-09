@@ -50,8 +50,15 @@ public:
             auto now = std::chrono::system_clock::now();
             auto time = std::chrono::system_clock::to_time_t(now);
             
+            std::tm tm_buf{};
+#ifdef _WIN32
+            localtime_s(&tm_buf, &time);
+#else
+            localtime_r(&time, &tm_buf);
+#endif
+            
             std::ostream& out = (level >= LogLevel::Warning) ? std::cerr : std::cout;
-            out << "[" << std::put_time(std::localtime(&time), "%H:%M:%S") << "] "
+            out << "[" << std::put_time(&tm_buf, "%H:%M:%S") << "] "
                 << level_string(level) << ": " << message << std::endl;
         }
     }

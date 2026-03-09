@@ -58,6 +58,7 @@ public:
 
 private:
     size_t pool_size_;
+    size_t base_pool_size_;  // Original base region size (immutable after construction)
     bool allow_growth_;
     void* base_ptr_ = nullptr;
     

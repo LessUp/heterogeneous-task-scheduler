@@ -5,6 +5,7 @@
 #include <chrono>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 // Forward declare CUDA types to avoid including cuda_runtime.h in headers
 using cudaStream_t = struct CUstream_st*;

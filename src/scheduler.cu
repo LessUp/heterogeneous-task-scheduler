@@ -236,9 +236,6 @@ std::string Scheduler::generate_timeline_json() const {
     return oss.str();
 }
 
-} // namespace hts
-
-
 void Scheduler::set_policy(std::unique_ptr<SchedulingPolicy> policy) {
     policy_ = std::move(policy);
 }
@@ -246,3 +243,5 @@ void Scheduler::set_policy(std::unique_ptr<SchedulingPolicy> policy) {
 const char* Scheduler::policy_name() const {
     return policy_ ? policy_->name() : "None";
 }
+
+} // namespace hts

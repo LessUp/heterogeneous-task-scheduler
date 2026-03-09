@@ -67,8 +67,12 @@ void TaskGroup::set_priority(TaskPriority priority) {
 }
 
 void TaskGroup::set_device(DeviceType device) {
-    // Note: This only affects tasks with DeviceType::Any
-    // Tasks with specific device preferences are not changed
+    for (auto& task : tasks_) {
+        // Only override tasks that don't have a specific device preference
+        if (task->preferred_device() == DeviceType::Any) {
+            task->set_preferred_device(device);
+        }
+    }
 }
 
 void TaskGroup::cancel() {

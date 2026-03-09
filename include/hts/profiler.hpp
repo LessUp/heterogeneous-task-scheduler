@@ -161,7 +161,8 @@ public:
                 summary.min_task_time = ns;
             }
             
-            summary.peak_memory = std::max(summary.peak_memory, record.memory_allocated);
+            cumulative_memory += record.memory_allocated;
+            summary.peak_memory = std::max(summary.peak_memory, cumulative_memory);
         }
         
         summary.total_time = std::chrono::duration_cast<std::chrono::nanoseconds>(

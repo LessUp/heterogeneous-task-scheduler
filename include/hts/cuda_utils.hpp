@@ -172,6 +172,17 @@ public:
         other.count_ = 0;
     }
     
+    PinnedMemory& operator=(PinnedMemory&& other) noexcept {
+        if (this != &other) {
+            if (ptr_) cudaFreeHost(ptr_);
+            ptr_ = other.ptr_;
+            count_ = other.count_;
+            other.ptr_ = nullptr;
+            other.count_ = 0;
+        }
+        return *this;
+    }
+    
     T* data() { return ptr_; }
     const T* data() const { return ptr_; }
     size_t size() const { return count_; }
@@ -205,6 +216,17 @@ public:
         : count_(other.count_), ptr_(other.ptr_) {
         other.ptr_ = nullptr;
         other.count_ = 0;
+    }
+    
+    DeviceMemory& operator=(DeviceMemory&& other) noexcept {
+        if (this != &other) {
+            if (ptr_) cudaFree(ptr_);
+            ptr_ = other.ptr_;
+            count_ = other.count_;
+            other.ptr_ = nullptr;
+            other.count_ = 0;
+        }
+        return *this;
     }
     
     T* data() { return ptr_; }
