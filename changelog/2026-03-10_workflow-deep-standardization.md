@@ -1,13 +1,60 @@
-# Workflow 深度标准化
+# Workflow Deep Standardization
 
-日期：2026-03-10
+**Date**: 2026-03-10
+**Type**: Infrastructure
+**PR**: -
 
-## 变更内容
+## Summary
 
-- CI workflow 统一 `permissions: contents: read` 与 `concurrency` 配置
-- Pages workflow 补充 `actions/configure-pages@v5` 步骤
-- Pages workflow 添加 `paths` 触发过滤，减少无效构建
+Second round of GitHub Actions deep standardization across the repository.
 
-## 背景
+## Changes
 
-全仓库第二轮 GitHub Actions 深度标准化：统一命名、权限、并发、路径过滤与缓存策略。
+### Standardized
+
+| Workflow | Change | Description |
+|----------|--------|-------------|
+| All CI | `permissions` | Unified `permissions: contents: read` |
+| All CI | `concurrency` | Added concurrency control to prevent duplicate runs |
+| Pages | `configure-pages` | Added `actions/configure-pages@v5` step |
+| Pages | `paths` filter | Trigger filtering to reduce unnecessary builds |
+
+## Technical Details
+
+### Permissions Configuration
+
+```yaml
+permissions:
+  contents: read
+```
+
+### Concurrency Control
+
+```yaml
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+```
+
+### Pages Paths Filter
+
+```yaml
+on:
+  push:
+    paths:
+      - 'docs/**'
+      - 'README.md'
+      - 'index.md'
+      - '_config.yml'
+```
+
+## Impact
+
+- Reduced resource consumption from duplicate workflow runs
+- Faster feedback on relevant changes only
+- Consistent permission model across all workflows
+
+## Related
+
+- [2026-03-09 Workflow Optimization](2026-03-09_workflow-optimization.md)
+- [2026-03-13 Workflow CPU-safe CI Adjustment](2026-03-13_workflow-cpu-safe-ci.md)

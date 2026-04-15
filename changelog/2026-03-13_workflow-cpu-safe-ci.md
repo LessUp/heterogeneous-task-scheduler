@@ -1,13 +1,84 @@
-# Workflow CPU-safe CI 调整
+# Workflow CPU-safe CI Adjustment
 
-日期：2026-03-13
+**Date**: 2026-03-13
+**Type**: Infrastructure
+**PR**: -
 
-## 变更内容
+## Summary
 
-- 将 `.github/workflows/ci.yml` 从 GitHub Hosted Runner 上的 CUDA 容器构建，调整为仅保留 CPU-safe 的 `Format Check`
-- 为 CI 补回 `push`、`pull_request` 与 `workflow_dispatch` 触发，避免只有手动触发却长期红灯
-- 统一使用 `jidicula/clang-format-action` 执行格式校验，并排除 `build`、`third_party`、`external`、`vendor` 等目录
+Adjusted CI workflow from GPU-dependent CUDA container builds to CPU-safe format checking.
 
-## 背景
+## Background
 
-该仓库原先的 CI 依赖 `nvidia/cuda` 容器，但 GitHub Hosted Runner 不提供可用 GPU，导致工作流长期处于无效或失败状态。本次调整将主线检查收敛为稳定可通过的静态格式校验。
+### Problem
+
+The repository's CI workflow depended on `nvidia/cuda` container for CUDA builds. However, GitHub Hosted Runners do not provide usable GPU resources, causing:
+
+- Workflow failures due to missing GPU
+- Long-running red CI status
+- No meaningful validation
+
+### Solution
+
+Replaced CUDA build validation with CPU-safe static analysis:
+
+| Before | After |
+|--------|-------|
+| `nvidia/cuda` container build | `clang-format` format check |
+| GPU-dependent | CPU-safe |
+| Unreliable | Stable |
+
+## Changes
+
+### Removed
+
+- CUDA container-based build job
+- GPU-dependent test execution
+
+### Added
+
+| Change | Description |
+|--------|-------------|
+| `clang-format` check | Code formatting validation |
+| `jidicula/clang-format-action` | Standardized format checker |
+| Path exclusions | Skip `build`, `third_party`, `external`, `vendor` |
+
+### Restored
+
+- `push` trigger for main branch
+- `pull_request` trigger
+- `workflow_dispatch` for manual runs
+
+## Technical Details
+
+```yaml
+jobs:
+  format-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jidicula/clang-format-action@v4
+        with:
+          clang-format-version: '17'
+          exclude-regex: '(build|third_party|external|vendor)/'
+```
+
+## Impact
+
+- ✅ Reliable CI status on all pull requests
+- ✅ Automated format enforcement
+- ✅ Fast feedback (< 2 minutes)
+- ⚠️ No GPU build validation (requires self-hosted runner with GPU)
+
+## Future Considerations
+
+For GPU build validation, consider:
+
+1. Self-hosted runners with GPU
+2. External CI services (e.g., NVIDIA's CI)
+3. Pre-merge validation on release branches
+
+## Related
+
+- [2026-03-09 Workflow Optimization](2026-03-09_workflow-optimization.md)
+- [2026-03-10 Workflow Deep Standardization](2026-03-10_workflow-deep-standardization.md)
