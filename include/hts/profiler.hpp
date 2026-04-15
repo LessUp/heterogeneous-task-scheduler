@@ -134,6 +134,7 @@ public:
 
     std::chrono::nanoseconds total_cpu_time{0};
     std::chrono::nanoseconds total_gpu_time{0};
+    size_t cumulative_memory = 0;
 
     for (const auto &record : records_) {
       auto duration = record.end_time - record.start_time;

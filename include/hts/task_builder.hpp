@@ -5,6 +5,7 @@
 #include "hts/types.hpp"
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace hts {
 

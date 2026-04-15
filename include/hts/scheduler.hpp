@@ -7,10 +7,13 @@
 #include "hts/scheduling_policy.hpp"
 #include "hts/task_graph.hpp"
 #include "hts/types.hpp"
+#include <atomic>
 #include <chrono>
 #include <functional>
 #include <future>
 #include <memory>
+#include <mutex>
+#include <string>
 
 namespace hts {
 

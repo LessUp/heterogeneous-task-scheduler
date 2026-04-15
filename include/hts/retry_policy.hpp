@@ -4,7 +4,9 @@
 #include <chrono>
 #include <cmath>
 #include <functional>
+#include <memory>
 #include <random>
+#include <string>
 
 namespace hts {
 

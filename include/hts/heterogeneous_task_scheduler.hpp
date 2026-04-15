@@ -124,6 +124,8 @@
 // Resource limiting
 #include "hts/resource_limiter.hpp"
 
+#include <string>
+
 namespace hts {
 
 /**

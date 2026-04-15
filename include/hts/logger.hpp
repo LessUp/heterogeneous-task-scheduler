@@ -6,6 +6,7 @@
 #include <iostream>
 #include <mutex>
 #include <sstream>
+#include <string>
 
 namespace hts {
 
