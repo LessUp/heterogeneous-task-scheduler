@@ -1,130 +1,139 @@
 # Contributing to Heterogeneous Task Scheduler (HTS)
 
-感谢你对 HTS 项目的关注！我们欢迎各种形式的贡献，包括 bug 报告、功能建议、文档改进和代码贡献。
+感谢你对 HTS 项目的关注！我们欢迎各种形式的贡献。
 
-## 目录
+[English](#english) | [中文](#中文)
 
-- [行为准则](#行为准则)
-- [开发环境设置](#开发环境设置)
-- [代码风格](#代码风格)
-- [提交规范](#提交规范)
-- [Pull Request 流程](#pull-request-流程)
-- [报告 Bug](#报告-bug)
-- [功能建议](#功能建议)
+---
 
-## 行为准则
+## English
 
-参与本项目即表示你同意遵守我们的 [行为准则](CODE_OF_CONDUCT.md)。请确保你的行为符合社区标准。
+### Table of Contents
 
-## 开发环境设置
+- [Code of Conduct](#code-of-conduct)
+- [Development Setup](#development-setup)
+- [Code Style](#code-style)
+- [Commit Convention](#commit-convention)
+- [Pull Request Process](#pull-request-process)
+- [Reporting Bugs](#reporting-bugs)
+- [Feature Requests](#feature-requests)
 
-### 依赖要求
+### Code of Conduct
 
-- CMake >= 3.18
-- CUDA Toolkit >= 11.0
-- C++17 兼容编译器 (GCC >= 8, Clang >= 7, MSVC >= 2019)
-- Git
+This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md). By participating, you agree to uphold this code.
 
-### 构建步骤
+### Development Setup
+
+#### Requirements
+
+| Requirement | Version |
+|-------------|---------|
+| CMake | >= 3.18 |
+| CUDA Toolkit | >= 11.0 |
+| C++ Compiler | GCC 8+, Clang 7+, or MSVC 2019+ |
+| Git | Any recent version |
+
+#### Build Steps
 
 ```bash
-# 克隆仓库
-git clone https://github.com/your-username/HeterogeneousTaskScheduler.git
-cd HeterogeneousTaskScheduler
+# Clone the repository
+git clone https://github.com/LessUp/heterogeneous-task-scheduler.git
+cd heterogeneous-task-scheduler
 
-# 创建构建目录
+# Create build directory
 mkdir build && cd build
 
-# 配置项目
+# Configure (Debug mode for development)
 cmake .. -DCMAKE_BUILD_TYPE=Debug
 
-# 构建
-make -j$(nproc)
+# Build
+cmake --build . -j$(nproc)
 
-# 运行测试
+# Run tests
 ctest --output-on-failure
 ```
 
-### 运行示例
+#### Run Examples
 
 ```bash
-./simple_dag
-./parallel_pipeline
-./fluent_api
+./build/simple_dag
+./build/parallel_pipeline
+./build/fluent_api
+./build/advanced_features
 ```
 
-## 代码风格
+### Code Style
 
-### C++ 代码规范
+#### C++ Naming Conventions
 
-我们遵循以下代码风格指南：
+| Type | Convention | Example |
+|------|------------|---------|
+| Classes | PascalCase | `TaskGraph`, `MemoryPool` |
+| Functions | snake_case | `add_task()`, `get_stats()` |
+| Variables | snake_case | `task_id`, `memory_pool` |
+| Constants | UPPER_SNAKE_CASE | `MAX_THREADS`, `MIN_BLOCK_SIZE` |
+| Private members | trailing underscore | `id_`, `state_` |
+| Namespaces | lowercase | `hts` |
 
-1. **命名约定**
-   - 类名：`PascalCase` (例如 `TaskGraph`, `MemoryPool`)
-   - 函数名：`snake_case` (例如 `add_task`, `get_stats`)
-   - 变量名：`snake_case` (例如 `task_id`, `memory_pool`)
-   - 常量：`UPPER_SNAKE_CASE` (例如 `MAX_THREADS`)
-   - 私有成员：后缀下划线 (例如 `id_`, `state_`)
+#### Formatting
 
-2. **格式化**
-   - 缩进：4 个空格
-   - 行宽：100 字符
-   - 大括号：K&R 风格
+- **Indentation**: 4 spaces (no tabs)
+- **Line width**: 100 characters
+- **Braces**: K&R style (opening brace on same line)
 
-3. **头文件**
-   - 使用 `#pragma once` 作为头文件保护
-   - 按以下顺序包含头文件：
-     1. 对应的头文件
-     2. C 标准库
-     3. C++ 标准库
-     4. 第三方库
-     5. 项目头文件
-
-4. **文档注释**
-   - 使用 Doxygen 风格的注释
-   - 所有公共 API 必须有文档注释
-
-```cpp
-/// @brief 简短描述
-/// @param param_name 参数描述
-/// @return 返回值描述
-/// @throws 异常描述
-```
-
-### 示例代码
+#### Header File Guidelines
 
 ```cpp
 #pragma once
 
+// 1. Project headers
 #include "hts/types.hpp"
+
+// 2. C standard library
+#include <cstdint>
+
+// 3. C++ standard library
 #include <memory>
 #include <string>
+#include <vector>
+
+// 4. Third-party libraries
+// (rarely needed in headers)
 
 namespace hts {
 
-/// @brief 任务类，表示可在 CPU 或 GPU 上执行的计算单元
-class Task {
+/// @brief Brief description of the class
+/// @details Detailed description if needed
+class ExampleClass {
 public:
-    /// @brief 构造函数
-    /// @param id 任务唯一标识符
-    /// @param device 首选执行设备
-    explicit Task(TaskId id, DeviceType device = DeviceType::Any);
-    
-    /// @brief 获取任务 ID
-    /// @return 任务唯一标识符
-    TaskId id() const { return id_; }
+    /// @brief Brief description of the method
+    /// @param param_name Description of parameter
+    /// @return Description of return value
+    /// @throws ExceptionType When this exception is thrown
+    void method(int param_name);
 
 private:
-    TaskId id_;
-    DeviceType device_;
+    int private_member_;
 };
 
 } // namespace hts
 ```
 
-## 提交规范
+#### Documentation Comments
 
-我们使用 [Conventional Commits](https://www.conventionalcommits.org/) 规范：
+Use Doxygen-style comments for all public APIs:
+
+```cpp
+/// @brief Add a new task to the graph
+/// @param device Preferred execution device (CPU, GPU, or Any)
+/// @return Shared pointer to the created task
+/// @note The task is not scheduled until execute() is called
+TaskPtr add_task(DeviceType device = DeviceType::Any);
+```
+
+### Commit Convention
+
+We follow [Conventional Commits](https://www.conventionalcommits.org/):
 
 ```
 <type>(<scope>): <description>
@@ -134,24 +143,27 @@ private:
 [optional footer(s)]
 ```
 
-### 类型 (type)
+#### Types
 
-- `feat`: 新功能
-- `fix`: Bug 修复
-- `docs`: 文档更新
-- `style`: 代码格式（不影响代码运行的变动）
-- `refactor`: 重构（既不是新功能也不是修复 bug）
-- `perf`: 性能优化
-- `test`: 测试相关
-- `chore`: 构建过程或辅助工具的变动
+| Type | Description |
+|------|-------------|
+| `feat` | New feature |
+| `fix` | Bug fix |
+| `docs` | Documentation changes |
+| `style` | Code style changes (formatting, no logic change) |
+| `refactor` | Code refactoring |
+| `perf` | Performance improvements |
+| `test` | Adding or modifying tests |
+| `chore` | Build process or tooling changes |
 
-### 示例
+#### Examples
 
 ```
 feat(scheduler): add support for task priorities
 
 Add TaskPriority enum and priority-based scheduling.
-Tasks with higher priority are executed first.
+Tasks with higher priority are executed first when
+multiple tasks are ready.
 
 Closes #123
 ```
@@ -163,89 +175,203 @@ The coalesce_blocks() function was not properly merging
 adjacent free blocks, causing memory fragmentation.
 ```
 
-## Pull Request 流程
+### Pull Request Process
 
-1. **Fork 仓库** 并克隆到本地
-
-2. **创建分支**
+1. **Fork** the repository and create your branch:
    ```bash
    git checkout -b feature/your-feature-name
-   # 或
+   # or
    git checkout -b fix/your-bug-fix
    ```
 
-3. **进行修改**
-   - 编写代码
-   - 添加测试
-   - 更新文档
+2. **Make changes** and ensure:
+   - Code follows style guidelines
+   - All tests pass
+   - New features have tests
+   - Documentation is updated
 
-4. **确保测试通过**
-   ```bash
-   cd build
-   ctest --output-on-failure
-   ```
-
-5. **提交更改**
+3. **Commit** with conventional commit messages:
    ```bash
    git add .
    git commit -m "feat(component): description"
    ```
 
-6. **推送到 Fork**
+4. **Push** to your fork:
    ```bash
    git push origin feature/your-feature-name
    ```
 
-7. **创建 Pull Request**
-   - 填写 PR 模板
-   - 关联相关 Issue
-   - 等待 CI 检查通过
-   - 等待代码审查
+5. **Create Pull Request** on GitHub
 
-### PR 检查清单
+#### PR Checklist
 
-- [ ] 代码遵循项目代码风格
+- [ ] Code follows project style guidelines
+- [ ] All tests pass (`ctest --output-on-failure`)
+- [ ] New features have corresponding tests
+- [ ] Documentation updated (if applicable)
+- [ ] CHANGELOG.md updated (if applicable)
+- [ ] Commit messages follow Conventional Commits
+
+### Reporting Bugs
+
+Before reporting, please:
+
+1. Search existing issues
+2. Verify the issue is reproducible
+
+Include in your report:
+
+- **Environment**: OS, compiler, CUDA version
+- **Steps to reproduce**: Detailed instructions
+- **Expected behavior**: What should happen
+- **Actual behavior**: What actually happens
+- **Minimal code example**: If possible
+
+### Feature Requests
+
+We welcome feature suggestions! Please:
+
+1. Search existing issues first
+2. Describe the use case and problem to solve
+3. Propose a solution if you have one in mind
+
+---
+
+## 中文
+
+### 目录
+
+- [行为准则](#行为准则)
+- [开发环境设置](#开发环境设置)
+- [代码风格](#代码风格)
+- [提交规范](#提交规范)
+- [Pull Request 流程](#pull-request-流程)
+- [报告 Bug](#报告-bug)
+- [功能建议](#功能建议)
+
+### 行为准则
+
+参与本项目即表示你同意遵守我们的 [行为准则](CODE_OF_CONDUCT.md)。
+
+### 开发环境设置
+
+#### 依赖要求
+
+| 依赖 | 版本 |
+|------|------|
+| CMake | >= 3.18 |
+| CUDA Toolkit | >= 11.0 |
+| C++ 编译器 | GCC 8+, Clang 7+, 或 MSVC 2019+ |
+| Git | 任意较新版本 |
+
+#### 构建步骤
+
+```bash
+# 克隆仓库
+git clone https://github.com/LessUp/heterogeneous-task-scheduler.git
+cd heterogeneous-task-scheduler
+
+# 创建构建目录
+mkdir build && cd build
+
+# 配置（Debug 模式用于开发）
+cmake .. -DCMAKE_BUILD_TYPE=Debug
+
+# 构建
+cmake --build . -j$(nproc)
+
+# 运行测试
+ctest --output-on-failure
+```
+
+### 代码风格
+
+#### 命名约定
+
+| 类型 | 约定 | 示例 |
+|------|------|------|
+| 类名 | PascalCase | `TaskGraph`, `MemoryPool` |
+| 函数名 | snake_case | `add_task()`, `get_stats()` |
+| 变量名 | snake_case | `task_id`, `memory_pool` |
+| 常量 | UPPER_SNAKE_CASE | `MAX_THREADS` |
+| 私有成员 | 后缀下划线 | `id_`, `state_` |
+
+#### 格式化
+
+- **缩进**：4 个空格
+- **行宽**：100 字符
+- **大括号**：K&R 风格
+
+#### 文档注释
+
+使用 Doxygen 风格注释：
+
+```cpp
+/// @brief 向图中添加新任务
+/// @param device 首选执行设备
+/// @return 创建的任务的共享指针
+TaskPtr add_task(DeviceType device = DeviceType::Any);
+```
+
+### 提交规范
+
+遵循 [Conventional Commits](https://www.conventionalcommits.org/)：
+
+```
+<类型>(<范围>): <描述>
+```
+
+#### 类型
+
+| 类型 | 描述 |
+|------|------|
+| `feat` | 新功能 |
+| `fix` | Bug 修复 |
+| `docs` | 文档更新 |
+| `style` | 代码格式 |
+| `refactor` | 重构 |
+| `perf` | 性能优化 |
+| `test` | 测试相关 |
+| `chore` | 构建/工具 |
+
+### Pull Request 流程
+
+1. **Fork** 仓库并创建分支
+2. **编写代码**，确保测试通过
+3. **提交** 遵循提交规范
+4. **推送** 到你的 Fork
+5. **创建 PR** 并填写模板
+
+#### PR 检查清单
+
+- [ ] 代码遵循项目风格
 - [ ] 所有测试通过
-- [ ] 新功能有对应的测试
-- [ ] 文档已更新（如适用）
-- [ ] CHANGELOG.md 已更新（如适用）
-- [ ] 提交信息遵循 Conventional Commits 规范
+- [ ] 新功能有对应测试
+- [ ] 文档已更新
 
-## 报告 Bug
+### 报告 Bug
 
-在报告 Bug 之前，请：
+请先搜索现有 Issue，报告时包含：
 
-1. 搜索现有 Issue，确认问题未被报告
-2. 确认问题可以复现
+- 环境信息（OS、编译器、CUDA 版本）
+- 复现步骤
+- 预期行为 vs 实际行为
+- 最小代码示例
 
-报告 Bug 时，请提供：
+### 功能建议
 
-- **环境信息**：操作系统、编译器版本、CUDA 版本
-- **复现步骤**：详细的步骤说明
-- **预期行为**：你期望发生什么
-- **实际行为**：实际发生了什么
-- **错误日志**：相关的错误信息或日志
+欢迎功能建议！请描述：
 
-## 功能建议
+- 问题背景
+- 建议方案
+- 使用场景
 
-我们欢迎功能建议！请在提交之前：
+---
 
-1. 搜索现有 Issue，确认功能未被建议
-2. 考虑该功能是否符合项目目标
+## Getting Help
 
-提交功能建议时，请描述：
-
-- **问题背景**：你想解决什么问题？
-- **建议方案**：你建议如何解决？
-- **替代方案**：你考虑过哪些替代方案？
-- **附加信息**：任何有助于理解建议的信息
-
-## 获取帮助
-
-如果你有任何问题，可以：
-
-- 查看 [README](README.md) 和示例代码
-- 搜索或创建 [Issue](https://github.com/your-username/HeterogeneousTaskScheduler/issues)
-- 查看 [API 文档](docs/api/)
+- 📖 [README](README.md) and examples
+- 🐛 [GitHub Issues](https://github.com/LessUp/heterogeneous-task-scheduler/issues)
+- 📚 [API Documentation](https://lessup.github.io/heterogeneous-task-scheduler/)
 
 感谢你的贡献！🎉

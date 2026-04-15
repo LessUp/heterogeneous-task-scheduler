@@ -4,89 +4,113 @@
 
 We release patches for security vulnerabilities for the following versions:
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 1.1.x   | :white_check_mark: |
-| 1.0.x   | :white_check_mark: |
-| < 1.0   | :x:                |
+| Version | Supported |
+| ------- | --------- |
+| 1.1.x   | ✅ |
+| 1.0.x   | ✅ |
+| < 1.0   | ❌ |
 
 ## Reporting a Vulnerability
 
-We take the security of HTS seriously. If you believe you have found a security vulnerability, please report it to us as described below.
+We take the security of HTS seriously. If you believe you have found a security vulnerability, please report it responsibly.
 
 ### How to Report
 
 **Please do not report security vulnerabilities through public GitHub issues.**
 
-Instead, please report them via email to [INSERT SECURITY EMAIL].
+Instead, please:
 
-You should receive a response within 48 hours. If for some reason you do not, please follow up via email to ensure we received your original message.
+1. **Open a draft security advisory** on GitHub: [Security Advisories](https://github.com/LessUp/heterogeneous-task-scheduler/security/advisories)
+2. **Or email** the maintainers directly via GitHub
 
-Please include the following information in your report:
+You should receive a response within 48 hours.
 
-- **Type of issue** (e.g., buffer overflow, memory leak, race condition, etc.)
-- **Full paths of source file(s)** related to the manifestation of the issue
-- **The location of the affected source code** (tag/branch/commit or direct URL)
-- **Any special configuration** required to reproduce the issue
-- **Step-by-step instructions** to reproduce the issue
-- **Proof-of-concept or exploit code** (if possible)
-- **Impact of the issue**, including how an attacker might exploit it
+### What to Include
+
+Please include the following information:
+
+- **Type of issue** (buffer overflow, memory leak, race condition, etc.)
+- **Source file paths** related to the issue
+- **Location** (tag/branch/commit or direct URL)
+- **Configuration** required to reproduce
+- **Step-by-step reproduction** instructions
+- **Proof-of-concept** (if possible)
+- **Impact assessment**
 
 ### What to Expect
 
-After you submit a report, we will:
+| Stage | Timeline |
+|-------|----------|
+| Acknowledgment | Within 48 hours |
+| Confirmation | Within 1 week |
+| Fix Development | Depends on severity |
+| Release | Coordinated with reporter |
 
-1. **Acknowledge receipt** of your vulnerability report within 48 hours
-2. **Confirm the vulnerability** and determine its impact
-3. **Develop a fix** and prepare a security release
-4. **Notify you** when the fix is released
-5. **Credit you** in the release notes (unless you prefer to remain anonymous)
+## Security Best Practices
 
-### Disclosure Policy
-
-- We will work with you to understand and resolve the issue quickly
-- We will keep you informed of our progress
-- We will credit you for your discovery (if desired)
-- We ask that you give us reasonable time to address the issue before public disclosure
-
-## Security Best Practices for Users
-
-When using HTS in your applications, please consider the following security best practices:
+When using HTS, follow these security practices:
 
 ### Memory Safety
 
-- Always check return values from `allocate()` for nullptr
-- Use RAII wrappers (`DeviceMemory`, `PinnedMemory`) when possible
-- Avoid manual memory management where possible
+```cpp
+// ✅ Good: Check allocation results
+void* ptr = ctx.allocate_gpu_memory(size);
+if (!ptr) {
+    ctx.report_error("Memory allocation failed");
+    return;
+}
+
+// ✅ Better: Use RAII wrappers
+hts::DeviceMemory<float> buffer(1024);  // Throws on failure
+```
 
 ### Thread Safety
 
-- The `Scheduler` class is thread-safe for concurrent task submission
-- `TaskGraph` modifications should be done before calling `execute()`
-- Use appropriate synchronization when sharing data between tasks
+```cpp
+// ✅ Good: Build graph before execution
+scheduler.graph().add_dependency(t1->id(), t2->id());
+scheduler.execute();  // No modifications during execution
+
+// ❌ Bad: Modifying graph during execution
+// scheduler.graph().add_task(...);  // Undefined behavior!
+```
 
 ### Error Handling
 
-- Always set an error callback to handle task failures
-- Check task states after execution
-- Handle CUDA errors appropriately
+```cpp
+// ✅ Always set error callback
+scheduler.set_error_callback([](hts::TaskId id, const std::string& msg) {
+    log_error("Task {} failed: {}", id, msg);
+    // Handle gracefully
+});
+
+// ✅ Check graph validity
+if (!scheduler.graph().validate()) {
+    throw std::runtime_error("Graph contains cycles");
+}
+```
 
 ### Input Validation
 
-- Validate task graph structure before execution
-- Check for cycles using `validate()` before `execute()`
-- Validate memory allocation sizes
+```cpp
+// ✅ Validate before use
+if (size > MAX_ALLOCATION || size == 0) {
+    return nullptr;
+}
+```
 
 ## Security Updates
 
-Security updates will be released as patch versions (e.g., 1.1.1, 1.1.2) and announced through:
+Security updates are released as:
 
-- GitHub Releases
-- CHANGELOG.md updates
-- Security advisories (for critical issues)
+- Patch versions (e.g., 1.1.1 → 1.1.2)
+- Announced via GitHub Releases
+- Documented in CHANGELOG.md
+- Critical issues: Security advisory published
 
 ## Contact
 
-For security-related questions that are not vulnerabilities, please open a GitHub issue with the `security` label.
+For security-related questions (non-vulnerability):
+- Open a GitHub issue with the `security` label
 
 Thank you for helping keep HTS and its users safe!

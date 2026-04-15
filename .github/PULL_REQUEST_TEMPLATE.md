@@ -1,50 +1,54 @@
 ## Description
 
-Please include a summary of the changes and the related issue. Please also include relevant motivation and context.
+Please include a summary of the changes and the related issue.
 
-Fixes # (issue)
+Fixes #(issue number)
 
 ## Type of Change
 
-Please delete options that are not relevant.
+<!-- Check all that apply -->
 
-- [ ] Bug fix (non-breaking change which fixes an issue)
-- [ ] New feature (non-breaking change which adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
-- [ ] Documentation update
-- [ ] Performance improvement
-- [ ] Code refactoring (no functional changes)
-- [ ] Test addition or modification
+- [ ] 🐛 Bug fix (non-breaking change which fixes an issue)
+- [ ] ✨ New feature (non-breaking change which adds functionality)
+- [ ] 💥 Breaking change (fix or feature that would cause existing functionality to not work)
+- [ ] 📝 Documentation update
+- [ ] ⚡ Performance improvement
+- [ ] 🔨 Code refactoring (no functional changes)
+- [ ] ✅ Test addition or modification
+- [ ] 🔧 Build/CI changes
 
 ## How Has This Been Tested?
 
-Please describe the tests that you ran to verify your changes. Provide instructions so we can reproduce.
+<!-- Describe the tests you ran -->
 
 - [ ] Unit tests
 - [ ] Integration tests
 - [ ] Manual testing
 
 **Test Configuration**:
-- OS:
-- Compiler:
-- CUDA Version:
+| Item | Version/Info |
+|------|--------------|
+| OS | |
+| Compiler | |
+| CUDA | |
 
 ## Checklist
+
+<!-- Check all that apply -->
 
 - [ ] My code follows the style guidelines of this project
 - [ ] I have performed a self-review of my code
 - [ ] I have commented my code, particularly in hard-to-understand areas
 - [ ] I have made corresponding changes to the documentation
 - [ ] My changes generate no new warnings
-- [ ] I have added tests that prove my fix is effective or that my feature works
-- [ ] New and existing unit tests pass locally with my changes
-- [ ] Any dependent changes have been merged and published in downstream modules
+- [ ] I have added tests that prove my fix is effective or my feature works
+- [ ] New and existing unit tests pass locally
 - [ ] I have updated the CHANGELOG.md (if applicable)
 
 ## Screenshots (if applicable)
 
-If your changes include visual elements, please add screenshots here.
+<!-- Add screenshots here if your changes include visual elements -->
 
 ## Additional Notes
 
-Add any additional notes for reviewers here.
+<!-- Add any additional notes for reviewers -->

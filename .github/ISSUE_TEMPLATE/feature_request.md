@@ -8,46 +8,50 @@ assignees: ''
 
 ## Problem Statement
 
-A clear and concise description of what the problem is.
-Ex. I'm always frustrated when [...]
+A clear description of the problem you're trying to solve.
+
+*Example: I'm always frustrated when [...]*
 
 ## Proposed Solution
 
-A clear and concise description of what you want to happen.
+A clear description of what you want to happen.
 
 ## Use Case
 
-Describe the use case for this feature. How would you use it?
+Describe how you would use this feature:
 
 ```cpp
-// Example code showing how you'd like to use the feature
-hts::Scheduler scheduler;
+#include <hts/heterogeneous_task_scheduler.hpp>
 
-// Your proposed API usage
+int main() {
+    // Example of how you'd like to use the proposed feature
+
+    return 0;
+}
 ```
 
 ## Alternative Solutions
 
-A clear and concise description of any alternative solutions or features you've considered.
-
-## Additional Context
-
-Add any other context, screenshots, or examples about the feature request here.
+Any alternative solutions or features you've considered.
 
 ## Implementation Considerations
 
-If you have thoughts on how this could be implemented, please share them:
+<!-- Check all that apply -->
 
-- [ ] This would require changes to the public API
-- [ ] This would require changes to the core scheduler
-- [ ] This would require new dependencies
-- [ ] This is backward compatible
+- [ ] Requires changes to public API
+- [ ] Requires changes to core scheduler
+- [ ] Requires new dependencies
+- [ ] Backward compatible
 
 ## Priority
 
 How important is this feature to you?
 
-- [ ] Critical - Blocking my use of HTS
-- [ ] High - Would significantly improve my workflow
-- [ ] Medium - Nice to have
-- [ ] Low - Minor improvement
+- [ ] 🔴 Critical - Blocking my use of HTS
+- [ ] 🟡 High - Would significantly improve my workflow
+- [ ] 🟢 Medium - Nice to have
+- [ ] ⚪ Low - Minor improvement
+
+## Additional Context
+
+Any other context, screenshots, or examples about the feature request.
