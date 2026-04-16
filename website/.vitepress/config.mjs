@@ -1,5 +1,4 @@
 import { defineConfig } from 'vitepress'
-import { withPwa } from '@vite-pwa/vitepress'
 
 const config = defineConfig({
   title: 'HTS',
