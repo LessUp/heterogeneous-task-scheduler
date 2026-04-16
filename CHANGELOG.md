@@ -2,43 +2,75 @@
 
 All notable changes to this project are documented in this file.
 
-[![Keep a Changelog](https://img.shields.io/badge/Keep%20a%20Changelog-1.1.0-informational)](https://keepachangelog.com/en/1.1.0/)
+[![Keep a Changelog](https://img.shields.io/badge/Keep%20a%20Changelog-1.1.0-blue)](https://keepachangelog.com/en/1.1.0/)
 [![Semantic Versioning](https://img.shields.io/badge/Semantic%20Versioning-2.0.0-blue)](https://semver.org/spec/v2.0.0.html)
 
-> 💡 **Tip**: Individual change logs are available in [`changelog/`](changelog/) directory.
+> 📄 **Detailed changelogs** are available in the [`changelog/`](changelog/) directory.
 
 ---
 
 ## [Unreleased]
 
-### Added
+---
 
-- Comprehensive documentation overhaul with bilingual (English/Chinese) support
-- Status badges in README (License, C++17, CUDA)
-- Architecture diagram in README
-- Core components documentation section
+## [1.2.0] - 2026-04-16
 
-### Fixed
+### 🌟 Highlights
 
-- `profiler.hpp`: Undeclared variable `cumulative_memory` in `generate_summary()` method
-- Missing `#include <string>` in 6 header files
-- Missing `#include <vector>` in 2 header files
-- Missing `#include <mutex>`, `#include <atomic>` in `scheduler.hpp`
-- Missing `#include <memory>` in `retry_policy.hpp`
+**Bilingual Documentation Release** — Complete documentation overhaul with full English and Chinese support, plus professional changelog structure.
 
-### Changed
+### 📚 Documentation
 
-- Restructured README with improved code examples
-- Reformatted CHANGELOG following Keep a Changelog 1.1.0
-- Modernized CONTRIBUTING.md with bilingual support
-- Simplified CODE_OF_CONDUCT.md
-- Enhanced SECURITY.md with code examples
+#### English Documentation (10 documents)
+
+| Document | Description |
+|----------|-------------|
+| [docs/en/installation.md](docs/en/installation.md) | Complete installation and configuration guide |
+| [docs/en/quickstart.md](docs/en/quickstart.md) | 5-minute quick start tutorial |
+| [docs/en/architecture.md](docs/en/architecture.md) | System architecture deep dive |
+| [docs/en/api-reference.md](docs/en/api-reference.md) | Complete API reference |
+| [docs/en/scheduling-policies.md](docs/en/scheduling-policies.md) | Scheduling policy guide |
+| [docs/en/memory-management.md](docs/en/memory-management.md) | Memory pool and optimization |
+| [docs/en/error-handling.md](docs/en/error-handling.md) | Error handling best practices |
+| [docs/en/profiling.md](docs/en/profiling.md) | Performance profiling guide |
+| [docs/en/examples.md](docs/en/examples.md) | Detailed example walkthroughs |
+| [docs/README.md](docs/README.md) | Documentation landing page |
+
+#### 中文文档 (10 篇)
+
+| 文档 | 描述 |
+|------|------|
+| [docs/zh-CN/installation.md](docs/zh-CN/installation.md) | 完整安装和配置指南 |
+| [docs/zh-CN/quickstart.md](docs/zh-CN/quickstart.md) | 5 分钟快速入门教程 |
+| [docs/zh-CN/architecture.md](docs/zh-CN/architecture.md) | 系统架构深入解析 |
+| [docs/zh-CN/api-reference.md](docs/zh-CN/api-reference.md) | 完整 API 参考文档 |
+| [docs/zh-CN/scheduling-policies.md](docs/zh-CN/scheduling-policies.md) | 调度策略指南 |
+| [docs/zh-CN/memory-management.md](docs/zh-CN/memory-management.md) | 内存池和优化指南 |
+| [docs/zh-CN/error-handling.md](docs/zh-CN/error-handling.md) | 错误处理最佳实践 |
+| [docs/zh-CN/profiling.md](docs/zh-CN/profiling.md) | 性能分析指南 |
+| [docs/zh-CN/examples.md](docs/zh-CN/examples.md) | 详细示例教程 |
+| [docs/README.md](docs/README.md) | 文档首页（双语）|
+
+### 🔧 Project Structure
+
+- Reorganized `docs/` with bilingual structure (`en/` and `zh-CN/`)
+- Professionalized `changelog/` with templates and consistent formatting
+- Enhanced `README.md` with table of contents and performance metrics
+- Updated `README.zh-CN.md` with full Chinese translation
+
+### 🆕 Added
+
+- Bilingual documentation support (English/Chinese)
+- 20 new documentation files across all topics
+- Professional changelog templates for future entries
+- Enhanced README with performance benchmarks
+- Documentation index with cross-language links
 
 ---
 
 ## [1.1.0] - 2024-12-31
 
-[![GitHub Release](https://img.shields.io/github/release/LessUp/heterogeneous-task-scheduler.svg?label=Release)](https://github.com/LessUp/heterogeneous-task-scheduler/releases/tag/v1.1.0)
+[![GitHub Release](https://img.shields.io/badge/Release-v1.1.0-blue)](https://github.com/LessUp/heterogeneous-task-scheduler/releases/tag/v1.1.0)
 
 ### ✨ New Features
 
@@ -101,13 +133,11 @@ All notable changes to this project are documented in this file.
 
 ## [1.0.0] - 2024-12-31
 
-[![GitHub Release](https://img.shields.io/github/release/LessUp/heterogeneous-task-scheduler.svg?label=Release)](https://github.com/LessUp/heterogeneous-task-scheduler/releases/tag/v1.0.0)
+[![GitHub Release](https://img.shields.io/badge/Release-v1.0.0-blue)](https://github.com/LessUp/heterogeneous-task-scheduler/releases/tag/v1.0.0)
 
 🎉 **Initial Release** — Core DAG scheduling framework for heterogeneous CPU/GPU task execution.
 
-### ✨ Features
-
-#### Core Engine
+### ✨ Core Features
 
 | Component | Description |
 |-----------|-------------|
@@ -118,52 +148,7 @@ All notable changes to this project are documented in this file.
 | **CUDA Stream Manager** | Concurrent GPU kernel execution |
 | **Device Scheduler** | Load-based CPU/GPU selection |
 
-#### Public API
-
-| Class | Purpose |
-|-------|---------|
-| `Scheduler` | Main entry point for graph execution |
-| `TaskGraph` | Build and validate task dependencies |
-| `Task` | Define CPU/GPU task functions |
-| `TaskContext` | Memory allocation, I/O, error reporting |
-| `TaskBuilder` | Fluent task construction API |
-| `TaskGroup` | Batch operations on task sets |
-
-#### Scheduling Policies
-
-| Policy | Behavior |
-|--------|----------|
-| `DefaultSchedulingPolicy` | Load-based device selection |
-| `GpuFirstPolicy` | Prefer GPU when available |
-| `CpuFirstPolicy` | Prefer CPU execution |
-| `RoundRobinPolicy` | Alternate between CPU/GPU |
-| `ShortestJobFirstPolicy` | Priority-based ordering |
-
-#### Observability
-
-| Component | Output |
-|-----------|--------|
-| `Profiler` | Timing stats, parallelism metrics, memory usage |
-| `Logger` | Thread-safe logging with levels |
-| Timeline JSON | Chrome tracing compatible timeline |
-
-#### Utilities
-
-| Class | Description |
-|-------|-------------|
-| `GraphSerializer` | Export to JSON / Graphviz DOT |
-| `CudaUtils` | Device info, memory stats |
-| `DeviceMemory<T>` | RAII device memory |
-| `PinnedMemory<T>` | RAII pinned host memory |
-| `ScopedDevice` | RAII device selection |
-
-#### Error Handling
-
-- Configurable error callbacks per-task
-- Automatic failure propagation to dependents
-- Graceful shutdown waiting for in-flight tasks
-
-### 📦 Examples
+### 📦 Examples Included
 
 | File | Demonstrates |
 |------|--------------|
@@ -176,12 +161,7 @@ All notable changes to this project are documented in this file.
 | `scheduling_policies.cpp` | Policy comparison |
 | `graph_visualization.cpp` | DOT/JSON export |
 | `gpu_computation.cpp` | CUDA kernel integration |
-
-### 📚 Documentation
-
-- API documentation in header files (Doxygen-style)
-- Comprehensive README with examples
-- Working example programs
+| `advanced_features.cpp` | Events, barriers, retry policies |
 
 ---
 
@@ -193,7 +173,7 @@ All notable changes to this project are documented in this file.
 
 **Problem**: CUDA container builds failed on GitHub Hosted Runners (no GPU).
 
-**Solution**: Replaced with `clang-format` static analysis.
+**Solution**: Migrated to CPU-safe static analysis (clang-format, markdownlint, yamllint).
 
 | Change | Details |
 |--------|---------|
@@ -228,12 +208,14 @@ All notable changes to this project are documented in this file.
 
 | Version | Date | Type | Summary |
 |---------|------|------|---------|
-| [Unreleased] | — | — | Docs, fixes |
+| [Unreleased] | — | — | — |
+| [1.2.0] | 2026-04-16 | Minor | Bilingual documentation overhaul |
 | [1.1.0] | 2024-12-31 | Minor | Synchronization, events, retry policies |
 | [1.0.0] | 2024-12-31 | Major | Initial release |
 
 ---
 
-[Unreleased]: https://github.com/LessUp/heterogeneous-task-scheduler/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/LessUp/heterogeneous-task-scheduler/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/LessUp/heterogeneous-task-scheduler/releases/tag/v1.2.0
 [1.1.0]: https://github.com/LessUp/heterogeneous-task-scheduler/releases/tag/v1.1.0
 [1.0.0]: https://github.com/LessUp/heterogeneous-task-scheduler/releases/tag/v1.0.0

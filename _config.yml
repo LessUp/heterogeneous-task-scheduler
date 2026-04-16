@@ -1,49 +1,109 @@
+# Site Configuration for HTS GitHub Pages
+# =========================================
+
+# Site Info
 title: Heterogeneous Task Scheduler
-description: >-
-  C++ 异构任务调度框架 — DAG 依赖管理、GPU 内存池、CPU/CUDA 流异步并发执行
+description: C++ 异构任务调度框架 — DAG 依赖管理、GPU 内存池、CPU/CUDA 流异步并发执行
+tagline: High-performance C++ framework for CPU/GPU task scheduling
+author: LessUp
+
+# Repository
+repository: LessUp/heterogeneous-task-scheduler
+github:
+  repository_url: https://github.com/LessUp/heterogeneous-task-scheduler
+  owner_url: https://github.com/LessUp
+
+# URLs
+url: https://lessup.github.io
+baseurl: /heterogeneous-task-scheduler
+
+# Language
+lang: zh-CN
+locale: zh_CN
+
+# Theme
 remote_theme: pages-themes/cayman@v0.2.0
+
+# Plugins
 plugins:
   - jekyll-remote-theme
   - jekyll-seo-tag
-repository: LessUp/heterogeneous-task-scheduler
-show_downloads: false
+  - jekyll-sitemap
+  - jekyll-feed
 
-# SEO & metadata
-url: https://lessup.github.io
-baseurl: /heterogeneous-task-scheduler
-lang: zh-CN
-author: LessUp
-
-# Markdown rendering
+# Markdown
 markdown: kramdown
 kramdown:
   input: GFM
   hard_wrap: false
   syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    block:
+      line_numbers: false
 
-# Default layout for all pages
+# Collections
+collections_dir: docs
+collections:
+  guides:
+    output: true
+    permalink: /:collection/:name
+
+# Navigation
+navigation:
+  - title: 首页
+    url: /
+  - title: 快速开始
+    url: /#quick-start
+  - title: API 参考
+    url: /#api-reference
+  - title: 示例
+    url: /#examples
+  - title: 更新日志
+    url: /changelog/
+  - title: GitHub
+    url: https://github.com/LessUp/heterogeneous-task-scheduler
+    external: true
+
+# Social Links
+social:
+  github: LessUp/heterogeneous-task-scheduler
+
+# SEO
+google_site_verification: # Add if needed
+
+# Defaults
 defaults:
   - scope:
       path: ""
     values:
       layout: default
+      lang: zh-CN
   - scope:
       path: "changelog"
     values:
       layout: default
+      category: changelog
+  - scope:
+      path: "docs"
+    values:
+      layout: default
+      category: docs
 
-# Exclude irrelevant files from Jekyll build
+# Build Settings
+show_downloads: false
+
+# Exclude from Jekyll build
 exclude:
   - .git
   - .github
   - .kiro
   - .vscode
-  - include
-  - src
-  - examples
-  - tests
-  - build
-  - cmake-build-*
+  - include/
+  - src/
+  - examples/
+  - tests/
+  - build/
+  - cmake-build-*/
   - CMakeLists.txt
   - CMakePresets.json
   - .editorconfig
@@ -55,6 +115,19 @@ exclude:
   - "*.h"
   - "*.o"
   - "*.so"
+  - "*.a"
   - Gemfile
   - Gemfile.lock
-  - vendor
+  - vendor/
+  - node_modules/
+
+# Include
+include:
+  - .nojekyll
+
+# Timezone
+timezone: Asia/Shanghai
+
+# Pagination (if needed)
+# paginate: 10
+# paginate_path: "/blog/page:num/"

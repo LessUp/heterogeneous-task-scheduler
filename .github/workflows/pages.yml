@@ -8,8 +8,11 @@ on:
       - 'docs/**'
       - 'changelog/**'
       - '_config.yml'
+      - 'index.md'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
+  release:
+    types: [published]
 
 permissions:
   contents: read
@@ -17,17 +20,19 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: pages-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
+  # Build job
   build:
-    name: Build
+    name: Build Site
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           sparse-checkout-cone-mode: false
           sparse-checkout: |
             *.md
@@ -35,21 +40,45 @@ jobs:
             docs
             changelog
             LICENSE
+            index.md
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
 
       - name: Setup Pages
+        id: pages
         uses: actions/configure-pages@v5
 
+      - name: Install Jekyll dependencies
+        run: |
+          gem install bundler
+          bundle init || true
+          bundle add jekyll --version ">= 4.3"
+          bundle add webrick
+          bundle add jekyll-seo-tag
+          bundle add jekyll-sitemap
+          bundle add jekyll-feed
+          bundle add jekyll-remote-theme
+
       - name: Build with Jekyll
-        uses: actions/jekyll-build-pages@v1
-        with:
-          source: ./
-          destination: ./_site
+        run: |
+          bundle exec jekyll build \
+            --baseurl "${{ steps.pages.outputs.base_path }}" \
+            --destination ./_site
+        env:
+          JEKYLL_ENV: production
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./_site
 
+  # Deployment job
   deploy:
-    name: Deploy
+    name: Deploy Site
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
