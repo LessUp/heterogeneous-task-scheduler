@@ -1,115 +1,145 @@
-# Requirements Document
+# Requirements Document: Heterogeneous Task Scheduler
+
+[![Spec](https://img.shields.io/badge/Spec-Requirements-orange)]()
+[![Version](https://img.shields.io/badge/Version-1.1.0-green)]()
+
+> 异构任务图调度器需求文档
 
 ## Introduction
 
-异构任务图调度器（Heterogeneous Task Scheduler）是一个 C++ 框架，允许用户定义由多个任务组成的有向无环图（DAG），框架自动将任务分配给 CPU 或 GPU 执行。该框架关注 CPU 和 GPU 的协同管理，提供依赖管理、内存池和异步并发能力，类似于 TensorFlow/PyTorch 的底层调度逻辑或游戏引擎中的渲染图。
+Heterogeneous Task Scheduler (HTS) 是一个 C++ 框架，允许用户定义由多个任务组成的有向无环图 (DAG)，框架自动将任务分配给 CPU 或 GPU 执行。类似于 TensorFlow/PyTorch 底层调度逻辑或游戏引擎渲染图。
+
+---
 
 ## Glossary
 
-- **Scheduler**: 核心调度器组件，负责管理任务图的执行和资源分配
-- **Task**: 可在 CPU 或 GPU 上执行的计算单元
-- **Task_Graph**: 由任务和依赖关系组成的有向无环图
-- **Memory_Pool**: 显存池组件，管理 GPU 内存的分配和回收
-- **Execution_Engine**: 执行引擎，负责在指定设备上运行任务
-- **Dependency_Manager**: 依赖管理器，跟踪任务间的依赖关系
-- **Device**: 执行设备，可以是 CPU 或 GPU
-- **Stream**: CUDA 流，用于异步执行 GPU 任务
+| Term | Definition |
+|------|------------|
+| **Scheduler** | 核心调度器，管理任务图执行和资源分配 |
+| **Task** | 可在 CPU 或 GPU 上执行的计算单元 |
+| **TaskGraph** | 任务和依赖关系组成的有向无环图 |
+| **MemoryPool** | GPU 显存池，管理内存分配和回收 |
+| **ExecutionEngine** | 执行引擎，在指定设备上运行任务 |
+| **DependencyManager** | 依赖管理器，跟踪任务间依赖关系 |
+| **Stream** | CUDA 流，用于异步执行 GPU 任务 |
+
+---
 
 ## Requirements
 
-### Requirement 1: Task Definition and Graph Construction
+### REQ-1: Task Definition and Graph Construction
 
-**User Story:** As a developer, I want to define tasks and their dependencies as a DAG, so that I can express complex computation workflows.
+**User Story:** As a developer, I want to define tasks and dependencies as a DAG.
 
-#### Acceptance Criteria
+| ID | Acceptance Criteria |
+|----|---------------------|
+| 1.1 | TaskGraph SHALL allow creating tasks with unique IDs and execution targets (CPU/GPU) |
+| 1.2 | WHEN adding dependency A→B, DependencyManager SHALL record that B depends on A |
+| 1.3 | WHEN adding dependency that creates cycle, TaskGraph SHALL reject and return false |
+| 1.4 | Task SHALL support user-defined CPU and GPU computation functions |
+| 1.5 | TaskGraph validation SHALL confirm all dependencies form valid DAG |
 
-1. THE Task_Graph SHALL allow users to create tasks with unique identifiers and execution targets (CPU or GPU)
-2. WHEN a user adds a dependency between Task A and Task B, THE Dependency_Manager SHALL record that Task B depends on Task A
-3. WHEN a user attempts to add a dependency that would create a cycle, THE Task_Graph SHALL reject the dependency and return an error
-4. THE Task SHALL support user-defined computation functions for both CPU and GPU execution
-5. WHEN a Task_Graph is finalized, THE Scheduler SHALL validate that all dependencies form a valid DAG
+### REQ-2: Dependency Management and Execution Order
 
-### Requirement 2: Dependency Management and Execution Order
+**User Story:** As a developer, I want automatic dependency management for correct execution order.
 
-**User Story:** As a developer, I want the scheduler to automatically manage task dependencies, so that tasks execute only when their prerequisites are complete.
+| ID | Acceptance Criteria |
+|----|---------------------|
+| 2.1 | WHEN Task A completes, DependencyManager SHALL notify all dependents |
+| 2.2 | WHEN all dependencies satisfied, Scheduler SHALL add Task to ready queue |
+| 2.3 | Scheduler SHALL NEVER execute Task before all predecessors complete |
+| 2.4 | WHEN multiple tasks ready, Scheduler SHALL support concurrent execution |
+| 2.5 | IF Task fails, Scheduler SHALL mark all dependents as blocked |
 
-#### Acceptance Criteria
+### REQ-3: Memory Pool Management
 
-1. WHEN Task A completes execution, THE Dependency_Manager SHALL notify all tasks that depend on Task A
-2. WHEN all dependencies of a Task are satisfied, THE Scheduler SHALL add the Task to the ready queue
-3. THE Scheduler SHALL never execute a Task before all its dependencies have completed
-4. WHEN multiple tasks become ready simultaneously, THE Scheduler SHALL support concurrent execution on available devices
-5. IF a Task fails during execution, THEN THE Scheduler SHALL mark all dependent tasks as blocked and report the failure
+**User Story:** As a developer, I want efficient GPU memory management.
 
-### Requirement 3: Memory Pool Management
+| ID | Acceptance Criteria |
+|----|---------------------|
+| 3.1 | MemoryPool SHALL pre-allocate configurable GPU memory at initialization |
+| 3.2 | Allocation SHALL return block from pool without cudaMalloc |
+| 3.3 | Free SHALL return block to pool without cudaFree |
+| 3.4 | IF insufficient memory, pool SHALL expand or block (never crash) |
+| 3.5 | MemoryPool SHALL track usage statistics |
 
-**User Story:** As a developer, I want a memory pool to manage GPU memory efficiently, so that I avoid the overhead of frequent cudaMalloc and cudaFree calls.
+### REQ-4: Asynchronous Concurrent Execution
 
-#### Acceptance Criteria
+**User Story:** As a developer, I want concurrent CPU/GPU execution.
 
-1. THE Memory_Pool SHALL pre-allocate a configurable amount of GPU memory at initialization
-2. WHEN a Task requests memory, THE Memory_Pool SHALL return a memory block from the pool without calling cudaMalloc
-3. WHEN a Task releases memory, THE Memory_Pool SHALL return the block to the pool without calling cudaFree
-4. IF the Memory_Pool has insufficient free memory, THEN THE Memory_Pool SHALL either expand the pool or block until memory becomes available
-5. THE Memory_Pool SHALL track memory usage statistics including total allocated, currently used, and peak usage
-6. WHEN the Memory_Pool is destroyed, THE Memory_Pool SHALL release all GPU memory back to the system
+| ID | Acceptance Criteria |
+|----|---------------------|
+| 4.1 | ExecutionEngine SHALL use CUDA Streams for async GPU execution |
+| 4.2 | WHILE GPU task executing, CPU tasks SHALL run concurrently |
+| 4.3 | Independent GPU tasks SHALL execute on separate streams |
+| 4.4 | Scheduler SHALL overlap CPU preparation with GPU execution |
+| 4.5 | CPU/GPU sync SHALL use CUDA events efficiently |
 
-### Requirement 4: Asynchronous Concurrent Execution
+### REQ-5: Device Assignment and Load Balancing
 
-**User Story:** As a developer, I want CPU and GPU tasks to execute concurrently, so that I maximize hardware utilization.
+**User Story:** As a developer, I want intelligent device assignment.
 
-#### Acceptance Criteria
+| ID | Acceptance Criteria |
+|----|---------------------|
+| 5.1 | Task SHALL allow specifying preferred device (CPU, GPU, or Any) |
+| 5.2 | WHEN "Any", Scheduler SHALL assign to least loaded device |
+| 5.3 | Scheduler SHALL track device utilization for load balancing |
+| 5.4 | WHEN GPU fully utilized, tasks SHALL queue without blocking CPU |
 
-1. THE Execution_Engine SHALL use CUDA Streams to enable asynchronous GPU task execution
-2. WHILE a GPU Task is executing, THE Scheduler SHALL allow CPU tasks to execute concurrently
-3. WHEN multiple independent GPU tasks are ready, THE Execution_Engine SHALL execute them on separate CUDA Streams
-4. THE Scheduler SHALL overlap CPU task preparation with GPU task execution
-5. WHEN synchronization is required between CPU and GPU, THE Execution_Engine SHALL use CUDA events for efficient waiting
+### REQ-6: Error Handling and Recovery
 
-### Requirement 5: Device Assignment and Load Balancing
+**User Story:** As a developer, I want robust error handling.
 
-**User Story:** As a developer, I want the scheduler to intelligently assign tasks to devices, so that workload is balanced across CPU and GPU.
+| ID | Acceptance Criteria |
+|----|---------------------|
+| 6.1 | IF CUDA operation fails, error SHALL be captured and propagated |
+| 6.2 | WHEN Task fails, detailed error info SHALL be provided |
+| 6.3 | User-defined error callbacks SHALL be supported |
+| 6.4 | IF allocation fails, error SHALL be returned (no crash) |
+| 6.5 | Graceful shutdown SHALL complete in-flight tasks |
 
-#### Acceptance Criteria
+### REQ-7: Performance Monitoring
 
-1. THE Task SHALL allow users to specify preferred execution device (CPU, GPU, or Any)
-2. WHEN a Task is marked as "Any", THE Scheduler SHALL assign it to the least loaded device
-3. THE Scheduler SHALL track device utilization and queue depths for load balancing decisions
-4. WHEN a GPU is fully utilized, THE Scheduler SHALL queue GPU tasks rather than blocking CPU execution
-5. THE Scheduler SHALL support multiple GPU devices when available
+**User Story:** As a developer, I want performance monitoring.
 
-### Requirement 6: Error Handling and Recovery
+| ID | Acceptance Criteria |
+|----|---------------------|
+| 7.1 | Scheduler SHALL record execution time for each Task |
+| 7.2 | Scheduler SHALL track total graph execution time |
+| 7.3 | Device utilization statistics SHALL be provided |
+| 7.4 | Timeline generation for visualization SHALL be supported |
+| 7.5 | Memory fragmentation metrics SHALL be reported |
 
-**User Story:** As a developer, I want robust error handling, so that I can diagnose and recover from failures.
+### REQ-8: API Usability
 
-#### Acceptance Criteria
+**User Story:** As a developer, I want a clean C++ API.
 
-1. IF a CUDA operation fails, THEN THE Execution_Engine SHALL capture the error code and propagate it to the Scheduler
-2. WHEN a Task fails, THE Scheduler SHALL provide detailed error information including task ID, device, and error message
-3. THE Scheduler SHALL support user-defined error callbacks for custom error handling
-4. IF a memory allocation fails, THEN THE Memory_Pool SHALL return an error rather than crashing
-5. THE Scheduler SHALL support graceful shutdown, completing in-flight tasks before termination
+| ID | Acceptance Criteria |
+|----|---------------------|
+| 8.1 | Fluent builder API SHALL be provided for graph construction |
+| 8.2 | Lambda functions SHALL be supported for task logic |
+| 8.3 | Both sync and async execution modes SHALL be supported |
+| 8.4 | Sync execute() SHALL block until all tasks complete |
+| 8.5 | Async execute_async() SHALL return future |
 
-### Requirement 7: Performance Monitoring
+---
 
-**User Story:** As a developer, I want to monitor scheduler performance, so that I can optimize my task graphs.
+## Requirement Traceability
 
-#### Acceptance Criteria
+| Requirement | Properties | Tests |
+|-------------|------------|-------|
+| REQ-1 | P1, P2, P3 | test_task.cpp, test_task_graph.cpp |
+| REQ-2 | P4, P5 | test_dependency_manager.cpp, test_integration.cpp |
+| REQ-3 | P6, P7 | test_memory_pool.cu |
+| REQ-4 | P8 | test_stream_manager.cu, test_execution_engine.cu |
+| REQ-5 | P9 | test_scheduling_policy.cpp |
+| REQ-6 | P10, P11 | test_error_handling.cpp, test_integration.cpp |
+| REQ-7 | P12, P13 | test_profiler.cpp |
+| REQ-8 | P14 | test_integration.cpp |
 
-1. THE Scheduler SHALL record execution time for each Task
-2. THE Scheduler SHALL track total graph execution time from start to completion
-3. THE Scheduler SHALL provide statistics on device utilization percentages
-4. WHEN requested, THE Scheduler SHALL generate a timeline of task executions for visualization
-5. THE Memory_Pool SHALL report fragmentation metrics
+---
 
-### Requirement 8: API Usability
+## Related Documents
 
-**User Story:** As a developer, I want a clean and intuitive C++ API, so that I can easily integrate the scheduler into my projects.
-
-#### Acceptance Criteria
-
-1. THE Scheduler SHALL provide a fluent builder API for constructing task graphs
-2. THE Task SHALL support lambda functions for defining computation logic
-3. THE Scheduler SHALL support both synchronous and asynchronous graph execution modes
-4. WHEN executing synchronously, THE Scheduler SHALL block until all tasks complete
-5. WHEN executing asynchronously, THE Scheduler SHALL return a future that resolves when execution completes
+- [Design](design.md)
+- [Tasks](tasks.md)

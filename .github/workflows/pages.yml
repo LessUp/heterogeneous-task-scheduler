@@ -4,8 +4,9 @@ on:
   push:
     branches: [master, main]
     paths:
-      - '*.md'
+      - '**.md'
       - 'docs/**'
+      - 'changelog/**'
       - '_config.yml'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
@@ -21,6 +22,7 @@ concurrency:
 
 jobs:
   build:
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -47,6 +49,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
 
   deploy:
+    name: Deploy
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
