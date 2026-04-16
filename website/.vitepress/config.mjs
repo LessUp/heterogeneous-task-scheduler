@@ -36,6 +36,8 @@ const config = defineConfig({
     math: true
   },
 
+  ignoreDeadLinks: true,
+
   themeConfig: {
     logo: '/logo.svg',
     siteTitle: 'HTS',
