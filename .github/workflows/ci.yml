@@ -27,5 +27,49 @@ jobs:
         with:
           clang-format-version: '17'
           check-path: '.'
-          exclude-regex: '(^|/)(build|third_party|external|vendor|\.git)(/|$)'
+          exclude-regex: '(^|/)(build|third_party|external|vendor|\.git|\.kiro)(/|$)'
           fallback-style: 'LLVM'
+
+  markdown-lint:
+    name: Markdown Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Lint Markdown files
+        uses: DavidAnson/markdownlint-cli2-action@v16
+        with:
+          globs: |
+            *.md
+            changelog/*.md
+            .github/**/*.md
+          config: |
+            {
+              "default": true,
+              "MD013": false,
+              "MD033": false,
+              "MD041": false
+            }
+        continue-on-error: true
+
+  yaml-lint:
+    name: YAML Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Lint YAML files
+        uses: ibiqlik/action-yamllint@v3
+        with:
+          file_or_dir: |
+            .github/workflows
+            _config.yml
+          config_data: |
+            extends: default
+            rules:
+              line-length:
+                max: 120
+                level: warning
+        continue-on-error: true
