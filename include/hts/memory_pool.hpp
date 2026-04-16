@@ -98,7 +98,7 @@ private:
   bool expand_pool(size_t min_size);
 
   /// Calculate fragmentation ratio
-  void update_fragmentation();
+  void update_fragmentation() const;
 };
 
 } // namespace hts
