@@ -1,0 +1,43 @@
+/* Custom CSS for HTS Documentation */
+
+:root {
+  --vp-c-brand-1: #3EAF7C;
+  --vp-c-brand-2: #41D1FF;
+  --vp-c-brand-3: #3EAF7C;
+  --vp-c-brand-soft: rgba(62, 175, 124, 0.14);
+  
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #3EAF7C 30%, #41D1FF);
+}
+
+.dark {
+  --vp-c-brand-1: #41D1FF;
+  --vp-c-brand-2: #3EAF7C;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--vp-c-bg-soft);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--vp-c-brand-3);
+  border-radius: 4px;
+}
+
+.VPFeature {
+  transition: all 0.3s ease;
+}
+
+.VPFeature:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
