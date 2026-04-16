@@ -47,7 +47,7 @@ jobs:
             changelog/*.md
             .github/**/*.md
             docs/**/*.md
-          config_file: '.markdownlint-cli2.jsonc'
+          config_file: .markdownlint-cli2.jsonc
 
   # YAML Lint
   yaml-lint:
