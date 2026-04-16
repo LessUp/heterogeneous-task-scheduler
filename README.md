@@ -177,6 +177,16 @@ See [Installation Guide](docs/en/installation.md) for detailed instructions.
 | API 参考 | 完整 API 文档 | [docs/zh-CN/api-reference.md](docs/zh-CN/api-reference.md) |
 | 示例教程 | 所有示例详解 | [docs/zh-CN/examples.md](docs/zh-CN/examples.md) |
 
+### Specifications
+
+For technical design documents, product requirements, and test specifications, see the [`/specs`](specs/) directory:
+
+| Resource | Description | Link |
+|----------|-------------|------|
+| Product Requirements | Feature definitions and acceptance criteria | [specs/product/](specs/product/) |
+| Architecture RFC | Technical design documents | [specs/rfc/](specs/rfc/) |
+| Test Specifications | Test specifications and acceptance criteria | [specs/testing/](specs/testing/) |
+
 ---
 
 ## 🎯 Architecture

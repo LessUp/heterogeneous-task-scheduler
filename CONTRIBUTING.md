@@ -11,12 +11,30 @@
 ### Table of Contents
 
 - [Code of Conduct](#code-of-conduct)
+- [Spec-Driven Development](#spec-driven-development)
 - [Development Setup](#development-setup)
 - [Code Style](#code-style)
 - [Commit Convention](#commit-convention)
 - [Pull Request Process](#pull-request-process)
 - [Reporting Bugs](#reporting-bugs)
 - [Feature Requests](#feature-requests)
+
+### Spec-Driven Development
+
+This project follows **Spec-Driven Development (SDD)**. All implementations are based on specification documents in the `/specs` directory:
+
+| Directory | Purpose |
+|-----------|---------|
+| `/specs/product/` | Product feature definitions and acceptance criteria |
+| `/specs/rfc/` | Technical design documents and architecture decisions |
+| `/specs/testing/` | Test specifications and acceptance criteria |
+
+**Before contributing:**
+
+1. Read the relevant specs for the area you're working on
+2. Ensure your implementation complies with the spec definitions
+3. If proposing a new feature, update or create the appropriate spec first
+4. See [AGENTS.md](AGENTS.md) for the full SDD workflow
 
 ### Code of Conduct
 
@@ -242,12 +260,30 @@ We welcome feature suggestions! Please:
 ### 目录
 
 - [行为准则](#行为准则)
+- [规范驱动开发](#规范驱动开发)
 - [开发环境设置](#开发环境设置)
 - [代码风格](#代码风格)
 - [提交规范](#提交规范)
 - [Pull Request 流程](#pull-request-流程)
 - [报告 Bug](#报告-bug)
 - [功能建议](#功能建议)
+
+### 规范驱动开发
+
+本项目遵循**规范驱动开发（SDD）**模式。所有实现均基于 `/specs` 目录下的规范文档：
+
+| 目录 | 用途 |
+|------|------|
+| `/specs/product/` | 产品功能定义和验收标准 |
+| `/specs/rfc/` | 技术设计文档和架构决策 |
+| `/specs/testing/` | 测试规范和验收标准 |
+
+**贡献前须知：**
+
+1. 阅读你所负责领域的相关规范文档
+2. 确保你的实现符合规范定义
+3. 如果提出新功能，请先更新或创建相应的规范文档
+4. 查看 [AGENTS.md](AGENTS.md) 了解完整的 SDD 工作流程
 
 ### 行为准则
 
