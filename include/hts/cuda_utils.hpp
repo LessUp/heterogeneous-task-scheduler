@@ -1,6 +1,11 @@
 #pragma once
 
+#ifdef HTS_CPU_ONLY
+#include "hts/internal/cuda_stubs.hpp"
+#else
 #include <cuda_runtime.h>
+#endif
+
 #include <stdexcept>
 #include <string>
 #include <vector>

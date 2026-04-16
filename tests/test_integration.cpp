@@ -260,6 +260,6 @@ TEST(IntegrationTest, LargeGraph) {
 
 TEST(IntegrationTest, Version) {
   EXPECT_EQ(hts::VERSION_MAJOR, 1);
-  EXPECT_EQ(hts::VERSION_MINOR, 1);
-  EXPECT_EQ(hts::get_version(), "1.1.0");
+  EXPECT_EQ(hts::VERSION_MINOR, 2);
+  EXPECT_EQ(hts::get_version(), "1.2.0");
 }

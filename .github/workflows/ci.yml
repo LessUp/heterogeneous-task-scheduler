@@ -121,6 +121,29 @@ jobs:
                 min-spaces-from-content: 1
               document-start: disable
 
+  # Build and Test (CPU-only mode)
+  build-test:
+    name: Build & Test (CPU-only)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake g++ ninja-build
+
+      - name: Configure CMake
+        run: cmake -B build -G Ninja -DHTS_CPU_ONLY=ON
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Run tests
+        working-directory: build
+        run: ctest --output-on-failure
+
   # Jekyll Build Test
   jekyll-test:
     name: Jekyll Build Test
@@ -167,7 +190,7 @@ jobs:
   ci-summary:
     name: CI Summary
     runs-on: ubuntu-latest
-    needs: [format-check, markdown-lint, yaml-lint, jekyll-test]
+    needs: [format-check, markdown-lint, yaml-lint, build-test, jekyll-test]
     if: always()
     steps:
       - name: Check Status
@@ -179,4 +202,5 @@ jobs:
           echo "| Format Check | ${{ needs.format-check.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Markdown Lint | ${{ needs.markdown-lint.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| YAML Lint | ${{ needs.yaml-lint.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Build & Test | ${{ needs.build-test.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Jekyll Test | ${{ needs.jekyll-test.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
