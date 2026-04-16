@@ -7,8 +7,6 @@ on:
       - '**.md'
       - 'docs/**'
       - 'changelog/**'
-      - '_config.yml'
-      - 'index.md'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
   release:
@@ -36,11 +34,9 @@ jobs:
           sparse-checkout-cone-mode: false
           sparse-checkout: |
             *.md
-            _config.yml
             docs
             changelog
             LICENSE
-            index.md
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1

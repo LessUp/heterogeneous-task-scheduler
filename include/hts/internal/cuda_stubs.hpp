@@ -16,6 +16,7 @@
 #include <cstdint>
 #include <cstring>
 #include <string>
+#include <unordered_map>
 
 // ============================================================================
 // CUDA Error Types

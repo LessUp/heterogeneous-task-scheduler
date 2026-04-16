@@ -106,9 +106,7 @@ jobs:
       - name: Lint YAML files
         uses: ibiqlik/action-yamllint@v3
         with:
-          file_or_dir: |
-            .github/workflows
-            _config.yml
+          file_or_dir: .github/workflows
           config_data: |
             extends: default
             rules:
@@ -155,11 +153,9 @@ jobs:
           sparse-checkout-cone-mode: false
           sparse-checkout: |
             *.md
-            _config.yml
             docs
             changelog
             LICENSE
-            index.md
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
