@@ -12,6 +12,7 @@ BUILD_DIR="build"
 ENABLE_TESTS=ON
 CUDA_ARCH="70"
 COVERAGE=OFF
+CPU_ONLY=OFF
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do
@@ -41,6 +42,10 @@ while [[ $# -gt 0 ]]; do
             rm -rf "$PROJECT_DIR/$BUILD_DIR"
             shift
             ;;
+        --cpu-only)
+            CPU_ONLY=ON
+            shift
+            ;;
         --help)
             echo "Usage: $0 [OPTIONS]"
             echo ""
@@ -50,6 +55,7 @@ while [[ $# -gt 0 ]]; do
             echo "  --no-tests       Disable test building"
             echo "  --cuda-arch ARCH Set CUDA architecture (default: 70)"
             echo "  --coverage       Enable code coverage"
+            echo "  --cpu-only       Build without CUDA support (for testing)"
             echo "  --clean          Clean build directory before building"
             echo "  --help           Show this help message"
             exit 0
@@ -69,6 +75,7 @@ echo "Build Dir:  $BUILD_DIR"
 echo "Tests:      $ENABLE_TESTS"
 echo "CUDA Arch:  $CUDA_ARCH"
 echo "Coverage:   $COVERAGE"
+echo "CPU Only:   $CPU_ONLY"
 echo "=========================================="
 
 cd "$PROJECT_DIR"
@@ -84,6 +91,7 @@ cmake .. \
     -DCMAKE_BUILD_TYPE="$BUILD_TYPE" \
     -DHTS_BUILD_TESTS=$ENABLE_TESTS \
     -DHTS_ENABLE_COVERAGE=$COVERAGE \
+    -DHTS_CPU_ONLY=$CPU_ONLY \
     -DCMAKE_CUDA_ARCHITECTURES="$CUDA_ARCH"
 
 # Build
