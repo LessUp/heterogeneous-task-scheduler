@@ -1,6 +1,6 @@
 # Specifications
 
-This directory contains all specification documents for the Heterogeneous Task Scheduler (HTS) project. It follows the **Spec-Driven Development (SDD)** paradigm, where specs are the Single Source of Truth for all implementation work.
+This directory contains all specification documents for the Heterogeneous Task Scheduler (HTS) project, following the **Spec-Driven Development (SDD)** paradigm where specs are the Single Source of Truth for all implementation work.
 
 ---
 
@@ -8,49 +8,65 @@ This directory contains all specification documents for the Heterogeneous Task S
 
 ```
 specs/
-├── product/            # Product requirements and feature definitions
-├── rfc/                # Technical design documents and architecture decisions
-├── api/                # API interface definitions (OpenAPI, proto, etc.)
-├── db/                 # Database schemas (N/A for this project)
-└── testing/            # Test specifications and acceptance criteria
+├── product/            # Product requirements (PRD)
+├── rfc/                # Technical design documents (RFCs)
+├── api/                # API interface definitions
+├── db/                 # Database schemas (reserved)
+└── testing/            # Test specifications (BDD)
 ```
 
 ---
 
 ## Product Requirements (`/specs/product/`)
 
-| Document | Description |
-|----------|-------------|
-| [001-heterogeneous-task-scheduler.md](product/001-heterogeneous-task-scheduler.md) | Core product requirements (REQ-1 to REQ-8) |
-| [002-project-quality.md](product/002-project-quality.md) | Project quality requirements as an open-source project |
-| [tasks-core.md](product/tasks-core.md) | Implementation task list with progress tracking |
+Product Requirements Documents (PRD) define user-facing features and acceptance criteria.
+
+| Document | Description | Status |
+|----------|-------------|--------|
+| [001-heterogeneous-task-scheduler.md](product/001-heterogeneous-task-scheduler.md) | Core product requirements (REQ-1 to REQ-8) | ✅ Implemented |
+| [002-project-quality.md](product/002-project-quality.md) | Project quality requirements | ✅ Complete |
+| [tasks-core.md](product/tasks-core.md) | Implementation task list with progress | ✅ Complete |
 
 ---
 
 ## RFCs (`/specs/rfc/`)
 
-| Document | Description |
-|----------|-------------|
-| [001-core-architecture.md](rfc/001-core-architecture.md) | Core system architecture and component design |
-| [002-memory-pool.md](rfc/002-memory-pool.md) | GPU memory pool design (buddy system allocator) |
-| [003-execution-engine.md](rfc/003-execution-engine.md) | Async execution engine with CPU thread pool and CUDA streams |
-| [004-error-handling.md](rfc/004-error-handling.md) | Error handling, propagation, and retry policies |
-| [005-profiling.md](rfc/005-profiling.md) | Performance profiling and monitoring |
-| [006-quality-assessment.md](rfc/006-quality-assessment.md) | Project quality assessment and structure |
+Request for Comments (RFC) documents describe technical architecture and design decisions.
+
+| Document | Description | Status |
+|----------|-------------|--------|
+| [001-core-architecture.md](rfc/001-core-architecture.md) | Core system architecture and component design | ✅ Implemented |
+| [002-memory-pool.md](rfc/002-memory-pool.md) | GPU memory pool design (buddy system allocator) | ✅ Implemented |
+| [003-execution-engine.md](rfc/003-execution-engine.md) | Async execution engine with CPU thread pool and CUDA streams | ✅ Implemented |
+| [004-error-handling.md](rfc/004-error-handling.md) | Error handling, propagation, and retry policies | ✅ Implemented |
+| [005-profiling.md](rfc/005-profiling.md) | Performance profiling and monitoring | ✅ Implemented |
+| [006-quality-assessment.md](rfc/006-quality-assessment.md) | Project quality assessment and structure | ✅ Implemented |
 
 ---
 
 ## API Definitions (`/specs/api/`)
 
-> **Note:** As a C++ library, API definitions are primarily in header files (`include/hts/`). Future additions may include OpenAPI specs for any REST interface or gRPC proto files.
+API interface definitions for external interfaces.
+
+> **Note:** As a C++ library, API definitions are primarily in header files (`include/hts/`). This directory is reserved for future additions such as OpenAPI specs for REST interfaces or gRPC proto files.
+
+---
+
+## Database Schemas (`/specs/db/`)
+
+Database schema definitions and data models.
+
+> **Note:** This project is a C++ library and does not use a database. This directory is reserved for future extensions.
 
 ---
 
 ## Test Specifications (`/specs/testing/`)
 
-| Document | Description |
-|----------|-------------|
-| [core-tests.md](testing/core-tests.md) | Test specifications for core components |
+Test specifications and acceptance criteria for validating implementation correctness.
+
+| Document | Description | Status |
+|----------|-------------|--------|
+| [core-tests.md](testing/core-tests.md) | Test specifications for core components | ✅ Implemented |
 
 ---
 
@@ -64,19 +80,43 @@ specs/
 
 ### For AI Agents
 
-See [AGENTS.md](../AGENTS.md) for the Spec-Driven Development workflow instructions.
+See [AGENTS.md](../AGENTS.md) for the complete Spec-Driven Development workflow instructions.
+
+**Key Principle**: Never write code before understanding and following the specs. If specs conflict with requirements, update specs first.
 
 ---
 
-## Versioning
+## Document Standards
 
-All spec documents include version badges and status indicators:
+### Status Badges
 
-| Status Badge | Meaning |
-|--------------|---------|
-| ![Status](https://img.shields.io/badge/Status-Implemented-brightgreen) | Fully implemented |
-| ![Status](https://img.shields.io/badge/Status-Partially%20Complete-yellow) | Partially implemented |
-| ![Status](https://img.shields.io/badge/Status-Planned-blue) | Planned for future |
+| Badge | Meaning |
+|-------|---------|
+| ![Implemented](https://img.shields.io/badge/Status-Implemented-brightgreen) | Fully implemented |
+| ![Partial](https://img.shields.io/badge/Status-Partially%20Complete-yellow) | Partially implemented |
+| ![Planned](https://img.shields.io/badge/Status-Planned-blue) | Planned for future |
+
+### Versioning
+
+All spec documents include:
+- Version badge (e.g., `Version-1.2.0`)
+- Status badge
+- Cross-references to related documents
+
+---
+
+## Requirement Traceability Matrix
+
+| Requirement | Product Spec | RFC | Test Spec |
+|-------------|--------------|-----|-----------|
+| REQ-1: Task Definition | [001-hts](product/001-heterogeneous-task-scheduler.md) | [RFC-001](rfc/001-core-architecture.md) | [core-tests](testing/core-tests.md) |
+| REQ-2: Dependency Management | [001-hts](product/001-heterogeneous-task-scheduler.md) | [RFC-001](rfc/001-core-architecture.md) | [core-tests](testing/core-tests.md) |
+| REQ-3: Memory Pool | [001-hts](product/001-heterogeneous-task-scheduler.md) | [RFC-002](rfc/002-memory-pool.md) | [core-tests](testing/core-tests.md) |
+| REQ-4: Async Execution | [001-hts](product/001-heterogeneous-task-scheduler.md) | [RFC-003](rfc/003-execution-engine.md) | [core-tests](testing/core-tests.md) |
+| REQ-5: Device Assignment | [001-hts](product/001-heterogeneous-task-scheduler.md) | [RFC-001](rfc/001-core-architecture.md) | [core-tests](testing/core-tests.md) |
+| REQ-6: Error Handling | [001-hts](product/001-heterogeneous-task-scheduler.md) | [RFC-004](rfc/004-error-handling.md) | [core-tests](testing/core-tests.md) |
+| REQ-7: Performance Monitoring | [001-hts](product/001-heterogeneous-task-scheduler.md) | [RFC-005](rfc/005-profiling.md) | [core-tests](testing/core-tests.md) |
+| REQ-8: API Usability | [001-hts](product/001-heterogeneous-task-scheduler.md) | [RFC-001](rfc/001-core-architecture.md) | [core-tests](testing/core-tests.md) |
 
 ---
 
@@ -85,3 +125,4 @@ All spec documents include version badges and status indicators:
 - [AGENTS.md](../AGENTS.md) — AI agent workflow instructions
 - [CONTRIBUTING.md](../CONTRIBUTING.md) — Contributor guidelines
 - [CHANGELOG.md](../CHANGELOG.md) — Version changelog
+- [docs/](../docs/) — User documentation

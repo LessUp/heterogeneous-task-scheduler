@@ -1,0 +1,45 @@
+# EditorConfig - Helps maintain consistent coding styles
+root = true
+
+# Default settings
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+# C/C++ source files
+[*.{c,cpp,cu,cuh,hpp}]
+indent_size = 4
+indent_style = space
+
+# CMake files
+[CMakeLists.txt]
+indent_size = 4
+
+# Python scripts
+[*.py]
+indent_size = 4
+
+# YAML files
+[*.{yml,yaml}]
+indent_size = 2
+
+# JSON files
+[*.json]
+indent_size = 2
+
+# Markdown files
+[*.md]
+indent_size = 2
+trim_trailing_whitespace = false
+
+# Shell scripts
+[*.sh]
+indent_size = 2
+
+# Makefiles
+[Makefile]
+indent_style = tab
