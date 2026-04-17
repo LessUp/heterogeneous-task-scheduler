@@ -1,0 +1,45 @@
+---
+# HTS Clang-Tidy Configuration
+Checks: >
+  -*,
+  bugprone-*,
+  concurrency-*,
+  cppcoreguidelines-*,
+  misc-*,
+  modernize-*,
+  performance-*,
+  readability-*,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -cppcoreguidelines-pro-bounds-constant-subscript,
+  -cppcoreguidelines-pro-type-reinterpret-cast,
+  -cppcoreguidelines-pro-type-union-access,
+  -cppcoreguidelines-pro-type-vararg,
+  -cppcoreguidelines-owning-memory,
+  -misc-non-private-member-variables-in-classes,
+  -readability-avoid-const-params-in-decls,
+  -readability-identifier-length,
+  -readability-magic-numbers
+
+WarningsAsErrors: ''
+
+HeaderFilterRegex: '.*'
+
+CheckOptions:
+  - key: modernize-use-nullptr.NullMacros
+    value: 'NULL'
+  - key: readability-identifier-naming.ClassCase
+    value: CamelCase
+  - key: readability-identifier-naming.FunctionCase
+    value: snake_case
+  - key: readability-identifier-naming.VariableCase
+    value: snake_case
+  - key: readability-identifier-naming.ConstantCase
+    value: UPPER_CASE
+  - key: readability-identifier-naming.ParameterCase
+    value: snake_case
+  - key: readability-identifier-naming.MemberCase
+    value: snake_case
+  - key: readability-identifier-naming.PrivateMemberSuffix
+    value: '_'
+...

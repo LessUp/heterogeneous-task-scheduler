@@ -66,20 +66,21 @@ FetchContent_MakeAvailable(rapidcheck)
 
 # CPU-only sources (always built)
 set(HTS_CPU_SOURCES
-    src/task.cpp
-    src/task_context.cpp
-    src/task_graph.cpp
-    src/task_group.cpp
-    src/task_barrier.cpp
-    src/dependency_manager.cpp
+    src/core/task.cpp
+    src/core/task_context.cpp
+    src/core/task_graph.cpp
+    src/core/task_group.cpp
+    src/core/task_barrier.cpp
+    src/core/dependency_manager.cpp
 )
 
 # CUDA sources (only when CUDA is enabled)
 set(HTS_CUDA_SOURCES
-    src/memory_pool.cu
-    src/stream_manager.cu
-    src/execution_engine.cu
-    src/scheduler.cu
+    src/cuda/memory_pool.cu
+    src/cuda/stream_manager.cu
+    src/cuda/execution_engine.cu
+    src/cuda/scheduler.cu
+    src/cuda/cuda_stubs.cpp
 )
 
 set(HTS_HEADERS
@@ -110,7 +111,7 @@ set(HTS_HEADERS
 
 if(HTS_CPU_ONLY)
     # CPU-only build: use stub implementations
-    set(HTS_SOURCES ${HTS_CPU_SOURCES} src/cuda_stubs.cpp)
+    set(HTS_SOURCES ${HTS_CPU_SOURCES} src/cuda/cuda_stubs.cpp)
 
     add_library(hts_lib ${HTS_SOURCES} ${HTS_HEADERS})
     target_compile_definitions(hts_lib PUBLIC HTS_CPU_ONLY)
@@ -139,27 +140,27 @@ target_compile_options(hts_lib PRIVATE
 enable_testing()
 
 set(HTS_TEST_SOURCES
-    tests/test_main.cpp
-    tests/test_task.cpp
-    tests/test_task_graph.cpp
-    tests/test_task_builder.cpp
-    tests/test_task_group.cpp
-    tests/test_task_barrier.cpp
-    tests/test_task_future.cpp
-    tests/test_dependency_manager.cpp
-    tests/test_scheduling_policy.cpp
-    tests/test_profiler.cpp
-    tests/test_graph_serializer.cpp
-    tests/test_logger.cpp
-    tests/test_event_system.cpp
-    tests/test_resource_limiter.cpp
-    tests/test_retry_policy.cpp
-    tests/test_cuda_utils.cpp
-    tests/test_integration.cpp
-    tests/test_memory_pool.cpp
-    tests/test_stream_manager.cpp
-    tests/test_execution_engine.cpp
-    tests/test_scheduler.cpp
+    tests/integration/test_main.cpp
+    tests/unit/test_task.cpp
+    tests/unit/test_task_graph.cpp
+    tests/unit/test_task_builder.cpp
+    tests/unit/test_task_group.cpp
+    tests/unit/test_task_barrier.cpp
+    tests/unit/test_task_future.cpp
+    tests/unit/test_dependency_manager.cpp
+    tests/unit/test_scheduling_policy.cpp
+    tests/unit/test_profiler.cpp
+    tests/unit/test_graph_serializer.cpp
+    tests/unit/test_logger.cpp
+    tests/unit/test_event_system.cpp
+    tests/unit/test_resource_limiter.cpp
+    tests/unit/test_retry_policy.cpp
+    tests/unit/test_cuda_utils.cpp
+    tests/unit/test_memory_pool.cpp
+    tests/unit/test_stream_manager.cpp
+    tests/unit/test_scheduler.cpp
+    tests/integration/test_integration.cpp
+    tests/integration/test_execution_engine.cpp
 )
 
 add_executable(hts_tests ${HTS_TEST_SOURCES})
