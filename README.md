@@ -1,16 +1,16 @@
 # Heterogeneous Task Scheduler (HTS)
 
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)]()
-[![Tests](https://img.shields.io/badge/tests-passing-brightgreen)]()
+[![GitHub Release](https://img.shields.io/github/v/release/LessUp/heterogeneous-task-scheduler?include_prereleases&logo=github)](https://github.com/LessUp/heterogeneous-task-scheduler/releases)
+[![CI](https://github.com/LessUp/heterogeneous-task-scheduler/actions/workflows/ci.yml/badge.svg)](https://github.com/LessUp/heterogeneous-task-scheduler/actions/workflows/ci.yml)
 [![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://lessup.github.io/heterogeneous-task-scheduler/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://en.cppreference.com/w/cpp/17)
 [![CUDA](https://img.shields.io/badge/CUDA-11.0+-green.svg)](https://developer.nvidia.com/cuda-toolkit)
-[![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)](CHANGELOG.md)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-> A high-performance C++ framework for scheduling and executing task DAGs (Directed Acyclic Graphs) across CPU and GPU devices.
+> **High-performance C++ framework for scheduling and executing task DAGs across CPU and GPU devices.**
 
 ---
 
@@ -30,91 +30,92 @@
 
 ## ✨ Features
 
-### Core Capabilities
+### Why Choose HTS?
 
-| Feature | Description | Benefit |
-|---------|-------------|---------|
-| **DAG Management** | Automatic cycle detection, topological sorting, dependency tracking | Express complex workflows naturally |
-| **GPU Memory Pool** | Buddy system allocator eliminates cudaMalloc/cudaFree overhead | 50-100x faster memory operations |
-| **Async Execution** | CPU thread pool + CUDA streams for maximum hardware utilization | Parallel CPU/GPU execution |
-| **Load Balancing** | Automatic task assignment based on device load | Optimal resource utilization |
-| **Performance Monitoring** | Execution stats, timeline visualization, profiling reports | Data-driven optimization |
-| **Flexible Scheduling** | Multiple policies (GPU-first, CPU-first, round-robin) | Workload-specific optimization |
-| **Error Handling** | Error callbacks, failure propagation, retry policies | Robust production workloads |
-| **Thread-Safe** | Safe concurrent task submission and execution | Multi-threaded applications |
+| Feature | Benefit |
+|---------|---------|
+| 🚀 **Blazing Fast** | Zero-overhead abstractions, lock-free data structures, 50-100x faster GPU memory allocation |
+| 🔄 **DAG Execution** | Automatic cycle detection, topological sorting, dependency tracking |
+| 🎯 **Smart Scheduling** | Pluggable policies: GPU-first, CPU-first, round-robin, load-based |
+| 💾 **Memory Pool** | Buddy system allocator eliminates cudaMalloc/cudaFree overhead |
+| 📊 **Performance Insights** | Built-in profiler with Chrome tracing export and parallelism metrics |
+| 🛡️ **Production Ready** | Retry policies, failure propagation, graceful degradation |
 
-### Why HTS?
+### Quick Example
 
 ```cpp
-// Simple, intuitive API
-auto task1 = scheduler.graph().add_task(hts::DeviceType::CPU);
-auto task2 = scheduler.graph().add_task(hts::DeviceType::GPU);
+#include <hts/heterogeneous_task_scheduler.hpp>
 
-// Define dependencies
-scheduler.graph().add_dependency(task1->id(), task2->id());
+using namespace hts;
 
-// Execute with automatic scheduling
-scheduler.execute();
+int main() {
+    TaskGraph graph;
+    TaskBuilder builder(graph);
+    
+    // Create CPU task
+    auto cpu_task = builder
+        .create_task("Preprocess")
+        .device(DeviceType::CPU)
+        .cpu_func([](TaskContext& ctx) {
+            std::cout << "Preprocessing on CPU..." << std::endl;
+        })
+        .build();
+    
+    // Create GPU task
+    auto gpu_task = builder
+        .create_task("Compute")
+        .device(DeviceType::GPU)
+        .gpu_func([](TaskContext& ctx, cudaStream_t stream) {
+            my_kernel<<<256, 128, 0, stream>>>(data);
+            cudaStreamSynchronize(stream);
+        })
+        .build();
+    
+    // Set dependency
+    graph.add_dependency(cpu_task->id(), gpu_task->id());
+    
+    // Execute
+    Scheduler scheduler;
+    scheduler.init(&graph);
+    scheduler.execute();
+    scheduler.wait_for_completion();
+    
+    return 0;
+}
 ```
 
 ---
 
 ## 🚀 Quick Start
 
-### Installation
+### Build from Source
 
 ```bash
 # Clone repository
 git clone https://github.com/LessUp/heterogeneous-task-scheduler.git
 cd heterogeneous-task-scheduler
 
-# Build
-mkdir build && cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
-make -j$(nproc)
+# Build (using scripts)
+scripts/build.sh --cpu-only  # or scripts/build.sh for CUDA support
 
 # Run tests
-ctest --output-on-failure
+scripts/test.sh
 ```
 
-### Your First Program
+### Use in Your Project
 
-```cpp
-#include <hts/heterogeneous_task_scheduler.hpp>
-#include <iostream>
+**With CMake FetchContent:**
 
-int main() {
-    // Create scheduler
-    hts::Scheduler scheduler;
+```cmake
+include(FetchContent)
+FetchContent_Declare(
+    hts
+    GIT_REPOSITORY https://github.com/LessUp/heterogeneous-task-scheduler.git
+    GIT_TAG        v1.2.0
+)
+FetchContent_MakeAvailable(hts)
 
-    // Create tasks
-    auto task1 = scheduler.graph().add_task(hts::DeviceType::CPU);
-    auto task2 = scheduler.graph().add_task(hts::DeviceType::CPU);
-
-    // Set task functions
-    task1->set_cpu_function([](hts::TaskContext& ctx) {
-        std::cout << "Hello from Task 1\n";
-        ctx.set_output("message", std::string("Hello Task 2"));
-    });
-
-    task2->set_cpu_function([](hts::TaskContext& ctx) {
-        auto msg = ctx.get_input<std::string>("message");
-        std::cout << msg << "\n";
-    });
-
-    // Add dependency: task2 depends on task1
-    scheduler.graph().add_dependency(task1->id(), task2->id());
-
-    // Execute
-    scheduler.execute();
-    return 0;
-}
-```
-
-**Output:**
-```
-Hello from Task 1
-Hello Task 2
+target_link_libraries(your_target PRIVATE hts_lib)
 ```
 
 ---
@@ -155,37 +156,40 @@ See [Installation Guide](docs/en/installation.md) for detailed instructions.
 
 ## 📖 Documentation
 
-### Full Documentation
+### 🌐 Complete Website
 
-📚 **Complete documentation is available at [GitHub Pages](https://lessup.github.io/heterogeneous-task-scheduler/)**
+**📚 Full documentation is available at [GitHub Pages](https://lessup.github.io/heterogeneous-task-scheduler/)**
 
-| Resource | Description | Link |
-|----------|-------------|------|
-| Installation Guide | Detailed setup instructions | [docs/en/installation.md](docs/en/installation.md) |
-| Quick Start | 5-minute introduction | [docs/en/quickstart.md](docs/en/quickstart.md) |
-| Architecture | System design overview | [docs/en/architecture.md](docs/en/architecture.md) |
-| API Reference | Complete API documentation | [docs/en/api-reference.md](docs/en/api-reference.md) |
-| Examples | All example walkthroughs | [docs/en/examples.md](docs/en/examples.md) |
+The website includes:
 
-### 中文文档
+- 📖 **Getting Started Guides** - Installation, quickstart, architecture
+- 📘 **API Reference** - Complete Scheduler, TaskGraph, TaskBuilder documentation
+- 💡 **Examples** - Working code examples from simple to complex
+- 📊 **Performance Guides** - Profiling and optimization tips
+- 🛡️ **Error Handling** - Retry policies, fallbacks, best practices
 
-| 文档 | 描述 | 链接 |
-|------|------|------|
-| 安装指南 | 详细安装说明 | [docs/zh-CN/installation.md](docs/zh-CN/installation.md) |
-| 快速入门 | 5 分钟入门 | [docs/zh-CN/quickstart.md](docs/zh-CN/quickstart.md) |
-| 架构概览 | 系统设计概述 | [docs/zh-CN/architecture.md](docs/zh-CN/architecture.md) |
-| API 参考 | 完整 API 文档 | [docs/zh-CN/api-reference.md](docs/zh-CN/api-reference.md) |
-| 示例教程 | 所有示例详解 | [docs/zh-CN/examples.md](docs/zh-CN/examples.md) |
+### Key Pages
+
+| Topic | Link |
+|-------|------|
+| Installation Guide | [Website →](https://lessup.github.io/heterogeneous-task-scheduler/guide/installation) |
+| Quick Start Tutorial | [Website →](https://lessup.github.io/heterogeneous-task-scheduler/guide/quickstart) |
+| Architecture Overview | [Website →](https://lessup.github.io/heterogeneous-task-scheduler/guide/architecture) |
+| Scheduler API | [Website →](https://lessup.github.io/heterogeneous-task-scheduler/api/scheduler) |
+| TaskGraph API | [Website →](https://lessup.github.io/heterogeneous-task-scheduler/api/task-graph) |
+| Examples | [Website →](https://lessup.github.io/heterogeneous-task-scheduler/examples/) |
+| Changelog | [Website →](https://lessup.github.io/heterogeneous-task-scheduler/changelog) |
+| Contributing Guide | [Website →](https://lessup.github.io/heterogeneous-task-scheduler/contributing) |
 
 ### Specifications
 
-For technical design documents, product requirements, and test specifications, see the [`/specs`](specs/) directory:
+Technical design documents and product requirements are in the [`/specs`](specs/) directory:
 
-| Resource | Description | Link |
-|----------|-------------|------|
-| Product Requirements | Feature definitions and acceptance criteria | [specs/product/](specs/product/) |
-| Architecture RFC | Technical design documents | [specs/rfc/](specs/rfc/) |
-| Test Specifications | Test specifications and acceptance criteria | [specs/testing/](specs/testing/) |
+| Resource | Link |
+|----------|------|
+| Product Requirements | [specs/product/](specs/product/) |
+| Architecture RFC | [specs/rfc/](specs/rfc/) |
+| Test Specifications | [specs/testing/](specs/testing/) |
 
 ---
 
@@ -230,49 +234,83 @@ For technical design documents, product requirements, and test specifications, s
 ### CPU + GPU Pipeline
 
 ```cpp
-// CPU preprocessing → GPU computation → CPU postprocessing
+#include <hts/heterogeneous_task_scheduler.hpp>
 
-// Step 1: CPU preprocess
-auto preprocess = scheduler.graph().add_task(hts::DeviceType::CPU);
-preprocess->set_cpu_function([](hts::TaskContext& ctx) {
-    void* d_data = ctx.allocate_gpu_memory(1024);
-    // Upload data...
-    ctx.set_output("data", d_data, 1024);
-});
+using namespace hts;
 
-// Step 2: GPU compute
-auto compute = scheduler.graph().add_task(hts::DeviceType::GPU);
-compute->set_gpu_function([](hts::TaskContext& ctx, cudaStream_t stream) {
-    auto data = ctx.get_input<void*>("data");
-    my_kernel<<<blocks, threads, 0, stream>>>(data);
-});
-
-// Step 3: CPU postprocess
-auto postprocess = scheduler.graph().add_task(hts::DeviceType::CPU);
-
-// Chain them
-scheduler.graph().add_dependency(preprocess->id(), compute->id());
-scheduler.graph().add_dependency(compute->id(), postprocess->id());
-scheduler.execute();
+int main() {
+    TaskGraph graph;
+    TaskBuilder builder(graph);
+    
+    // CPU preprocessing
+    auto preprocess = builder
+        .create_task("Preprocess")
+        .device(DeviceType::CPU)
+        .cpu_func([](TaskContext& ctx) {
+            std::cout << "Preprocessing data..." << std::endl;
+        })
+        .build();
+    
+    // GPU computation
+    auto compute = builder
+        .create_task("GPUCompute")
+        .device(DeviceType::GPU)
+        .gpu_func([](TaskContext& ctx, cudaStream_t stream) {
+            my_kernel<<<256, 128, 0, stream>>>(data);
+            cudaStreamSynchronize(stream);
+        })
+        .priority(10)
+        .build();
+    
+    // CPU postprocessing
+    auto postprocess = builder
+        .create_task("Postprocess")
+        .device(DeviceType::CPU)
+        .cpu_func([](TaskContext& ctx) {
+            std::cout << "Postprocessing results..." << std::endl;
+        })
+        .build();
+    
+    // Set dependencies: preprocess → compute → postprocess
+    graph.add_dependency(preprocess->id(), compute->id());
+    graph.add_dependency(compute->id(), postprocess->id());
+    
+    // Execute
+    Scheduler scheduler;
+    scheduler.set_policy(std::make_unique<GPUPriorityPolicy>());
+    scheduler.init(&graph);
+    scheduler.execute();
+    scheduler.wait_for_completion();
+    
+    return 0;
+}
 ```
 
-### Fluent API
+### With Retry Policy
 
 ```cpp
-hts::TaskBuilder builder(scheduler.graph());
-
-auto result = builder
-    .name("ProcessData")
-    .device(hts::DeviceType::GPU)
-    .after(load_task)
-    .gpu([](hts::TaskContext& ctx, cudaStream_t stream) {
-        // GPU processing
+// GPU task with automatic retry on failure
+auto unreliable_task = builder
+    .create_task("RiskyGPUTask")
+    .device(DeviceType::GPU)
+    .gpu_func(risky_kernel)
+    .retry_policy(RetryPolicy{
+        .max_retries = 3,
+        .backoff_ms = 100,
+        .backoff_multiplier = 2.0f
     })
-    .retry(hts::RetryPolicyFactory::exponential(3))
+    .fallback([](TaskContext& ctx) {
+        std::cout << "GPU failed, using CPU fallback" << std::endl;
+        cpu_fallback(ctx);
+    })
     .build();
 ```
 
-See [examples/](examples/) directory for complete examples.
+**More examples:**
+
+- [Simple DAG](https://lessup.github.io/heterogeneous-task-scheduler/examples/simple-dag) - Basic pipeline
+- [Pipeline](https://lessup.github.io/heterogeneous-task-scheduler/examples/pipeline) - Complex ML pipeline with error handling
+- [examples/](examples/) directory for complete examples
 
 ---
 
@@ -329,27 +367,40 @@ See [docs/en/profiling.md](docs/en/profiling.md) for profiling guide.
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+We welcome contributions! See our [Contributing Guide](CONTRIBUTING.md) for details.
 
 ### Quick Start for Contributors
 
 ```bash
-# Fork and clone
+# 1. Fork and clone
 git clone https://github.com/YOUR_USERNAME/heterogeneous-task-scheduler.git
+cd heterogeneous-task-scheduler
 
-# Create branch
+# 2. Create feature branch
 git checkout -b feature/amazing-feature
 
-# Make changes and test
-mkdir build && cd build
-cmake .. && make -j$(nproc) && ctest
+# 3. Build and test
+scripts/build.sh --cpu-only
+scripts/test.sh
 
-# Commit and push
+# 4. Format code
+scripts/format.sh
+
+# 5. Commit and push
 git commit -m "feat: add amazing feature"
 git push origin feature/amazing-feature
 
-# Open Pull Request
+# 6. Open Pull Request
 ```
+
+### Contribution Types
+
+- 🐛 **Bug Fixes** - Always welcome!
+- 📝 **Documentation** - Guides, examples, API docs
+- ✨ **New Features** - Please discuss in Issues first
+- 🎨 **Code Quality** - Refactoring, style improvements
+- 🧪 **Tests** - Increase coverage, add edge cases
+- 💡 **Examples** - Real-world use cases
 
 ---
 
@@ -369,10 +420,17 @@ This project is licensed under the MIT License - see [LICENSE](LICENSE) file for
 
 ## 🔗 Links
 
-- **Documentation**: [GitHub Pages](https://lessup.github.io/heterogeneous-task-scheduler/)
-- **Repository**: [GitHub](https://github.com/LessUp/heterogeneous-task-scheduler)
-- **Issues**: [GitHub Issues](https://github.com/LessUp/heterogeneous-task-scheduler/issues)
-- **Changelog**: [CHANGELOG.md](CHANGELOG.md)
+- **📚 Documentation**: [GitHub Pages](https://lessup.github.io/heterogeneous-task-scheduler/)
+- **💻 Repository**: [GitHub](https://github.com/LessUp/heterogeneous-task-scheduler)
+- **🐛 Issue Tracker**: [GitHub Issues](https://github.com/LessUp/heterogeneous-task-scheduler/issues)
+- 💬 **Discussions**: [GitHub Discussions](https://github.com/LessUp/heterogeneous-task-scheduler/discussions)
+- 📝 **Changelog**: [Website](https://lessup.github.io/heterogeneous-task-scheduler/changelog)
+
+---
+
+## 🌟 Star History
+
+If you find HTS useful, please consider giving it a ⭐️ on GitHub!
 
 ---
 
