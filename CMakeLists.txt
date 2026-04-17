@@ -142,6 +142,8 @@ enable_testing()
 set(HTS_TEST_SOURCES
     tests/integration/test_main.cpp
     tests/unit/test_task.cpp
+    tests/unit/test_task_graph.cpp
+    tests/unit/test_task_group.cpp
     tests/unit/test_task_builder.cpp
     tests/unit/test_task_barrier.cpp
     tests/unit/test_task_future.cpp
