@@ -76,9 +76,8 @@ int main() {
     
     // Execute
     Scheduler scheduler;
-    scheduler.init(&graph);
+    // Note: Tasks are accessed via scheduler.graph() or use the graph directly
     scheduler.execute();
-    scheduler.wait_for_completion();
     
     return 0;
 }
@@ -278,9 +277,7 @@ int main() {
     // Execute
     Scheduler scheduler;
     scheduler.set_policy(std::make_unique<GPUPriorityPolicy>());
-    scheduler.init(&graph);
     scheduler.execute();
-    scheduler.wait_for_completion();
     
     return 0;
 }
@@ -410,32 +407,14 @@ This project is licensed under the MIT License - see [LICENSE](LICENSE) file for
 
 ---
 
-## 🙏 Acknowledgments
-
-- Inspired by modern task scheduling systems
-- Built with modern C++ best practices
-- Thanks to all contributors
-
----
-
-## 🔗 Links
+## 🔗 Resources
 
 - **📚 Documentation**: [GitHub Pages](https://lessup.github.io/heterogeneous-task-scheduler/)
-- **💻 Repository**: [GitHub](https://github.com/LessUp/heterogeneous-task-scheduler)
-- **🐛 Issue Tracker**: [GitHub Issues](https://github.com/LessUp/heterogeneous-task-scheduler/issues)
-- 💬 **Discussions**: [GitHub Discussions](https://github.com/LessUp/heterogeneous-task-scheduler/discussions)
-- 📝 **Changelog**: [Website](https://lessup.github.io/heterogeneous-task-scheduler/changelog)
-
----
-
-## 🌟 Star History
-
-If you find HTS useful, please consider giving it a ⭐️ on GitHub!
+- **🐛 Issues**: [GitHub Issues](https://github.com/LessUp/heterogeneous-task-scheduler/issues)
+- **💬 Discussions**: [GitHub Discussions](https://github.com/LessUp/heterogeneous-task-scheduler/discussions)
 
 ---
 
 <p align="center">
   <strong>HTS</strong> — High-performance heterogeneous computing made simple.
-  <br>
-  Made with ❤️ by the HTS Contributors
 </p>

@@ -76,9 +76,8 @@ int main() {
     
     // 执行
     Scheduler scheduler;
-    scheduler.init(&graph);
+    // 注意：通过 scheduler.graph() 访问 TaskGraph 或直接使用 graph
     scheduler.execute();
-    scheduler.wait_for_completion();
     
     return 0;
 }
@@ -243,9 +242,7 @@ int main() {
     // 执行
     Scheduler scheduler;
     scheduler.set_policy(std::make_unique<GPUPriorityPolicy>());
-    scheduler.init(&graph);
     scheduler.execute();
-    scheduler.wait_for_completion();
     
     return 0;
 }
@@ -373,24 +370,14 @@ git push origin feature/amazing-feature
 
 ---
 
-## 🔗 链接
+## 🔗 资源
 
 - **📚 文档**: [GitHub Pages](https://lessup.github.io/heterogeneous-task-scheduler/)
-- **💻 仓库**: [GitHub](https://github.com/LessUp/heterogeneous-task-scheduler)
-- **🐛 问题追踪**: [GitHub Issues](https://github.com/LessUp/heterogeneous-task-scheduler/issues)
+- **🐛 问题**: [GitHub Issues](https://github.com/LessUp/heterogeneous-task-scheduler/issues)
 - **💬 讨论**: [GitHub Discussions](https://github.com/LessUp/heterogeneous-task-scheduler/discussions)
-- **📝 更新日志**: [网站](https://lessup.github.io/heterogeneous-task-scheduler/changelog)
-
----
-
-## 🌟 Star 历史
-
-如果您觉得 HTS 有用，请在 GitHub 上给我们一个 ⭐️！
 
 ---
 
 <p align="center">
   <strong>HTS</strong> — 让高性能异构计算变得简单。
-  <br>
-  由 HTS 贡献者用 ❤️ 打造
 </p>

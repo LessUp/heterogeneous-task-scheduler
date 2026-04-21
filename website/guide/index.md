@@ -113,9 +113,7 @@ int main() {
     
     // Execute
     Scheduler scheduler;
-    scheduler.init(&graph);
     scheduler.execute();
-    scheduler.wait_for_completion();
     
     return 0;
 }
