@@ -1,6 +1,6 @@
 # Introduction
 
-Welcome to **HTS (Heterogeneous Task Scheduler)** — a high-performance C++ framework for scheduling and executing task DAGs across CPU and GPU devices.
+Welcome to **HTS (Heterogeneous Task Scheduler)** — a C++ library for building and executing task DAGs across CPU and GPU devices.
 
 ## What is HTS?
 
@@ -8,15 +8,15 @@ HTS enables efficient parallel execution of complex task dependencies across het
 
 - **DAG-based task management** with automatic dependency resolution
 - **Intelligent scheduling** that optimizes CPU/GPU utilization
-- **High-performance memory pooling** for GPU allocations (50-100x faster than cudaMalloc)
+- **Reusable memory pooling** for GPU allocations
 - **Comprehensive observability** with built-in profiling and metrics
 - **Production-ready error handling** with retry policies and graceful degradation
 
 ## Core Features
 
-### ⚡ Blazing Performance
+### ⚡ Practical runtime focus
 
-Zero-overhead abstractions with lock-free data structures and optimized memory pools. Task scheduling overhead is just ~100 nanoseconds.
+HTS combines DAG orchestration, scheduling policy selection, device services, and profiling in one library surface.
 
 ### 🔄 DAG Execution
 
@@ -35,7 +35,7 @@ Pluggable scheduling policies:
 Buddy system allocator eliminates `cudaMalloc`/`cudaFree` overhead:
 - O(log n) allocation time
 - Automatic defragmentation
-- Up to 50x faster than standard CUDA allocation
+- Runtime statistics for fragmentation and allocation behavior
 
 ### 📊 Performance Insights
 
@@ -129,9 +129,8 @@ Choose your installation method:
 ```bash
 git clone https://github.com/LessUp/heterogeneous-task-scheduler.git
 cd heterogeneous-task-scheduler
-mkdir build && cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
-make -j$(nproc)
+scripts/build.sh --cpu-only
+scripts/test.sh
 ```
 
 **Or use in your CMake project:**
@@ -163,15 +162,11 @@ Browse working examples:
 - [**Simple DAG**](/examples/simple-dag) — Basic pipeline (beginner)
 - [**Pipeline**](/examples/pipeline) — Complex DAG with error handling (intermediate)
 
-## Performance Benchmarks
+## Operational focus
 
-| Operation | Standard | HTS | Speedup |
-|:----------|:---------|:----|:--------|
-| GPU Memory Allocate (1MB) | ~50 μs | ~1 μs | **50x** |
-| GPU Memory Free (1MB) | ~25 μs | ~0.5 μs | **50x** |
-| Task Schedule | ~500 ns | ~100 ns | **5x** |
-
-*Measured on NVIDIA V100 with CUDA 12.1*
+- Use the CPU-only path for contributor and CI validation.
+- Use profiling output and runtime statistics to understand scheduler behavior in your own workload.
+- See the memory guide for pool configuration and observability patterns.
 
 ## System Requirements
 
@@ -184,8 +179,8 @@ Browse working examples:
 
 - 💬 [GitHub Discussions](https://github.com/LessUp/heterogeneous-task-scheduler/discussions)
 - 🐛 [Report Issues](https://github.com/LessUp/heterogeneous-task-scheduler/issues)
-- 📖 [Contributing Guide](/contributing)
-- 📝 [Changelog](/changelog)
+- 📦 [GitHub Releases](https://github.com/LessUp/heterogeneous-task-scheduler/releases)
+- 📖 [Repository README](https://github.com/LessUp/heterogeneous-task-scheduler#readme)
 
 ## License
 

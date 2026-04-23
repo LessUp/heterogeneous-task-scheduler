@@ -4,7 +4,7 @@ layout: home
 hero:
   name: "HTS"
   text: "Heterogeneous Task Scheduler"
-  tagline: High-performance C++ framework for CPU/GPU task scheduling
+  tagline: C++17 DAG scheduling for mixed CPU and GPU workloads
   image:
     src: /logo.svg
     alt: HTS Logo
@@ -13,28 +13,31 @@ hero:
       text: Get Started
       link: /guide/
     - theme: alt
+      text: Browse Examples
+      link: /examples/
+    - theme: alt
       text: View on GitHub
       link: https://github.com/LessUp/heterogeneous-task-scheduler
 
 features:
   - icon: ⚡
-    title: Blazing Fast
-    details: Zero-overhead abstraction with lock-free data structures and optimized memory pools delivering 50-100x faster GPU memory allocation.
+    title: DAG-first execution
+    details: Build dependency-aware pipelines with TaskGraph, TaskBuilder, and scheduling policies that span CPU and GPU work.
   - icon: 🔄
-    title: DAG Execution
-    details: Automatic cycle detection, topological sorting, and dependency tracking for complex task graphs.
+    title: CPU-only fallback
+    details: Validate and iterate without CUDA hardware by using the project's CPU-only build and test path.
   - icon: 🎯
-    title: Smart Scheduling
-    details: Pluggable scheduling policies including GPU-first, CPU-first, round-robin, and load-based selection.
+    title: Scheduling and control
+    details: Combine scheduling policies, retry behavior, barriers, resource limits, and event hooks in one runtime surface.
   - icon: 💾
-    title: Memory Pool
-    details: Buddy system allocator eliminates cudaMalloc/cudaFree overhead with O(log n) allocation.
+    title: GPU runtime services
+    details: Use the CUDA execution path, stream manager, and memory pool for accelerator-backed stages when available.
   - icon: 📊
-    title: Performance Insights
-    details: Built-in profiler with execution stats, timeline export to Chrome tracing, and parallelism metrics.
+    title: Profiling and inspection
+    details: Export execution statistics and trace-oriented profiling data to understand scheduler behavior.
   - icon: 🛡️
-    title: Production Ready
-    details: Comprehensive error handling with retry policies, failure propagation, and graceful degradation.
+    title: Source-guided adoption
+    details: Start from runnable examples, public headers, and GitHub Pages guides instead of a README mirror.
 
 head:
   - - meta
@@ -42,7 +45,7 @@ head:
       content: HTS - Heterogeneous Task Scheduler
   - - meta
     - property: og:description
-      content: High-performance C++ framework for CPU/GPU task scheduling with DAG dependency management
+      content: C++17 DAG scheduling library for mixed CPU and GPU workloads
 ---
 
 <style>
@@ -72,70 +75,39 @@ head:
 }
 </style>
 
-## Quick Start
+## Why use HTS
 
-::: code-group
+- Compose dependency-aware workloads with a single C++ API.
+- Keep the default contributor path CPU-only while still supporting CUDA-backed execution.
+- Use examples and public headers to evaluate the library without reverse-engineering the repository.
 
-```bash [Clone & Build]
-# Clone the repository
+## Architecture at a glance
+
+| Layer | Responsibilities |
+|------|------------------|
+| Builder API | `TaskGraph`, `TaskBuilder`, task groups, barriers, and futures |
+| Scheduler | Dependency resolution, policy selection, retries, profiling, and events |
+| Execution | CPU worker threads, CUDA execution path, stream management, and resource limits |
+| Device services | Memory pool, CUDA helpers, CPU-only stubs, and runtime utilities |
+
+## Quick start
+
+```bash
 git clone https://github.com/LessUp/heterogeneous-task-scheduler.git
 cd heterogeneous-task-scheduler
-
-# Build with CMake
-mkdir build && cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
-make -j$(nproc)
+scripts/build.sh --cpu-only
+scripts/test.sh
 ```
 
-```cpp [C++ Example]
-#include <hts/heterogeneous_task_scheduler.hpp>
+For editor/LSP integration, the repository provides a `cpu-only-debug` CMake preset and workspace
+settings in `.vscode/`.
 
-int main() {
-    hts::Scheduler scheduler;
-    
-    auto cpu_task = scheduler.graph().add_task(hts::DeviceType::CPU);
-    auto gpu_task = scheduler.graph().add_task(hts::DeviceType::GPU);
-    
-    cpu_task->set_cpu_function([](hts::TaskContext& ctx) {
-        // CPU computation
-    });
-    
-    gpu_task->set_gpu_function([](hts::TaskContext& ctx, cudaStream_t stream) {
-        // GPU kernel launch
-    });
-    
-    scheduler.graph().add_dependency(cpu_task->id(), gpu_task->id());
-    scheduler.execute();
-    
-    return 0;
-}
-```
+## Where to go next
 
-:::
-
-## Performance Benchmarks
-
-| Operation | cudaMalloc | HTS Pool | Speedup |
-|:----------|:-----------|:---------|:--------|
-| Allocate 1MB | ~50 μs | ~1 μs | **50x** |
-| Free 1MB | ~25 μs | ~0.5 μs | **50x** |
-| Task Schedule | ~500 ns | ~100 ns | **5x** |
-
-## What Users Say
-
-> "HTS reduced our ML inference pipeline latency by 3x with minimal code changes."
-> 
-> — **AI Engineering Team**, TechCorp
-
-> "The scheduling policies are game-changers for balancing CPU preprocessing with GPU computation."
-> 
-> — **Computer Vision Lead**, StartupXYZ
-
-## Get Involved
-
-- 💬 [Discussions](https://github.com/LessUp/heterogeneous-task-scheduler/discussions)
-- 🐛 [Report Issues](https://github.com/LessUp/heterogeneous-task-scheduler/issues)
-- 📖 [Contributing Guide](/contributing)
+- [Guide](/guide/) - installation, quick start, and architecture
+- [API](/api/) - public API orientation
+- [Examples](/examples/) - runnable usage patterns
+- [GitHub repository](https://github.com/LessUp/heterogeneous-task-scheduler) - source, issues, and releases
 
 ---
 

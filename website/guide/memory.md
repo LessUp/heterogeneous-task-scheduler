@@ -133,16 +133,10 @@ void* ptr = pool.allocate(1024 * 1024); // 1 MB
 pool.free(ptr);
 ```
 
-## Performance Characteristics
+## Operational Characteristics
 
-### Allocation Speed
-
-| Operation | cudaMalloc | HTS Pool | Speedup |
-|:----------|:-----------|:---------|:--------|
-| 1 MB | ~50 μs | ~1 μs | **50x** |
-| 10 MB | ~55 μs | ~1 μs | **55x** |
-| 100 MB | ~60 μs | ~2 μs | **30x** |
-| 1 GB | ~80 μs | ~3 μs | **27x** |
+The memory pool is designed to reduce repeated allocation churn and expose runtime statistics you can
+inspect in your own workload.
 
 ### Fragmentation
 

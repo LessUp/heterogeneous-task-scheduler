@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress'
 const config = defineConfig({
   title: 'HTS',
   titleTemplate: ':title | Heterogeneous Task Scheduler',
-  description: 'High-performance C++ framework for CPU/GPU task scheduling',
+  description: 'C++17 DAG scheduling library for mixed CPU and GPU workloads',
   base: '/heterogeneous-task-scheduler/',
   cleanUrls: true,
   lastUpdated: true,
@@ -19,12 +19,7 @@ const config = defineConfig({
     ['meta', { name: 'og:site_name', content: 'HTS' }],
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
     ['meta', { name: 'apple-mobile-web-app-capable', content: 'yes' }],
-    ['meta', { name: 'apple-mobile-web-app-status-bar-style', content: 'black' }],
-    ['script', {}, `
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js');
-      }
-    `]
+    ['meta', { name: 'apple-mobile-web-app-status-bar-style', content: 'black' }]
   ],
 
   markdown: {
@@ -43,17 +38,12 @@ const config = defineConfig({
     siteTitle: 'HTS',
     
     nav: [
+      { text: 'Overview', link: '/' },
       { text: 'Guide', link: '/guide/', activeMatch: '/guide/' },
+      { text: 'Architecture', link: '/guide/architecture' },
       { text: 'API', link: '/api/', activeMatch: '/api/' },
       { text: 'Examples', link: '/examples/', activeMatch: '/examples/' },
-      {
-        text: 'v1.2.0',
-        items: [
-          { text: 'Changelog', link: '/changelog' },
-          { text: 'Contributing', link: '/contributing' },
-          { text: 'GitHub', link: 'https://github.com/LessUp/heterogeneous-task-scheduler' }
-        ]
-      }
+      { text: 'GitHub', link: 'https://github.com/LessUp/heterogeneous-task-scheduler' }
     ],
 
     sidebar: {

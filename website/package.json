@@ -3,14 +3,17 @@
   "version": "1.2.0",
   "description": "Heterogeneous Task Scheduler Documentation",
   "type": "module",
+  "engines": {
+    "node": ">=20 <23"
+  },
   "scripts": {
     "docs:dev": "vitepress dev",
     "docs:build": "vitepress build",
     "docs:preview": "vitepress preview"
   },
   "devDependencies": {
-    "markdown-it-mathjax3": "^4.3.2",
-    "vitepress": "^1.0.0-rc.40",
-    "vue": "^3.4.0"
+    "markdown-it-mathjax3": "4.3.2",
+    "vitepress": "1.0.0-rc.40",
+    "vue": "3.4.0"
   }
 }
