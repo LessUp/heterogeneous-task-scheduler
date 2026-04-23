@@ -1,0 +1,25 @@
+schema: spec-driven
+
+context: |
+  Project: Heterogeneous Task Scheduler (HTS)
+  Stack: C++17, optional CUDA, CMake, GoogleTest, RapidCheck, VitePress, GitHub Actions
+  Goal: finish and stabilize the repository with minimal maintenance noise before archival posture
+  Canonical validation paths:
+    - scripts/build.sh --cpu-only
+    - scripts/test.sh
+    - scripts/format.sh --check
+    - website: npm run docs:build
+  Constraints:
+    - Preserve unrelated worktree edits
+    - Prefer repo-local, low-overhead tooling and workflow guidance
+    - Use OpenSpec to drive material repository changes before implementation
+
+rules:
+  proposal:
+    - Focus proposals on repository behavior, delivery quality, and closeout scope.
+  design:
+    - Record rationale for workflow, documentation, automation, and tooling trade-offs.
+  specs:
+    - Write requirements around observable repository behavior and maintained public surfaces.
+  tasks:
+    - Sequence work for long-running autopilot sessions and avoid relying on /fleet by default.

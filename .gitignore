@@ -1,5 +1,6 @@
 # Build directories
 build/
+build-*/
 cmake-build-*/
 out/
 
@@ -42,3 +43,10 @@ external/
 # OS
 .DS_Store
 Thumbs.db
+
+# OpenSpec backup (reference-only historical material)
+specs.backup/
+
+# Node modules
+node_modules/
+package-lock.json
