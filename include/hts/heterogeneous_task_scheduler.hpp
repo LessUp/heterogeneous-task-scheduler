@@ -140,8 +140,8 @@ constexpr int VERSION_PATCH = 0;
  * @return Version string in format "major.minor.patch"
  */
 inline std::string get_version() {
-  return std::to_string(VERSION_MAJOR) + "." + std::to_string(VERSION_MINOR) +
-         "." + std::to_string(VERSION_PATCH);
+    return std::to_string(VERSION_MAJOR) + "." + std::to_string(VERSION_MINOR) + "." +
+           std::to_string(VERSION_PATCH);
 }
 
 } // namespace hts
