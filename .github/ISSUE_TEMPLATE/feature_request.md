@@ -10,11 +10,18 @@ assignees: ''
 
 A clear description of the problem you're trying to solve.
 
-*Example: I'm always frustrated when [...]*
+_Example: I'm always frustrated when [...]_
+
+## OpenSpec Fit
+
+Describe the capability, workflow, or closeout problem this request changes. Material requests for
+HTS are expected to become an OpenSpec change before implementation.
 
 ## Proposed Solution
 
 A clear description of what you want to happen.
+
+If you have acceptance signals, list them here.
 
 ## Use Case
 
@@ -42,6 +49,7 @@ Any alternative solutions or features you've considered.
 - [ ] Requires changes to core scheduler
 - [ ] Requires new dependencies
 - [ ] Backward compatible
+- [ ] Requires workflow / docs / GitHub Pages changes
 
 ## Priority
 

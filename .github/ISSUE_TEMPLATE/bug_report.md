@@ -20,6 +20,12 @@ A clear and concise description of what the bug is.
 | HTS Version | e.g., 1.1.0 |
 | CMake Version | e.g., 3.26 |
 
+## Baseline Check
+
+- [ ] Reproduces with the documented CPU-only validation path
+- [ ] Appears to be spec or documentation drift
+- [ ] Appears to be implementation-only
+
 ## Steps to Reproduce
 
 1.

@@ -6,7 +6,6 @@ on:
     paths:
       - 'docs/**'
       - 'website/**'
-      - 'changelog/**'
       - '.github/workflows/docs.yml'
   workflow_dispatch:
   release:
@@ -41,7 +40,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd website
-          npm install
+          npm install --no-fund --no-audit
 
       - name: Build with VitePress
         run: |

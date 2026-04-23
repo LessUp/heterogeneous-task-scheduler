@@ -1,6 +1,14 @@
+## OpenSpec
+
+<!-- Required for material repo/code/docs/workflow changes -->
+
+- Change name:
+- Task(s) completed:
+- If no OpenSpec change was used, explain why:
+
 ## Description
 
-Please include a summary of the changes and the related issue.
+Please include a summary of the changes and any related issue.
 
 Fixes #(issue number)
 
@@ -38,12 +46,12 @@ Fixes #(issue number)
 
 - [ ] My code follows the style guidelines of this project
 - [ ] I have performed a self-review of my code
-- [ ] I have commented my code, particularly in hard-to-understand areas
 - [ ] I have made corresponding changes to the documentation
 - [ ] My changes generate no new warnings
 - [ ] I have added tests that prove my fix is effective or my feature works
 - [ ] New and existing unit tests pass locally
-- [ ] I have updated the CHANGELOG.md (if applicable)
+- [ ] I updated the active OpenSpec change artifacts or confirmed they were not needed
+- [ ] I ran `/review` or performed an equivalent final review for major changes
 
 ## Screenshots (if applicable)
 

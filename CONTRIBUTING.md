@@ -21,20 +21,25 @@
 
 ### Spec-Driven Development
 
-This project follows **Spec-Driven Development (SDD)**. All implementations are based on specification documents in the `/specs` directory:
+This project uses [OpenSpec](https://github.com/Fission-AI/OpenSpec) as the contract for material
+repository changes.
 
-| Directory | Purpose |
-|-----------|---------|
-| `/specs/product/` | Product feature definitions and acceptance criteria |
-| `/specs/rfc/` | Technical design documents and architecture decisions |
-| `/specs/testing/` | Test specifications and acceptance criteria |
+| Path | Purpose |
+|------|---------|
+| `openspec/specs/` | Durable capability specs archived into the main repo state |
+| `openspec/changes/` | Active proposals, design docs, delta specs, and task lists |
+| `specs` | Compatibility symlink to `openspec/specs` |
 
-**Before contributing:**
+**Before contributing material changes:**
 
-1. Read the relevant specs for the area you're working on
-2. Ensure your implementation complies with the spec definitions
-3. If proposing a new feature, update or create the appropriate spec first
-4. See [AGENTS.md](AGENTS.md) for the full SDD workflow
+1. Use `/opsx:explore` if scope or design is unclear
+2. Use `/opsx:propose "<change-name>"` for non-trivial code, docs, workflow, or product-surface work
+3. Refine `proposal.md`, `design.md`, `specs/`, and `tasks.md`
+4. Use `/opsx:apply <change-name>` to implement tasks in order
+5. Use `/review` at major milestones
+6. Use `/opsx:archive <change-name>` only after validation and repo alignment
+
+See [AGENTS.md](AGENTS.md) for the HTS-specific closeout workflow.
 
 ### Code of Conduct
 
@@ -58,18 +63,19 @@ This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.
 git clone https://github.com/LessUp/heterogeneous-task-scheduler.git
 cd heterogeneous-task-scheduler
 
-# Create build directory
-mkdir build && cd build
-
-# Configure (Debug mode for development)
-cmake .. -DCMAKE_BUILD_TYPE=Debug
-
-# Build
-cmake --build . -j$(nproc)
-
-# Run tests
-ctest --output-on-failure
+# Default validation path
+scripts/build.sh --cpu-only
+scripts/test.sh
 ```
+
+#### Optional local guards
+
+```bash
+scripts/install-hooks.sh
+```
+
+Use `/review` before opening a PR for broad governance, workflow, documentation, or multi-file code
+refactors.
 
 #### Run Examples
 
@@ -270,20 +276,24 @@ We welcome feature suggestions! Please:
 
 ### 规范驱动开发
 
-本项目遵循**规范驱动开发（SDD）**模式。所有实现均基于 `/specs` 目录下的规范文档：
+本项目使用 [OpenSpec](https://github.com/Fission-AI/OpenSpec) 作为重大仓库变更的契约来源。
 
-| 目录 | 用途 |
+| 路径 | 用途 |
 |------|------|
-| `/specs/product/` | 产品功能定义和验收标准 |
-| `/specs/rfc/` | 技术设计文档和架构决策 |
-| `/specs/testing/` | 测试规范和验收标准 |
+| `openspec/specs/` | 归档到主仓库状态中的持久 capability specs |
+| `openspec/changes/` | 活跃 proposal、design、delta specs 与 tasks |
+| `specs` | 指向 `openspec/specs` 的兼容性符号链接 |
 
-**贡献前须知：**
+**提交重大变更前：**
 
-1. 阅读你所负责领域的相关规范文档
-2. 确保你的实现符合规范定义
-3. 如果提出新功能，请先更新或创建相应的规范文档
-4. 查看 [AGENTS.md](AGENTS.md) 了解完整的 SDD 工作流程
+1. 范围或设计不清晰时，先运行 `/opsx:explore`
+2. 对非平凡代码、文档、workflow 或项目展示面改动，运行 `/opsx:propose "<change-name>"`
+3. 完善 `proposal.md`、`design.md`、`specs/` 与 `tasks.md`
+4. 运行 `/opsx:apply <change-name>` 按任务顺序实现
+5. 在关键里程碑运行 `/review`
+6. 仅在验证通过且仓库状态完成对齐后运行 `/opsx:archive <change-name>`
+
+查看 [AGENTS.md](AGENTS.md) 了解 HTS 的收尾型 OpenSpec 工作流。
 
 ### 行为准则
 
