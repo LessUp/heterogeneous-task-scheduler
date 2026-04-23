@@ -125,4 +125,4 @@ examples/
 
 - [Quick Start Guide](/guide/quickstart) — Learn the basics
 - [API Reference](/api/) — Complete API documentation
-- [Contributing](/contributing) — How to contribute
+- [GitHub repository](https://github.com/LessUp/heterogeneous-task-scheduler) — Source and issues
