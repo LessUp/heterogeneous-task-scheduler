@@ -28,6 +28,30 @@
                 "CMAKE_CUDA_ARCHITECTURES": "80",
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
             }
+        },
+        {
+            "name": "cpu-only-debug",
+            "displayName": "CPU-only Debug",
+            "binaryDir": "${sourceDir}/build-cpu-only",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "HTS_CPU_ONLY": "ON",
+                "HTS_BUILD_TESTS": "ON",
+                "HTS_BUILD_EXAMPLES": "OFF"
+            }
+        },
+        {
+            "name": "cpu-only-release",
+            "displayName": "CPU-only Release",
+            "binaryDir": "${sourceDir}/build-cpu-only-release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "HTS_CPU_ONLY": "ON",
+                "HTS_BUILD_TESTS": "ON",
+                "HTS_BUILD_EXAMPLES": "OFF"
+            }
         }
     ],
     "buildPresets": [
@@ -42,12 +66,27 @@
         {
             "name": "minimal",
             "configurePreset": "minimal"
+        },
+        {
+            "name": "cpu-only-debug",
+            "configurePreset": "cpu-only-debug"
+        },
+        {
+            "name": "cpu-only-release",
+            "configurePreset": "cpu-only-release"
         }
     ],
     "testPresets": [
         {
             "name": "default",
             "configurePreset": "default",
+            "output": {
+                "outputOnFailure": true
+            }
+        },
+        {
+            "name": "cpu-only-debug",
+            "configurePreset": "cpu-only-debug",
             "output": {
                 "outputOnFailure": true
             }

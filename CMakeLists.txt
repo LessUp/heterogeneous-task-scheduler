@@ -6,6 +6,8 @@ include(CheckLanguage)
 # Option for CPU-only builds (useful for testing without CUDA hardware)
 option(HTS_CPU_ONLY "Build without CUDA support (for testing only)" OFF)
 option(HTS_ENABLE_COVERAGE "Enable code coverage reporting" OFF)
+option(HTS_BUILD_TESTS "Build the test suite" ON)
+option(HTS_BUILD_EXAMPLES "Build example programs" ON)
 
 if(NOT HTS_CPU_ONLY)
     check_language(CUDA)
@@ -137,63 +139,67 @@ target_compile_options(hts_lib PRIVATE
 # ---------------------------------------------------------------------------
 # Tests
 # ---------------------------------------------------------------------------
-enable_testing()
+if(HTS_BUILD_TESTS)
+    enable_testing()
 
-set(HTS_TEST_SOURCES
-    tests/integration/test_main.cpp
-    tests/unit/test_task.cpp
-    tests/unit/test_task_graph.cpp
-    tests/unit/test_task_group.cpp
-    tests/unit/test_task_builder.cpp
-    tests/unit/test_task_barrier.cpp
-    tests/unit/test_task_future.cpp
-    tests/unit/test_dependency_manager.cpp
-    tests/unit/test_scheduling_policy.cpp
-    tests/unit/test_profiler.cpp
-    tests/unit/test_graph_serializer.cpp
-    tests/unit/test_logger.cpp
-    tests/unit/test_event_system.cpp
-    tests/unit/test_resource_limiter.cpp
-    tests/unit/test_retry_policy.cpp
-    tests/unit/test_cuda_utils.cpp
-    tests/unit/test_memory_pool.cpp
-    tests/unit/test_stream_manager.cpp
-    tests/unit/test_scheduler.cpp
-    tests/integration/test_integration.cpp
-    tests/integration/test_execution_engine.cpp
-)
+    set(HTS_TEST_SOURCES
+        tests/integration/test_main.cpp
+        tests/unit/test_task.cpp
+        tests/unit/test_task_graph.cpp
+        tests/unit/test_task_group.cpp
+        tests/unit/test_task_builder.cpp
+        tests/unit/test_task_barrier.cpp
+        tests/unit/test_task_future.cpp
+        tests/unit/test_dependency_manager.cpp
+        tests/unit/test_scheduling_policy.cpp
+        tests/unit/test_profiler.cpp
+        tests/unit/test_graph_serializer.cpp
+        tests/unit/test_logger.cpp
+        tests/unit/test_event_system.cpp
+        tests/unit/test_resource_limiter.cpp
+        tests/unit/test_retry_policy.cpp
+        tests/unit/test_cuda_utils.cpp
+        tests/unit/test_memory_pool.cpp
+        tests/unit/test_stream_manager.cpp
+        tests/unit/test_scheduler.cpp
+        tests/integration/test_integration.cpp
+        tests/integration/test_execution_engine.cpp
+    )
 
-add_executable(hts_tests ${HTS_TEST_SOURCES})
-target_link_libraries(hts_tests PRIVATE
-    hts_lib
-    GTest::gtest_main
-    rapidcheck
-)
-include(GoogleTest)
-gtest_discover_tests(hts_tests)
+    add_executable(hts_tests ${HTS_TEST_SOURCES})
+    target_link_libraries(hts_tests PRIVATE
+        hts_lib
+        GTest::gtest_main
+        rapidcheck
+    )
+    include(GoogleTest)
+    gtest_discover_tests(hts_tests)
+endif()
 
-# ---------------------------------------------------------------------------
-# Examples
-# ---------------------------------------------------------------------------
-set(HTS_EXAMPLES
-    simple_dag
-    parallel_pipeline
-    error_handling
-    fluent_api
-    task_groups
-    profiling
-    scheduling_policies
-    graph_visualization
-    advanced_features
-)
+if(HTS_BUILD_EXAMPLES)
+    # ---------------------------------------------------------------------------
+    # Examples
+    # ---------------------------------------------------------------------------
+    set(HTS_EXAMPLES
+        simple_dag
+        parallel_pipeline
+        error_handling
+        fluent_api
+        task_groups
+        profiling
+        scheduling_policies
+        graph_visualization
+        advanced_features
+    )
 
-foreach(example IN LISTS HTS_EXAMPLES)
-    add_executable(${example} examples/${example}.cpp)
-    target_link_libraries(${example} PRIVATE hts_lib)
-endforeach()
+    foreach(example IN LISTS HTS_EXAMPLES)
+        add_executable(${example} examples/${example}.cpp)
+        target_link_libraries(${example} PRIVATE hts_lib)
+    endforeach()
 
-# GPU example (CUDA source) - only build when CUDA is available
-if(NOT HTS_CPU_ONLY)
-    add_executable(gpu_computation examples/gpu_computation.cu)
-    target_link_libraries(gpu_computation PRIVATE hts_lib)
+    # GPU example (CUDA source) - only build when CUDA is available
+    if(NOT HTS_CPU_ONLY)
+        add_executable(gpu_computation examples/gpu_computation.cu)
+        target_link_libraries(gpu_computation PRIVATE hts_lib)
+    endif()
 endif()
