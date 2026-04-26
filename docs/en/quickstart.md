@@ -19,6 +19,7 @@
 ## Prerequisites
 
 Before starting, ensure you have:
+
 - [ ] Completed [installation](installation.md)
 - [ ] Working C++17 compiler
 - [ ] CMake 3.18+
@@ -91,6 +92,7 @@ int main() {
 ```
 
 **Output:**
+
 ```
 Task 1 executed on CPU
 Task 2 received: 42
@@ -153,6 +155,7 @@ int main() {
 ```
 
 **Benefits of Fluent API:**
+
 - Clear dependency chains via `.after()`
 - Self-documenting task names
 - Easy to add/remove tasks
@@ -274,6 +277,7 @@ int main() {
 ```
 
 **Key Points:**
+
 - Errors propagate to dependent tasks
 - Retry policies can be configured per-task
 - Error callbacks provide visibility

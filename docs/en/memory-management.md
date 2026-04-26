@@ -178,6 +178,7 @@ task->set_gpu_function([](TaskContext& ctx, cudaStream_t stream) {
 ```
 
 **Benefits**:
+
 - Automatic lifetime management
 - Automatic cleanup on exceptions
 - No memory leaks
@@ -471,6 +472,7 @@ std::cout << "MemoryPool: "
 ```
 
 Typical Results:
+
 - `cudaMalloc`/`cudaFree`: ~50-100 μs per operation
 - HTS Memory Pool: ~1-2 μs per operation
 - **Speedup: 50-100x**

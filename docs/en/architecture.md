@@ -76,6 +76,7 @@ public:
 ```
 
 **Key Features:**
+
 - Cycle detection before execution
 - Topological sorting for execution order
 - Automatic dependency tracking
@@ -100,6 +101,7 @@ public:
 ```
 
 **Responsibilities:**
+
 1. Validate task graph (cycle detection)
 2. Select scheduling policy
 3. Coordinate execution engine
@@ -120,11 +122,13 @@ public:
 ```
 
 **CPU Thread Pool:**
+
 - Work-stealing queue for load balancing
 - Configurable thread count (default: hardware concurrency)
 - Thread-local allocation caches
 
 **GPU Stream Manager:**
+
 - Pool of CUDA streams for concurrent execution
 - Automatic stream assignment
 - Synchronization primitives for cross-stream dependencies
@@ -140,6 +144,7 @@ public:
 | `ShortestJobFirstPolicy` | Priority queue | Latency-sensitive |
 
 Policy Interface:
+
 ```cpp
 class SchedulingPolicy {
 public:
@@ -170,6 +175,7 @@ Buddy system allocator for efficient GPU memory:
 ```
 
 **Benefits:**
+
 - Eliminates cudaMalloc/cudaFree overhead
 - Reduces memory fragmentation
 - O(log n) allocation/deallocation
@@ -355,7 +361,7 @@ CPU Thread                    GPU Stream
 | Operation | Complexity | Notes |
 |-----------|------------|-------|
 | Task addition | O(1) | Amortized |
-| Dependency addition | O(1) | 
+| Dependency addition | O(1) | Amortized |
 | Cycle detection | O(V + E) | One-time at execute() |
 | Topological sort | O(V + E) | One-time at execute() |
 | Memory allocation | O(log n) | n = pool size |

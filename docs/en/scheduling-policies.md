@@ -65,6 +65,7 @@ struct SystemStatus {
 **Description**: Makes decisions based on current system load and queue depth.
 
 **Algorithm**:
+
 1. If task specifies CPU or GPU, respect that preference
 2. Compare queue depths (shorter queue wins)
 3. Consider historical task performance
@@ -80,6 +81,7 @@ scheduler.set_policy(std::make_unique<DefaultSchedulingPolicy>());
 **Description**: Prefers GPU execution when available.
 
 **Algorithm**:
+
 1. Use GPU if task has GPU function
 2. Fall back to CPU only if GPU unavailable
 
@@ -90,6 +92,7 @@ scheduler.set_policy(std::make_unique<GpuFirstPolicy>());
 ```
 
 **Characteristics**:
+
 - Maximizes GPU utilization
 - May leave CPU underutilized
 - Good for deep learning inference, image processing
@@ -99,6 +102,7 @@ scheduler.set_policy(std::make_unique<GpuFirstPolicy>());
 **Description**: Prefers CPU execution when possible.
 
 **Algorithm**:
+
 1. Use CPU if task has CPU function
 2. Use GPU only for tasks without CPU implementation
 
@@ -109,6 +113,7 @@ scheduler.set_policy(std::make_unique<CpuFirstPolicy>());
 ```
 
 **Characteristics**:
+
 - Preserves GPU memory
 - Avoids CPU→GPU data transfer overhead
 - Good for control logic, preprocessing
@@ -118,6 +123,7 @@ scheduler.set_policy(std::make_unique<CpuFirstPolicy>());
 **Description**: Alternates between CPU and GPU for load balancing.
 
 **Algorithm**:
+
 1. Track last device used
 2. Pick opposite device for next task
 3. Respect task device constraints
@@ -129,6 +135,7 @@ scheduler.set_policy(std::make_unique<RoundRobinPolicy>());
 ```
 
 **Characteristics**:
+
 - Even distribution of work
 - Prevents either device from being idle
 - May cause unnecessary data transfers
@@ -138,6 +145,7 @@ scheduler.set_policy(std::make_unique<RoundRobinPolicy>());
 **Description**: Prioritizes tasks based on estimated completion time.
 
 **Algorithm**:
+
 1. Use historical data to estimate execution time
 2. Pick device with shorter expected completion
 
@@ -148,6 +156,7 @@ scheduler.set_policy(std::make_unique<ShortestJobFirstPolicy>());
 ```
 
 **Characteristics**:
+
 - Minimizes makespan
 - Requires historical data (warmup period)
 - Good for real-time processing

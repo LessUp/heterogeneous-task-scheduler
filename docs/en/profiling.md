@@ -161,6 +161,7 @@ std::cout << scheduler.profiler().generate_report();
 ```
 
 Example output:
+
 ```
 === HTS Profile Report ===
 Generated: 2026-04-16 10:30:15
@@ -256,6 +257,7 @@ Time →
 ```
 
 **What to look for:**
+
 - **Gaps**: Indicate synchronization or idle time
 - **Overlap**: Shows parallel execution
 - **Long tasks**: Optimization candidates

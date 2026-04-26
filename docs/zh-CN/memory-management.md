@@ -95,6 +95,7 @@ task->set_gpu_function([](TaskContext& ctx, cudaStream_t stream) {
 ```
 
 **优势**：
+
 - 自动生命周期管理
 - 异常时自动清理
 - 无内存泄漏
@@ -303,6 +304,7 @@ std::cout << "MemoryPool: "
 ```
 
 典型结果：
+
 - `cudaMalloc`/`cudaFree`: ~50-100 μs 每次操作
 - HTS 内存池: ~1-2 μs 每次操作
 - **加速：50-100 倍**

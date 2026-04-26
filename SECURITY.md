@@ -111,6 +111,7 @@ Security updates are released as:
 ## Contact
 
 For security-related questions (non-vulnerability):
+
 - Open a GitHub issue with the `security` label
 
 Thank you for helping keep HTS and its users safe!

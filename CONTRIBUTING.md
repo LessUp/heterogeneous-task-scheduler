@@ -202,6 +202,7 @@ adjacent free blocks, causing memory fragmentation.
 ### Pull Request Process
 
 1. **Fork** the repository and create your branch:
+
    ```bash
    git checkout -b feature/your-feature-name
    # or
@@ -215,12 +216,14 @@ adjacent free blocks, causing memory fragmentation.
    - Documentation is updated
 
 3. **Commit** with conventional commit messages:
+
    ```bash
    git add .
    git commit -m "feat(component): description"
    ```
 
 4. **Push** to your fork:
+
    ```bash
    git push origin feature/your-feature-name
    ```

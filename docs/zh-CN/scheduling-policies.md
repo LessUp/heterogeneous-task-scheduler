@@ -11,7 +11,7 @@
 - [策略选择指南](#策略选择指南)
 - [自定义策略](#自定义策略)
 - [性能调优](#性能调优)
-- [示例](#示例)
+- [最佳实践](#最佳实践)
 
 ---
 
@@ -65,6 +65,7 @@ struct SystemStatus {
 **描述**：基于当前系统负载和队列深度做决策。
 
 **算法**：
+
 1. 如果任务指定了 CPU 或 GPU，尊重该偏好
 2. 比较队列深度（更短的队列获胜）
 3. 考虑历史任务性能
@@ -80,6 +81,7 @@ scheduler.set_policy(std::make_unique<DefaultSchedulingPolicy>());
 **描述**：优先使用 GPU 执行。
 
 **算法**：
+
 1. 如果任务有 GPU 函数，使用 GPU
 2. 仅当 GPU 不可用时回退到 CPU
 
@@ -90,6 +92,7 @@ scheduler.set_policy(std::make_unique<GpuFirstPolicy>());
 ```
 
 **特性**：
+
 - 最大化 GPU 利用率
 - 可能导致 CPU 利用率不足
 - 适合深度学习推理、图像处理
@@ -99,6 +102,7 @@ scheduler.set_policy(std::make_unique<GpuFirstPolicy>());
 **描述**：优先使用 CPU 执行。
 
 **算法**：
+
 1. 如果任务有 CPU 函数，使用 CPU
 2. 仅对没有 CPU 实现的任务使用 GPU
 
@@ -109,6 +113,7 @@ scheduler.set_policy(std::make_unique<CpuFirstPolicy>());
 ```
 
 **特性**：
+
 - 节省 GPU 内存
 - 避免 CPU→GPU 数据传输开销
 - 适合控制逻辑、预处理
@@ -118,6 +123,7 @@ scheduler.set_policy(std::make_unique<CpuFirstPolicy>());
 **描述**：在 CPU 和 GPU 之间交替实现负载均衡。
 
 **算法**：
+
 1. 追踪上次使用的设备
 2. 为下个任务选择相反设备
 3. 尊重任务设备约束
@@ -129,6 +135,7 @@ scheduler.set_policy(std::make_unique<RoundRobinPolicy>());
 ```
 
 **特性**：
+
 - 工作均匀分布
 - 防止任一设备空闲
 - 可能导致不必要的数据传输
@@ -138,6 +145,7 @@ scheduler.set_policy(std::make_unique<RoundRobinPolicy>());
 **描述**：基于预计完成时间优先执行任务。
 
 **算法**：
+
 1. 使用历史数据估算执行时间
 2. 选择预计完成时间更短的设备
 
@@ -148,6 +156,7 @@ scheduler.set_policy(std::make_unique<ShortestJobFirstPolicy>());
 ```
 
 **特性**：
+
 - 最小化完工时间
 - 需要历史数据（预热期）
 - 适合实时处理
