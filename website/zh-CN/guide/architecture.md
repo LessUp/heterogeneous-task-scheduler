@@ -371,6 +371,6 @@ CPU 线程                    GPU 流
 
 ## 延伸阅读
 
-- [调度策略](scheduling-policies.md) - 策略详情
-- [内存管理](memory-management.md) - 内存系统
-- [API 参考](api-reference.md) - 组件 API
+- [调度策略](scheduling) - 策略详情
+- [内存管理](memory) - 内存系统
+- [API 参考](../api/) - 组件 API

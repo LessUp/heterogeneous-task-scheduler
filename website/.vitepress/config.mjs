@@ -1,6 +1,6 @@
 import { defineConfig } from 'vitepress'
 
-const config = defineConfig({
+export default defineConfig({
   title: 'HTS',
   titleTemplate: ':title | Heterogeneous Task Scheduler',
   description: 'C++17 DAG scheduling library for mixed CPU and GPU workloads',
@@ -31,27 +31,62 @@ const config = defineConfig({
     math: true
   },
 
-  ignoreDeadLinks: true,
+  locales: {
+    root: {
+      label: 'English',
+      lang: 'en',
+      themeConfig: {
+        nav: [
+          { text: 'Overview', link: '/' },
+          { text: 'Guide', link: '/guide/', activeMatch: '/guide/' },
+          { text: 'Architecture', link: '/guide/architecture' },
+          { text: 'API', link: '/api/', activeMatch: '/api/' },
+          { text: 'Examples', link: '/examples/', activeMatch: '/examples/' },
+          { text: 'GitHub', link: 'https://github.com/LessUp/heterogeneous-task-scheduler' }
+        ],
+        sidebar: {
+          '/guide/': sidebarGuideEn(),
+          '/api/': sidebarAPI(),
+          '/examples/': sidebarExamples()
+        }
+      }
+    },
+    'zh-CN': {
+      label: '简体中文',
+      lang: 'zh-CN',
+      link: '/zh-CN/',
+      themeConfig: {
+        nav: [
+          { text: '概述', link: '/zh-CN/' },
+          { text: '指南', link: '/zh-CN/guide/', activeMatch: '/zh-CN/guide/' },
+          { text: '架构', link: '/zh-CN/guide/architecture' },
+          { text: 'API', link: '/zh-CN/api/', activeMatch: '/zh-CN/api/' },
+          { text: '示例', link: '/zh-CN/examples/', activeMatch: '/zh-CN/examples/' },
+          { text: 'GitHub', link: 'https://github.com/LessUp/heterogeneous-task-scheduler' }
+        ],
+        sidebar: {
+          '/zh-CN/guide/': sidebarGuideZh(),
+          '/zh-CN/api/': sidebarAPIZh(),
+          '/zh-CN/examples/': sidebarExamplesZh()
+        },
+        outline: { label: '目录' },
+        docFooter: { prev: '上一页', next: '下一页' },
+        lastUpdated: { text: '最后更新' },
+        darkModeSwitchLabel: '外观',
+        sidebarMenuLabel: '菜单',
+        returnToTopLabel: '返回顶部',
+        editLink: {
+          pattern: 'https://github.com/LessUp/heterogeneous-task-scheduler/edit/main/website/:path',
+          text: '在 GitHub 上编辑此页'
+        }
+      }
+    }
+  },
 
   themeConfig: {
     logo: '/logo.svg',
     siteTitle: 'HTS',
     
-    nav: [
-      { text: 'Overview', link: '/' },
-      { text: 'Guide', link: '/guide/', activeMatch: '/guide/' },
-      { text: 'Architecture', link: '/guide/architecture' },
-      { text: 'API', link: '/api/', activeMatch: '/api/' },
-      { text: 'Examples', link: '/examples/', activeMatch: '/examples/' },
-      { text: 'GitHub', link: 'https://github.com/LessUp/heterogeneous-task-scheduler' }
-    ],
-
-    sidebar: {
-      '/guide/': sidebarGuide(),
-      '/api/': sidebarAPI(),
-      '/examples/': sidebarExamples()
-    },
-
     socialLinks: [
       { icon: 'github', link: 'https://github.com/LessUp/heterogeneous-task-scheduler' }
     ],
@@ -90,7 +125,7 @@ const config = defineConfig({
   }
 })
 
-function sidebarGuide() {
+function sidebarGuideEn() {
   return [
     {
       text: 'Getting Started',
@@ -142,4 +177,54 @@ function sidebarExamples() {
   ]
 }
 
-export default config
+function sidebarGuideZh() {
+  return [
+    {
+      text: '入门指南',
+      collapsed: false,
+      items: [
+        { text: '简介', link: '/zh-CN/guide/' },
+        { text: '安装', link: '/zh-CN/guide/installation' },
+        { text: '快速开始', link: '/zh-CN/guide/quickstart' },
+        { text: '架构', link: '/zh-CN/guide/architecture' }
+      ]
+    },
+    {
+      text: '核心主题',
+      collapsed: false,
+      items: [
+        { text: '任务图', link: '/zh-CN/guide/task-graph' },
+        { text: '调度', link: '/zh-CN/guide/scheduling' },
+        { text: '内存', link: '/zh-CN/guide/memory' },
+        { text: '错误处理', link: '/zh-CN/guide/error-handling' }
+      ]
+    }
+  ]
+}
+
+function sidebarAPIZh() {
+  return [
+    {
+      text: '核心 API',
+      items: [
+        { text: '概述', link: '/zh-CN/api/' },
+        { text: '调度器', link: '/zh-CN/api/scheduler' },
+        { text: '任务图', link: '/zh-CN/api/task-graph' },
+        { text: '任务构建器', link: '/zh-CN/api/task-builder' }
+      ]
+    }
+  ]
+}
+
+function sidebarExamplesZh() {
+  return [
+    {
+      text: '示例',
+      items: [
+        { text: '概述', link: '/zh-CN/examples/' },
+        { text: '简单 DAG', link: '/zh-CN/examples/simple-dag' },
+        { text: '流水线', link: '/zh-CN/examples/pipeline' }
+      ]
+    }
+  ]
+}

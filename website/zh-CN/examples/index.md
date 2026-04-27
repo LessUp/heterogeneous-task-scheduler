@@ -256,6 +256,6 @@ echo -e "\n=== Advanced Features ==="
 
 ## 进一步阅读
 
-- [快速入门](quickstart.md) - HTS 入门
-- [架构概览](architecture.md) - 理解系统设计
-- [API 参考](api-reference.md) - 完整 API 文档
+- [快速入门](../guide/) - HTS 入门
+- [架构概览](../guide/architecture) - 理解系统设计
+- [API 参考](../api/) - 完整 API 文档

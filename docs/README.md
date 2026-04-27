@@ -4,11 +4,24 @@ The maintained public documentation surface for HTS is the GitHub Pages site:
 
 - <https://lessup.github.io/heterogeneous-task-scheduler/>
 
-## Source documents
+## Source documents (Migrated to website/)
 
-- `docs/en/` - English source docs
-- `docs/zh-CN/` - Simplified Chinese source docs
-- `website/` - VitePress site configuration and public-facing pages
+**All documentation has been consolidated into `website/` for VitePress publishing:**
+
+- `website/guide/` - English guides
+- `website/api/` - English API reference
+- `website/examples/` - English examples
+- `website/zh-CN/guide/` - Chinese guides
+- `website/zh-CN/api/` - Chinese API reference
+- `website/zh-CN/examples/` - Chinese examples
+
+## Building Documentation
+
+```bash
+cd website
+npm install
+npm run docs:build
+```
 
 ## Specifications
 

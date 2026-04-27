@@ -306,6 +306,6 @@ cmake .. -DHTS_ENABLE_CUDA=OFF
 
 ## 下一步
 
-- [快速入门](quickstart.md) - 编写您的第一个 HTS 程序
-- [架构概览](architecture.md) - 理解系统设计
-- [API 参考](api-reference.md) - 探索 API
+- [快速入门](/zh-CN/guide/) - 编写您的第一个 HTS 程序
+- [架构概览](architecture) - 理解系统设计
+- [API 参考](../api/) - 探索 API

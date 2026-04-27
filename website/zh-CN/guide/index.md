@@ -1,116 +1,116 @@
-# Quick Start Guide
+# 快速入门指南
 
-> Get started with HTS in 5 minutes
-
----
-
-## Table of Contents
-
-- [Prerequisites](#prerequisites)
-- [Basic Concepts](#basic-concepts)
-- [Your First Program](#your-first-program)
-- [Fluent API](#fluent-api)
-- [CPU + GPU Workflow](#cpu--gpu-workflow)
-- [Error Handling](#error-handling)
-- [Next Steps](#next-steps)
+> 在 5 分钟内上手 HTS
 
 ---
 
-## Prerequisites
+## 目录
 
-Before starting, ensure you have:
-
-- [ ] Completed [installation](installation.md)
-- [ ] Working C++17 compiler
-- [ ] CMake 3.18+
-- [ ] CUDA Toolkit 11.0+ (optional, for GPU features)
+- [前提条件](#前提条件)
+- [基本概念](#基本概念)
+- [第一个程序](#第一个程序)
+- [流式 API](#流式-api)
+- [CPU + GPU 工作流](#cpu--gpu-工作流)
+- [错误处理](#错误处理)
+- [下一步](#下一步)
 
 ---
 
-## Basic Concepts
+## 前提条件
 
-### Core Components
+开始前，请确保您已：
+
+- [ ] 完成[安装](installation.md)
+- [ ] 拥有可用的 C++17 编译器
+- [ ] 安装 CMake 3.18+
+- [ ] 安装 CUDA Toolkit 11.0+（可选，用于 GPU 功能）
+
+---
+
+## 基本概念
+
+### 核心组件
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                         Scheduler                            │
+│                          调度器                              │
 │  ┌─────────────────┐  ┌─────────────────────────────────┐   │
-│  │    TaskGraph    │→ │      Execution Engine           │   │
-│  │    (DAG)        │  │  (CPU Thread Pool + GPU Streams)│   │
+│  │     任务图      │→ │          执行引擎                │   │
+│  │     (DAG)       │  │   (CPU 线程池 + GPU 流)          │   │
 │  └─────────────────┘  └─────────────────────────────────┘   │
-│                         ┌─────────────────────────────┐      │
-│                         │      Memory Pool            │      │
-│                         │  (Buddy System Allocator)   │      │
-│                         └─────────────────────────────┘      │
+│                          ┌─────────────────────────────┐     │
+│                          │        内存池                │     │
+│                          │   (伙伴系统分配器)            │     │
+│                          └─────────────────────────────┘     │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-| Component | Purpose |
-|-----------|---------|
-| `Scheduler` | Main orchestrator for task execution |
-| `TaskGraph` | DAG representing task dependencies |
-| `Task` | Individual unit of work |
-| `TaskContext` | Execution context (memory, I/O, status) |
+| 组件 | 用途 |
+|------|------|
+| `Scheduler` | 主调度器，协调执行 |
+| `TaskGraph` | 任务图，定义 DAG |
+| `Task` | 任务单元 |
+| `TaskContext` | 执行上下文 |
 
 ---
 
-## Your First Program
+## 第一个程序
 
-Create a simple task dependency graph:
+创建一个简单的任务依赖图：
 
 ```cpp
 #include <hts/heterogeneous_task_scheduler.hpp>
 #include <iostream>
 
 int main() {
-    // 1. Create scheduler with default configuration
+    // 1. 创建默认配置的调度器
     hts::Scheduler scheduler;
 
-    // 2. Add tasks
+    // 2. 添加任务
     auto task1 = scheduler.graph().add_task(hts::DeviceType::CPU);
     auto task2 = scheduler.graph().add_task(hts::DeviceType::CPU);
 
-    // 3. Set task functions
+    // 3. 设置任务函数
     task1->set_cpu_function([](hts::TaskContext& ctx) {
-        std::cout << "Task 1 executed on CPU\n";
-        ctx.set_output(" result", 42);
+        std::cout << "任务 1 在 CPU 上执行\n";
+        ctx.set_output("result", 42);
     });
 
     task2->set_cpu_function([](hts::TaskContext& ctx) {
-        auto result = ctx.get_input<int>(" result");
-        std::cout << "Task 2 received: " << result << "\n";
+        auto result = ctx.get_input<int>("result");
+        std::cout << "任务 2 收到: " << result << "\n";
     });
 
-    // 4. Define dependencies (task2 depends on task1)
+    // 4. 定义依赖（task2 依赖于 task1）
     scheduler.graph().add_dependency(task1->id(), task2->id());
 
-    // 5. Execute the graph
+    // 5. 执行图
     scheduler.execute();
 
     return 0;
 }
 ```
 
-**Output:**
+**输出:**
 
 ```
-Task 1 executed on CPU
-Task 2 received: 42
+任务 1 在 CPU 上执行
+任务 2 收到: 42
 ```
 
-### Build and Run
+### 编译和运行
 
 ```bash
-# Save as first_program.cpp
+# 保存为 first_program.cpp
 g++ -std=c++17 -I./include first_program.cpp -o first_program -lpthread
 ./first_program
 ```
 
 ---
 
-## Fluent API
+## 流式 API
 
-The TaskBuilder provides a more intuitive way to create tasks:
+TaskBuilder 提供了更直观的任务创建方式：
 
 ```cpp
 #include <hts/heterogeneous_task_scheduler.hpp>
@@ -119,33 +119,33 @@ int main() {
     hts::Scheduler scheduler;
     hts::TaskBuilder builder(scheduler.graph());
 
-    // Chain tasks together
+    // 链式任务创建
     auto init = builder
         .name("Initialize")
         .device(hts::DeviceType::CPU)
         .priority(hts::TaskPriority::High)
         .cpu([](hts::TaskContext& ctx) {
-            std::cout << "Initializing...\n";
+            std::cout << "初始化...\n";
             ctx.set_output("config", std::string("ready"));
         })
         .build();
 
     auto process = builder
         .name("Process")
-        .after(init)                    // Depends on init
+        .after(init)                    // 依赖于 init
         .device(hts::DeviceType::CPU)
         .cpu([](hts::TaskContext& ctx) {
             auto config = ctx.get_input<std::string>("config");
-            std::cout << "Processing with: " << config << "\n";
+            std::cout << "处理中: " << config << "\n";
         })
         .build();
 
     auto finalize = builder
         .name("Finalize")
-        .after(process)                 // Depends on process
-        .device(hts::DeviceType::Any)   // Let scheduler decide
+        .after(process)                 // 依赖于 process
+        .device(hts::DeviceType::Any)   // 让调度器决定
         .cpu([](hts::TaskContext& ctx) {
-            std::cout << "Finalizing...\n";
+            std::cout << "完成...\n";
         })
         .build();
 
@@ -154,23 +154,23 @@ int main() {
 }
 ```
 
-**Benefits of Fluent API:**
+**流式 API 的优势：**
 
-- Clear dependency chains via `.after()`
-- Self-documenting task names
-- Easy to add/remove tasks
+- 通过 `.after()` 清晰表示依赖链
+- 自描述的任务名称
+- 易于添加/删除任务
 
 ---
 
-## CPU + GPU Workflow
+## CPU + GPU 工作流
 
-A common pattern: CPU preprocessing → GPU computation → CPU postprocessing:
+一个常见模式：CPU 预处理 → GPU 计算 → CPU 后处理：
 
 ```cpp
 #include <hts/heterogeneous_task_scheduler.hpp>
 #include <iostream>
 
-// Simple CUDA kernel example
+// 简单的 CUDA 内核示例
 __global__ void multiply_kernel(float* data, float factor, int n) {
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
     if (idx < n) {
@@ -183,22 +183,22 @@ int main() {
     const int data_size = 1024;
     const float factor = 2.5f;
 
-    // CPU: Allocate and initialize data
+    // CPU: 分配并初始化数据
     auto preprocess = scheduler.graph().add_task(hts::DeviceType::CPU);
     preprocess->set_cpu_function([data_size](hts::TaskContext& ctx) {
-        // Allocate GPU memory through context
+        // 通过上下文分配 GPU 内存
         void* d_data = ctx.allocate_gpu_memory(data_size * sizeof(float));
         
-        // Initialize data (in real app, would copy from host)
+        // 初始化数据（实际应用会从主机复制）
         std::vector<float> host_data(data_size, 1.0f);
         cudaMemcpy(d_data, host_data.data(), data_size * sizeof(float), 
                    cudaMemcpyHostToDevice);
         
         ctx.set_output("data", d_data, data_size * sizeof(float));
-        std::cout << "Data prepared on GPU\n";
+        std::cout << "数据已准备到 GPU\n";
     });
 
-    // GPU: Compute
+    // GPU: 计算
     auto compute = scheduler.graph().add_task(hts::DeviceType::GPU);
     compute->set_gpu_function([data_size, factor](hts::TaskContext& ctx, 
                                                    cudaStream_t stream) {
@@ -211,25 +211,25 @@ int main() {
             static_cast<float*>(d_data), factor, data_size);
         
         ctx.set_output("result", d_data, data_size * sizeof(float));
-        std::cout << "GPU computation complete\n";
+        std::cout << "GPU 计算完成\n";
     });
 
-    // CPU: Post-process
+    // CPU: 后处理
     auto postprocess = scheduler.graph().add_task(hts::DeviceType::CPU);
     postprocess->set_cpu_function([](hts::TaskContext& ctx) {
         auto d_data = ctx.get_input<void*>("result");
         
-        // Copy back to host
+        // 复制回主机
         std::vector<float> host_data(1024);
         cudaMemcpy(host_data.data(), d_data, 1024 * sizeof(float),
                    cudaMemcpyDeviceToHost);
         
         float sum = 0;
         for (auto v : host_data) sum += v;
-        std::cout << "Sum after processing: " << sum << "\n";
+        std::cout << "处理后的总和: " << sum << "\n";
     });
 
-    // Chain dependencies
+    // 链式依赖
     scheduler.graph().add_dependency(preprocess->id(), compute->id());
     scheduler.graph().add_dependency(compute->id(), postprocess->id());
 
@@ -240,9 +240,9 @@ int main() {
 
 ---
 
-## Error Handling
+## 错误处理
 
-Handle task failures gracefully:
+优雅地处理任务失败：
 
 ```cpp
 #include <hts/heterogeneous_task_scheduler.hpp>
@@ -251,22 +251,22 @@ Handle task failures gracefully:
 int main() {
     hts::Scheduler scheduler;
 
-    // Set global error callback
+    // 设置全局错误回调
     scheduler.set_error_callback([](hts::TaskId id, const std::string& msg) {
-        std::cerr << "[ERROR] Task " << id << " failed: " << msg << "\n";
+        std::cerr << "[错误] 任务 " << id << " 失败: " << msg << "\n";
     });
 
-    // Task that might fail
+    // 可能失败的任务
     auto risky_task = scheduler.graph().add_task(hts::DeviceType::CPU);
     risky_task->set_cpu_function([](hts::TaskContext& ctx) {
-        // Simulate error condition
+        // 模拟错误条件
         if (random() % 2 == 0) {
-            throw std::runtime_error("Random failure occurred");
+            throw std::runtime_error("随机故障");
         }
-        std::cout << "Task succeeded!\n";
+        std::cout << "任务成功！\n";
     });
 
-    // Add retry policy
+    // 添加重试策略
     risky_task->set_retry_policy(
         hts::RetryPolicyFactory::fixed(3, std::chrono::milliseconds{100})
     );
@@ -276,46 +276,46 @@ int main() {
 }
 ```
 
-**Key Points:**
+**要点：**
 
-- Errors propagate to dependent tasks
-- Retry policies can be configured per-task
-- Error callbacks provide visibility
-
----
-
-## Next Steps
-
-| Topic | Learn About |
-|-------|-------------|
-| [Architecture](architecture.md) | Deep dive into system design |
-| [API Reference](api-reference.md) | Complete API documentation |
-| [Scheduling Policies](scheduling-policies.md) | Control task placement |
-| [Memory Management](memory-management.md) | Optimize GPU memory usage |
-| [Examples](examples.md) | More complex use cases |
+- 错误会传播到依赖任务
+- 可以按任务配置重试策略
+- 错误回调提供可见性
 
 ---
 
-## Quick Reference Card
+## 下一步
+
+| 主题 | 学习内容 |
+|------|---------|
+| [架构概览](architecture) | 深入系统架构 |
+| [API 参考](../api/) | 完整 API 文档 |
+| [调度策略](scheduling) | 控制任务放置 |
+| [内存管理](memory) | 优化 GPU 内存使用 |
+| [示例](../examples/) | 更复杂的用例 |
+
+---
+
+## 速查卡
 
 ```cpp
-// Create scheduler
+// 创建调度器
 hts::Scheduler scheduler;
 scheduler.set_profiling(true);
 
-// Add task (three ways)
+// 添加任务（三种方式）
 auto t1 = scheduler.graph().add_task(hts::DeviceType::CPU);
 hts::TaskBuilder builder(scheduler.graph());
 auto t2 = builder.name("Task2").cpu(...).build();
 
-// Task function types
-t1->set_cpu_function([](hts::TaskContext& ctx) { /* CPU work */ });
-t1->set_gpu_function([](hts::TaskContext& ctx, cudaStream_t s) { /* GPU work */ });
+// 任务函数类型
+t1->set_cpu_function([](hts::TaskContext& ctx) { /* CPU 工作 */ });
+t1->set_gpu_function([](hts::TaskContext& ctx, cudaStream_t s) { /* GPU 工作 */ });
 
-// Dependencies
+// 依赖
 scheduler.graph().add_dependency(t1->id(), t2->id());
-builder.after(t1);  // Fluent API
+builder.after(t1);  // 流式 API
 
-// Execute
+// 执行
 scheduler.execute();
 ```

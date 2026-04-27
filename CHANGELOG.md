@@ -7,7 +7,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) 
 
 ## [Unreleased]
 
-- Repository normalization, documentation cleanup, and workflow simplification in progress.
+## [1.3.0] - 2026-04-27
+
+### Changed
+
+- Consolidated documentation to `website/` for VitePress publishing with full bilingual support
+- Removed redundant `docs/en/` and `docs/zh-CN/` directories
+- Optimized CI workflow by removing duplicate `docs-build` job
+- Fixed VitePress configuration to enforce dead link checking
+
+### Removed
+
+- Historical build directories (`build-closeout/`, `build-plan-baseline/`)
+- Legacy `specs.backup/` directory (replaced by `openspec/specs/`)
+
+### Added
+
+- Test coverage script (`scripts/coverage.sh`) using gcovr
+- OpenSpec change record for closeout cleanup
+- Chinese documentation in `website/zh-CN/` with proper navigation
+
+### Fixed
+
+- Dead links in Chinese documentation
+- VitePress bilingual navigation configuration
 
 ## [1.2.0] - 2026-04-16
 
