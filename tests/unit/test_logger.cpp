@@ -23,8 +23,9 @@ TEST(LoggerTest, CustomCallback) {
 
     std::vector<std::pair<LogLevel, std::string>> logs;
 
-    logger.set_callback(
-        [&](LogLevel level, const std::string &msg) { logs.push_back({level, msg}); });
+    logger.set_callback([&](LogLevel level, const std::string &msg) {
+        logs.push_back({level, msg});
+    });
 
     logger.set_level(LogLevel::Debug);
 
