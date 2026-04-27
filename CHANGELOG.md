@@ -53,7 +53,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) 
 - Initial DAG-based scheduler, dependency management, CUDA execution path, memory pool, and core
   examples.
 
-[Unreleased]: https://github.com/LessUp/heterogeneous-task-scheduler/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/LessUp/heterogeneous-task-scheduler/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/LessUp/heterogeneous-task-scheduler/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/LessUp/heterogeneous-task-scheduler/releases/tag/v1.2.0
 [1.1.0]: https://github.com/LessUp/heterogeneous-task-scheduler/releases/tag/v1.1.0
 [1.0.0]: https://github.com/LessUp/heterogeneous-task-scheduler/releases/tag/v1.0.0
