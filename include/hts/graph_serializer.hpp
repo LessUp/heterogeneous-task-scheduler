@@ -99,8 +99,8 @@ class GraphSerializer {
             std::string label = task->name().empty() ? "Task " + std::to_string(id) : task->name();
 
             oss << "  task" << id << " [label=\"" << label << "\\n"
-                << device_to_string(task->preferred_device()) << "\", " << "fillcolor=" << color
-                << "];\n";
+                << device_to_string(task->preferred_device())
+                << "\", fillcolor=" << color << "];\n";
         }
 
         oss << "\n";
