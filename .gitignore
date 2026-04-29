@@ -50,3 +50,6 @@ specs.backup/
 # Node modules
 node_modules/
 package-lock.json
+
+# AI tool sessions (local only)
+.omc/
