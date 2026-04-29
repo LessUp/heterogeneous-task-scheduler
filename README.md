@@ -45,7 +45,6 @@ ctest --preset cpu-only-debug
 | Resource | Purpose |
 |----------|---------|
 | [GitHub Pages](https://lessup.github.io/heterogeneous-task-scheduler/) | Product overview, architecture, API, and examples |
-| [docs/README.md](docs/README.md) | Source documentation index |
 | [examples/](examples/) | Runnable sample programs |
 | [specs/README.md](specs/README.md) | Durable OpenSpec surface |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Contribution workflow and local guard rails |

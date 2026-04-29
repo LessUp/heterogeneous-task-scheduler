@@ -207,10 +207,7 @@ function sidebarAPIZh() {
     {
       text: '核心 API',
       items: [
-        { text: '概述', link: '/zh-CN/api/' },
-        { text: '调度器', link: '/zh-CN/api/scheduler' },
-        { text: '任务图', link: '/zh-CN/api/task-graph' },
-        { text: '任务构建器', link: '/zh-CN/api/task-builder' }
+        { text: '概述', link: '/zh-CN/api/' }
       ]
     }
   ]
@@ -221,9 +218,7 @@ function sidebarExamplesZh() {
     {
       text: '示例',
       items: [
-        { text: '概述', link: '/zh-CN/examples/' },
-        { text: '简单 DAG', link: '/zh-CN/examples/simple-dag' },
-        { text: '流水线', link: '/zh-CN/examples/pipeline' }
+        { text: '概述', link: '/zh-CN/examples/' }
       ]
     }
   ]

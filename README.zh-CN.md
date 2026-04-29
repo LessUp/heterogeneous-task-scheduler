@@ -42,7 +42,6 @@ ctest --preset cpu-only-debug
 | 资源 | 用途 |
 |------|------|
 | [GitHub Pages](https://lessup.github.io/heterogeneous-task-scheduler/) | 产品概览、架构、API 与示例 |
-| [docs/README.md](docs/README.md) | 仓库内文档索引 |
 | [examples/](examples/) | 可运行示例 |
 | [specs/README.md](specs/README.md) | 持久 OpenSpec 规范入口 |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | 贡献流程与本地质量门 |

@@ -199,7 +199,7 @@ std::cout << "Total time: " << stats.total_time_ms << " ms" << std::endl;
 
 ## Version Information
 
-Current version: **v1.2.0**
+Current version: **v1.3.0**
 
 Release history is tracked on [GitHub Releases](https://github.com/LessUp/heterogeneous-task-scheduler/releases).
 
