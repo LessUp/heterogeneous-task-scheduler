@@ -1,6 +1,6 @@
 # API 参考
 
-> HTS 完整 API 文档
+> HTS 完整 API 文档。本文档为中文整合版，包含所有核心 API 参考。英文版分页面详见 [API Reference](/api/)。
 
 ---
 
