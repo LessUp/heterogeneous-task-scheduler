@@ -4,40 +4,38 @@ This page explains the internal architecture and design of HTS.
 
 ## High-Level Architecture
 
-```
-┌─────────────────────────────────────────────────┐
-│               User Application                   │
-└────────────────┬────────────────────────────────┘
-                 │
-┌────────────────▼────────────────────────────────┐
-│            TaskGraph Builder API                 │
-│  - Task creation and configuration               │
-│  - Dependency management                         │
-│  - Validation and optimization                   │
-└────────────────┬────────────────────────────────┘
-                 │
-┌────────────────▼────────────────────────────────┐
-│              Scheduler Core                      │
-│  - TaskGraph management                          │
-│  - Dependency tracking                           │
-│  - Ready queue management                        │
-│  - Scheduling policy selection                   │
-└────────────────┬────────────────────────────────┘
-                 │
-┌────────────────▼────────────────────────────────┐
-│           Execution Engine                       │
-│  ┌──────────────┐  ┌──────────────────────┐    │
-│  │  CPU Thread   │  │   CUDA Streams       │    │
-│  │    Pool       │  │   Manager            │    │
-│  └──────────────┘  └──────────────────────┘    │
-└────────────────┬────────────────────────────────┘
-                 │
-┌────────────────▼────────────────────────────────┐
-│            Memory Pool (GPU)                     │
-│  - Buddy system allocator                        │
-│  - O(log n) allocation                           │
-│  - Defragmentation support                       │
-└──────────────────────────────────────────────────┘
+```mermaid
+flowchart TB
+    subgraph Builder["Builder Layer"]
+        TG[TaskGraph]
+        TB[TaskBuilder]
+    end
+
+    subgraph Scheduler["Scheduler Layer"]
+        SCH[Scheduler]
+        POL[SchedulingPolicy]
+        RET[RetryPolicy]
+        EVT[EventSystem]
+    end
+
+    subgraph Execution["Execution Layer"]
+        CPU[CPU Thread Pool]
+        GPU[CUDA Streams]
+        SM[StreamManager]
+        MP[MemoryPool]
+    end
+
+    App[User Application] --> TG
+    App --> TB
+    TG --> SCH
+    TB --> TG
+    SCH --> POL
+    SCH --> RET
+    SCH --> EVT
+    SCH --> CPU
+    SCH --> GPU
+    GPU --> SM
+    GPU --> MP
 ```
 
 ## Core Components
@@ -231,22 +229,109 @@ Critical paths use lock-free data structures:
 
 ## Threading Model
 
+```mermaid
+flowchart TB
+    Main[Main Thread]
+    Sch[Scheduler Thread]
+    Prof[Profiler Thread]
+
+    Main --> Sch
+    Main --> Prof
+
+    subgraph CPU["CPU Thread Pool (8 threads)"]
+        W1[Worker 1]
+        W2[Worker 2]
+        Wn[Worker N]
+    end
+
+    subgraph GPU["GPU Streams (4 streams)"]
+        S0[Stream 0]
+        S1[Stream 1]
+        Sn[Stream N]
+    end
+
+    Sch --> CPU
+    Sch --> GPU
 ```
-Main Thread
-    │
-    ├──► Scheduler Thread
-    │       │
-    │       ├──► CPU Thread Pool (8 threads)
-    │       │       ├──► Worker Thread 1
-    │       │       ├──► Worker Thread 2
-    │       │       └──► ...
-    │       │
-    │       └──► GPU Streams (4 streams)
-    │               ├──► Stream 0
-    │               ├──► Stream 1
-    │               └──► ...
-    │
-    └──► Profiler Thread (optional)
+
+## Execution Flow
+
+```mermaid
+sequenceDiagram
+    participant App as Application
+    participant TG as TaskGraph
+    participant Sch as Scheduler
+    participant CPU as CPU Pool
+    participant GPU as GPU Streams
+
+    App->>TG: Build task graph
+    App->>Sch: Init(graph)
+    Sch->>TG: Validate DAG
+    Sch-->>App: Ready
+
+    loop Until complete
+        Sch->>Sch: Select ready tasks
+        alt CPU Task
+            Sch->>CPU: Dispatch task
+            CPU->>CPU: Execute
+            CPU-->>Sch: Task complete
+        else GPU Task
+            Sch->>GPU: Dispatch task
+            GPU->>GPU: Execute kernel
+            GPU-->>Sch: Task complete
+        end
+        Sch->>TG: Update dependencies
+    end
+
+    Sch-->>App: All tasks complete
+```
+
+## Core Class Relationships
+
+```mermaid
+classDiagram
+    class Scheduler {
+        -TaskGraph* graph
+        -SchedulingPolicy* policy
+        +init(graph)
+        +execute()
+        +wait_for_completion()
+    }
+
+    class TaskGraph {
+        -vector~Task~ tasks
+        -DependencyGraph deps
+        +add_task()
+        +add_dependency()
+        +get_ready_tasks()
+    }
+
+    class TaskBuilder {
+        -TaskGraph* graph
+        +set_name()
+        +set_device()
+        +set_priority()
+        +build()
+    }
+
+    class SchedulingPolicy {
+        <<interface>>
+        +select_next(ready_queue) Task*
+    }
+
+    class GPUPriorityPolicy {
+        +select_next() Task*
+    }
+
+    class CPUPriorityPolicy {
+        +select_next() Task*
+    }
+
+    Scheduler --> TaskGraph : manages
+    Scheduler --> SchedulingPolicy : uses
+    TaskBuilder --> TaskGraph : builds
+    GPUPriorityPolicy --|> SchedulingPolicy
+    CPUPriorityPolicy --|> SchedulingPolicy
 ```
 
 ## Next Steps
