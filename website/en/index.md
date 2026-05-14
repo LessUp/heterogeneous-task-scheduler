@@ -18,7 +18,7 @@ import { VPTeamMembers } from 'vitepress/theme'
 
 const coreFeatures = [
   {
-    avatar: { src: '/logo.svg' },
+    avatar: '/heterogeneous-task-scheduler/logo.svg',
     name: 'DAG-First Execution',
     desc: 'Build dependency-aware pipelines with TaskGraph and TaskBuilder. Automatic topological ordering ensures correct execution sequence.',
     links: [
@@ -26,7 +26,7 @@ const coreFeatures = [
     ]
   },
   {
-    avatar: { src: '/logo.svg' },
+    avatar: '/heterogeneous-task-scheduler/logo.svg',
     name: 'Heterogeneous Computing',
     desc: 'Seamlessly mix CPU and GPU tasks in the same graph. CUDA streams and memory pools managed automatically when available.',
     links: [
@@ -34,7 +34,7 @@ const coreFeatures = [
     ]
   },
   {
-    avatar: { src: '/logo.svg' },
+    avatar: '/heterogeneous-task-scheduler/logo.svg',
     name: 'Memory Pool',
     desc: 'GPU memory pooling reduces allocation overhead. Buddy system allocator with automatic defragmentation.',
     links: [

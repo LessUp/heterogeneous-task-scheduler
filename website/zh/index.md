@@ -18,7 +18,7 @@ import { VPTeamMembers } from 'vitepress/theme'
 
 const coreFeatures = [
   {
-    avatar: { src: '/logo.svg' },
+    avatar: '/heterogeneous-task-scheduler/logo.svg',
     name: 'DAG 优先执行',
     desc: '使用 TaskGraph 和 TaskBuilder 构建依赖感知的任务流水线。自动拓扑排序确保正确的执行顺序。',
     links: [
@@ -26,7 +26,7 @@ const coreFeatures = [
     ]
   },
   {
-    avatar: { src: '/logo.svg' },
+    avatar: '/heterogeneous-task-scheduler/logo.svg',
     name: '异构计算',
     desc: '在同一任务图中无缝混合 CPU 和 GPU 任务。CUDA 流和内存池自动管理。',
     links: [
@@ -34,7 +34,7 @@ const coreFeatures = [
     ]
   },
   {
-    avatar: { src: '/logo.svg' },
+    avatar: '/heterogeneous-task-scheduler/logo.svg',
     name: '内存池',
     desc: 'GPU 内存池减少分配开销。伙伴系统分配器支持自动碎片整理。',
     links: [

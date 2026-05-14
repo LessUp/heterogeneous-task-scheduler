@@ -217,8 +217,8 @@ export default withMermaid(defineConfig({
   },
 
   head: [
-    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' }],
-    ['link', { rel: 'mask-icon', href: '/logo.svg', color: '#0891b2' }],
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: `${base}logo.svg` }],
+    ['link', { rel: 'mask-icon', href: `${base}logo.svg`, color: '#0891b2' }],
     ['meta', { name: 'theme-color', content: '#0891b2' }],
     ['meta', { name: 'og:type', content: 'website' }],
     ['meta', { name: 'og:site_name', content: 'HTS' }],
