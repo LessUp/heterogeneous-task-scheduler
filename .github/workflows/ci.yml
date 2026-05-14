@@ -71,6 +71,25 @@ jobs:
                 min-spaces-from-content: 1
               document-start: disable
 
+  # Docs Build
+  docs-build:
+    name: Docs Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install and build docs
+        run: |
+          cd website
+          npm ci --no-fund --no-audit
+          npm run docs:build
+
   # Build and Test (CPU-only mode)
   build-test:
     name: Build & Test (CPU-only)
@@ -98,7 +117,7 @@ jobs:
   ci-summary:
     name: CI Summary
     runs-on: ubuntu-latest
-    needs: [format-check, markdown-lint, yaml-lint, build-test]
+    needs: [format-check, markdown-lint, yaml-lint, docs-build, build-test]
     if: always()
     steps:
       - name: Check Status
@@ -110,4 +129,5 @@ jobs:
           echo "| Format Check | ${{ needs.format-check.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Markdown Lint | ${{ needs.markdown-lint.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| YAML Lint | ${{ needs.yaml-lint.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Docs Build | ${{ needs.docs-build.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Build & Test | ${{ needs.build-test.result == 'success' && '✅ Passed' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY

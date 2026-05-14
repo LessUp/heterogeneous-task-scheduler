@@ -14,7 +14,7 @@
   "devDependencies": {
     "markdown-it-footnote": "^4.0.0",
     "markdown-it-mathjax3": "4.3.2",
-    "vitepress": "^1.5.0",
+    "vitepress": "^1.6.4",
     "vitepress-plugin-llms": "^1.0.0",
     "vitepress-plugin-mermaid": "^2.0.17",
     "vue": "3.4.0"
