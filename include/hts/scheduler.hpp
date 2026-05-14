@@ -1,6 +1,7 @@
 #pragma once
 
 #include "hts/dependency_manager.hpp"
+#include "hts/event_system.hpp"
 #include "hts/execution_engine.hpp"
 #include "hts/memory_pool.hpp"
 #include "hts/profiler.hpp"
@@ -71,7 +72,7 @@ class Scheduler {
     const Profiler &profiler() const { return profiler_; }
 
     /// Enable/disable profiling
-    void set_profiling(bool enabled) { profiling_enabled_ = enabled; }
+    void set_profiling(bool enabled);
     bool profiling_enabled() const { return profiling_enabled_; }
 
   private:
@@ -87,6 +88,7 @@ class Scheduler {
 
     std::unique_ptr<SchedulingPolicy> policy_;
     Profiler profiler_;
+    EventSystem event_system_;
     bool profiling_enabled_ = false;
 
     std::mutex execution_mutex_;

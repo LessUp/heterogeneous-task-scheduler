@@ -3,62 +3,78 @@
 
 namespace hts {
 
-DependencyManager::DependencyManager(const TaskGraph &graph) : graph_(graph) {
-    init_pending_counts();
+DependencyManager::DependencyManager(const TaskGraph &graph) {
+    init_from_graph(graph);
 }
 
-void DependencyManager::init_pending_counts() {
+void DependencyManager::init_from_graph(const TaskGraph &graph) {
     std::lock_guard<std::mutex> lock(mutex_);
 
+    successors_.clear();
     pending_deps_.clear();
     completed_.clear();
     failed_.clear();
     blocked_.clear();
 
-    for (const auto &[id, task] : graph_.tasks()) {
-        pending_deps_[id] = graph_.in_degree(id);
-    }
-}
-
-void DependencyManager::mark_completed(TaskId id) {
-    std::lock_guard<std::mutex> lock(mutex_);
-
-    if (completed_.count(id) || failed_.count(id) || blocked_.count(id)) {
-        return; // Already in terminal state
+    // Snapshot successors and compute in-degrees (pending deps).
+    for (const auto &[id, task] : graph.tasks()) {
+        successors_[id] = {};
+        pending_deps_[id] = 0;
     }
 
-    completed_.insert(id);
-
-    // Notify all dependents
-    auto successors = graph_.get_successors(id);
-    for (const auto &succ : successors) {
-        TaskId succ_id = succ->id();
-        if (pending_deps_.count(succ_id) && pending_deps_[succ_id] > 0) {
-            pending_deps_[succ_id]--;
+    for (const auto &[from, task_ptr] : graph.tasks()) {
+        (void)task_ptr;
+        for (const auto &succ_task : graph.get_successors(from)) {
+            TaskId succ = succ_task->id();
+            successors_[from].push_back(succ);
+            pending_deps_[succ]++;
         }
     }
 }
 
-void DependencyManager::mark_failed(TaskId id) {
+std::vector<TaskId> DependencyManager::mark_completed(TaskId id) {
     std::lock_guard<std::mutex> lock(mutex_);
 
     if (completed_.count(id) || failed_.count(id) || blocked_.count(id)) {
-        return; // Already in terminal state
+        return {}; // Already in terminal state
+    }
+
+    completed_.insert(id);
+
+    // Decrement pending dependency count for all successors.
+    std::vector<TaskId> newly_ready;
+    auto it = successors_.find(id);
+    if (it != successors_.end()) {
+        for (TaskId succ_id : it->second) {
+            auto pit = pending_deps_.find(succ_id);
+            if (pit != pending_deps_.end() && pit->second > 0) {
+                if (--pit->second == 0) {
+                    newly_ready.push_back(succ_id);
+                }
+            }
+        }
+    }
+    return newly_ready;
+}
+
+std::vector<TaskId> DependencyManager::mark_failed(TaskId id) {
+    std::lock_guard<std::mutex> lock(mutex_);
+
+    if (completed_.count(id) || failed_.count(id) || blocked_.count(id)) {
+        return {}; // Already in terminal state
     }
 
     failed_.insert(id);
 
-    // Block all dependents recursively
-    block_dependents(id);
-}
-
-void DependencyManager::block_dependents(TaskId id) {
-    // BFS to block all transitive dependents
+    // BFS to block all transitive dependents.
+    std::vector<TaskId> blocked;
     std::queue<TaskId> queue;
 
-    auto successors = graph_.get_successors(id);
-    for (const auto &succ : successors) {
-        queue.push(succ->id());
+    auto it = successors_.find(id);
+    if (it != successors_.end()) {
+        for (TaskId succ_id : it->second) {
+            queue.push(succ_id);
+        }
     }
 
     while (!queue.empty()) {
@@ -70,25 +86,22 @@ void DependencyManager::block_dependents(TaskId id) {
         }
 
         blocked_.insert(current);
+        blocked.push_back(current);
 
-        // Update task state
-        auto task = graph_.get_task(current);
-        if (task) {
-            task->set_state(TaskState::Blocked);
-        }
-
-        // Add successors to queue
-        auto current_successors = graph_.get_successors(current);
-        for (const auto &succ : current_successors) {
-            queue.push(succ->id());
+        auto sit = successors_.find(current);
+        if (sit != successors_.end()) {
+            for (TaskId succ_id : sit->second) {
+                queue.push(succ_id);
+            }
         }
     }
+
+    return blocked;
 }
 
 bool DependencyManager::is_ready(TaskId id) const {
     std::lock_guard<std::mutex> lock(mutex_);
 
-    // Not ready if already processed or blocked
     if (completed_.count(id) || failed_.count(id) || blocked_.count(id)) {
         return false;
     }
@@ -132,7 +145,24 @@ bool DependencyManager::is_blocked(TaskId id) const {
 }
 
 void DependencyManager::reset() {
-    init_pending_counts();
+    std::lock_guard<std::mutex> lock(mutex_);
+
+    completed_.clear();
+    failed_.clear();
+    blocked_.clear();
+
+    for (auto &[id, count] : pending_deps_) {
+        count = 0;
+        (void)id;
+    }
+
+    // Recompute pending_deps from the snapshot.
+    for (const auto &[from, tos] : successors_) {
+        (void)from;
+        for (TaskId to : tos) {
+            pending_deps_[to]++;
+        }
+    }
 }
 
 } // namespace hts

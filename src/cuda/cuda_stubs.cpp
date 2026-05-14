@@ -2,6 +2,10 @@
 // This file provides CPU implementations of CUDA-dependent components
 // for testing purposes only. It should NOT be used in production.
 
+#ifndef HTS_CPU_ONLY
+#error "cuda_stubs.cpp is intended for CPU-only builds only"
+#endif
+
 #include "hts/internal/cuda_stubs.hpp"
 #include "hts/execution_engine.hpp"
 #include "hts/memory_pool.hpp"
@@ -433,21 +437,27 @@ void Scheduler::execute_internal() {
     }
     executing_ = true;
     if (profiling_enabled_)
-        profiler_.start();
+        event_system_.graph_started();
     dep_manager_ = std::make_unique<DependencyManager>(graph_);
     stats_ = ExecutionStats{};
     timeline_ = ExecutionTimeline{};
     timeline_.graph_start = std::chrono::high_resolution_clock::now();
     std::unordered_map<TaskId, std::future<void>> task_futures;
     auto ready = dep_manager_->get_ready_tasks();
+    std::vector<std::shared_ptr<Task>> ready_tasks;
+    ready_tasks.reserve(ready.size());
     for (TaskId id : ready) {
         auto task = graph_.get_task(id);
         if (task) {
-            DeviceType device = select_device(*task);
-            if (profiling_enabled_)
-                profiler_.record_task_start(id, task->name(), device);
-            task_futures[id] = engine_->execute_task(task, device);
+            ready_tasks.push_back(task);
         }
+    }
+    policy_->prioritize(ready_tasks);
+    for (auto &task : ready_tasks) {
+        DeviceType device = select_device(*task);
+        if (profiling_enabled_)
+            event_system_.task_started(task->id(), device, task->name());
+        task_futures[task->id()] = engine_->execute_task(task, device);
     }
     while (!task_futures.empty()) {
         std::vector<TaskId> completed;
@@ -464,7 +474,7 @@ void Scheduler::execute_internal() {
                                               TaskState::Completed);
                         stats_.task_times[id] = task->execution_time();
                         if (profiling_enabled_)
-                            profiler_.record_task_end(id, TaskState::Completed);
+                            event_system_.task_completed(id, task->actual_device());
                     }
                 } catch (const std::exception &e) {
                     on_task_failed(id, e.what());
@@ -473,7 +483,7 @@ void Scheduler::execute_internal() {
                         record_timeline_event(id, task->actual_device(), end, end,
                                               TaskState::Failed);
                         if (profiling_enabled_)
-                            profiler_.record_task_end(id, TaskState::Failed);
+                            event_system_.task_failed(id, e.what());
                     }
                 }
                 completed.push_back(id);
@@ -482,16 +492,23 @@ void Scheduler::execute_internal() {
         for (TaskId id : completed)
             task_futures.erase(id);
         auto newly_ready = dep_manager_->get_ready_tasks();
+        std::vector<std::shared_ptr<Task>> newly_ready_tasks;
+        newly_ready_tasks.reserve(newly_ready.size());
         for (TaskId id : newly_ready) {
             if (task_futures.find(id) == task_futures.end()) {
                 auto task = graph_.get_task(id);
-                if (task && task->state() == TaskState::Pending) {
-                    DeviceType device = select_device(*task);
-                    if (profiling_enabled_)
-                        profiler_.record_task_start(id, task->name(), device);
-                    task_futures[id] = engine_->execute_task(task, device);
+                if (task &&
+                    (task->state() == TaskState::Pending || task->state() == TaskState::Ready)) {
+                    newly_ready_tasks.push_back(task);
                 }
             }
+        }
+        policy_->prioritize(newly_ready_tasks);
+        for (auto &task : newly_ready_tasks) {
+            DeviceType device = select_device(*task);
+            if (profiling_enabled_)
+                event_system_.task_started(task->id(), device, task->name());
+            task_futures[task->id()] = engine_->execute_task(task, device);
         }
         if (task_futures.empty())
             break;
@@ -504,7 +521,7 @@ void Scheduler::execute_internal() {
     stats_.gpu_utilization = engine_->get_gpu_load();
     stats_.memory_stats = memory_pool_->get_stats();
     if (profiling_enabled_)
-        profiler_.stop();
+        event_system_.graph_completed();
     executing_ = false;
 }
 
@@ -513,11 +530,23 @@ DeviceType Scheduler::select_device(const Task &task) {
 }
 
 void Scheduler::on_task_completed(TaskId id) {
-    dep_manager_->mark_completed(id);
+    auto newly_ready = dep_manager_->mark_completed(id);
+    for (TaskId ready_id : newly_ready) {
+        auto task = graph_.get_task(ready_id);
+        if (task) {
+            task->set_state(TaskState::Ready);
+        }
+    }
 }
 
 void Scheduler::on_task_failed(TaskId id, const std::string &error) {
-    dep_manager_->mark_failed(id);
+    auto blocked = dep_manager_->mark_failed(id);
+    for (TaskId blocked_id : blocked) {
+        auto task = graph_.get_task(blocked_id);
+        if (task) {
+            task->set_state(TaskState::Blocked);
+        }
+    }
     if (error_callback_)
         error_callback_(id, error);
 }
@@ -579,6 +608,18 @@ void Scheduler::set_policy(std::unique_ptr<SchedulingPolicy> policy) {
 
 const char *Scheduler::policy_name() const {
     return policy_ ? policy_->name() : "None";
+}
+
+void Scheduler::set_profiling(bool enabled) {
+    if (enabled == profiling_enabled_)
+        return;
+
+    profiling_enabled_ = enabled;
+    if (enabled) {
+        profiler_.subscribe_to(event_system_);
+    } else {
+        profiler_.unsubscribe_from(event_system_);
+    }
 }
 
 } // namespace hts

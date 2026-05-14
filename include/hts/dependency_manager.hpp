@@ -9,19 +9,23 @@
 
 namespace hts {
 
-/// DependencyManager tracks task completion and dependency satisfaction
+/// DependencyManager tracks task completion and dependency satisfaction.
+/// It operates purely on TaskIds and no longer holds a reference to TaskGraph
+/// after construction, making it testable with lightweight adjacency data.
 class DependencyManager {
   public:
-    /// Construct from a task graph
+    /// Construct from a task graph (snapshots dependency structure).
     explicit DependencyManager(const TaskGraph &graph);
 
-    /// Mark a task as completed
+    /// Mark a task as completed.
     /// @param id Task ID
-    void mark_completed(TaskId id);
+    /// @return TaskIds that became ready as a result of this completion.
+    std::vector<TaskId> mark_completed(TaskId id);
 
-    /// Mark a task as failed (blocks all dependents)
+    /// Mark a task as failed (blocks all dependents).
     /// @param id Task ID
-    void mark_failed(TaskId id);
+    /// @return TaskIds that were blocked as a result of this failure (transitive).
+    std::vector<TaskId> mark_failed(TaskId id);
 
     /// Check if a task is ready to execute
     /// @param id Task ID
@@ -62,7 +66,8 @@ class DependencyManager {
     const std::unordered_set<TaskId> &blocked_tasks() const { return blocked_; }
 
   private:
-    const TaskGraph &graph_;
+    // Snapshot of the graph: successors for each task.
+    std::unordered_map<TaskId, std::vector<TaskId>> successors_;
 
     // Pending dependency count for each task
     std::unordered_map<TaskId, size_t> pending_deps_;
@@ -74,11 +79,8 @@ class DependencyManager {
 
     mutable std::mutex mutex_;
 
-    /// Block all tasks that depend on the given task (recursively)
-    void block_dependents(TaskId id);
-
-    /// Initialize pending dependency counts
-    void init_pending_counts();
+    /// Initialize pending dependency counts and snapshot successors.
+    void init_from_graph(const TaskGraph &graph);
 };
 
 } // namespace hts

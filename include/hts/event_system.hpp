@@ -1,6 +1,7 @@
 #pragma once
 
 #include "hts/types.hpp"
+#include <algorithm>
 #include <any>
 #include <functional>
 #include <memory>
@@ -133,6 +134,12 @@ class EventSystem {
 
     void task_started(TaskId id, DeviceType device) {
         publish(Event{EventType::TaskStarted, id, device});
+    }
+
+    void task_started(TaskId id, DeviceType device, const std::string &name) {
+        Event event{EventType::TaskStarted, id, device};
+        event.message = name;
+        publish(event);
     }
 
     void task_completed(TaskId id, DeviceType device) {

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "hts/event_system.hpp"
 #include "hts/types.hpp"
 #include <algorithm>
 #include <chrono>
@@ -119,6 +120,72 @@ class Profiler {
         if (it != pending_records_.end()) {
             it->second.memory_freed += bytes;
         }
+    }
+
+    /// Handle an event from the EventSystem (start/stop/record)
+    void on_event(const Event &event) {
+        switch (event.type) {
+        case EventType::GraphStarted:
+            start();
+            break;
+        case EventType::GraphCompleted:
+            stop();
+            break;
+        case EventType::TaskStarted:
+            record_task_start(event.task_id, event.message, event.device);
+            break;
+        case EventType::TaskCompleted:
+            record_task_end(event.task_id, TaskState::Completed);
+            break;
+        case EventType::TaskFailed:
+            record_task_end(event.task_id, TaskState::Failed);
+            break;
+        case EventType::MemoryAllocated:
+            // custom_data holds size_t allocation size
+            try {
+                size_t bytes = std::any_cast<size_t>(event.custom_data);
+                record_allocation(event.task_id, bytes);
+            } catch (...) {
+                // Ignore malformed event
+            }
+            break;
+        case EventType::MemoryFreed:
+            try {
+                size_t bytes = std::any_cast<size_t>(event.custom_data);
+                record_free(event.task_id, bytes);
+            } catch (...) {
+                // Ignore malformed event
+            }
+            break;
+        default:
+            break;
+        }
+    }
+
+    /// Subscribe this profiler to an EventSystem
+    void subscribe_to(EventSystem &system) {
+        subscription_ids_.push_back(
+            system.subscribe(EventType::GraphStarted, [this](const Event &e) { on_event(e); }));
+        subscription_ids_.push_back(
+            system.subscribe(EventType::GraphCompleted, [this](const Event &e) { on_event(e); }));
+        subscription_ids_.push_back(
+            system.subscribe(EventType::TaskStarted, [this](const Event &e) { on_event(e); }));
+        subscription_ids_.push_back(
+            system.subscribe(EventType::TaskCompleted, [this](const Event &e) { on_event(e); }));
+        subscription_ids_.push_back(
+            system.subscribe(EventType::TaskFailed, [this](const Event &e) { on_event(e); }));
+        subscription_ids_.push_back(
+            system.subscribe(EventType::MemoryAllocated, [this](const Event &e) { on_event(e); }));
+        subscription_ids_.push_back(
+            system.subscribe(EventType::MemoryFreed, [this](const Event &e) { on_event(e); }));
+    }
+
+    /// Unsubscribe from all previously subscribed EventSystems
+    void unsubscribe_from(EventSystem &system) {
+        for (auto id : subscription_ids_) {
+            system.unsubscribe(id);
+        }
+        subscription_ids_.clear();
     }
 
     /// Get all records
@@ -270,6 +337,7 @@ class Profiler {
     std::vector<TaskRecord> records_;
     std::unordered_map<TaskId, TaskRecord> pending_records_;
     size_t total_allocations_ = 0;
+    std::vector<SubscriptionId> subscription_ids_;
 };
 
 } // namespace hts

@@ -82,7 +82,6 @@ set(HTS_CUDA_SOURCES
     src/cuda/stream_manager.cu
     src/cuda/execution_engine.cu
     src/cuda/scheduler.cu
-    src/cuda/cuda_stubs.cpp
 )
 
 set(HTS_HEADERS

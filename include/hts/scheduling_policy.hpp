@@ -132,12 +132,17 @@ class RoundRobinPolicy : public SchedulingPolicy {
             return task.preferred_device();
         }
 
-        use_gpu_ = !use_gpu_;
+        bool next_gpu;
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            use_gpu_ = !use_gpu_;
+            next_gpu = use_gpu_;
+        }
 
-        if (use_gpu_ && task.has_gpu_function()) {
+        if (next_gpu && task.has_gpu_function()) {
             return DeviceType::GPU;
         }
-        if (!use_gpu_ && task.has_cpu_function()) {
+        if (!next_gpu && task.has_cpu_function()) {
             return DeviceType::CPU;
         }
 
@@ -157,6 +162,7 @@ class RoundRobinPolicy : public SchedulingPolicy {
     const char *name() const override { return "Round-Robin"; }
 
   private:
+    mutable std::mutex mutex_;
     bool use_gpu_ = false;
 };
 
