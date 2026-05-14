@@ -1,8 +1,8 @@
 # Heterogeneous Task Scheduler (HTS)
 
-[![GitHub Release](https://img.shields.io/github/v/release/LessUp/heterogeneous-task-scheduler?include_prereleases&logo=github)](https://github.com/LessUp/heterogeneous-task-scheduler/releases)
-[![CI](https://github.com/LessUp/heterogeneous-task-scheduler/actions/workflows/ci.yml/badge.svg)](https://github.com/LessUp/heterogeneous-task-scheduler/actions/workflows/ci.yml)
-[![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://lessup.github.io/heterogeneous-task-scheduler/)
+[![GitHub Release](https://img.shields.io/github/v/release/AICL-Lab/heterogeneous-task-scheduler?include_prereleases&logo=github)](https://github.com/AICL-Lab/heterogeneous-task-scheduler/releases)
+[![CI](https://github.com/AICL-Lab/heterogeneous-task-scheduler/actions/workflows/ci.yml/badge.svg)](https://github.com/AICL-Lab/heterogeneous-task-scheduler/actions/workflows/ci.yml)
+[![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://aicl-lab.github.io/heterogeneous-task-scheduler/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://en.cppreference.com/w/cpp/17)
 [![CUDA](https://img.shields.io/badge/CUDA-optional-green.svg)](https://developer.nvidia.com/cuda-toolkit)
@@ -24,7 +24,7 @@
 ## Quick start
 
 ```bash
-git clone https://github.com/LessUp/heterogeneous-task-scheduler.git
+git clone https://github.com/AICL-Lab/heterogeneous-task-scheduler.git
 cd heterogeneous-task-scheduler
 
 # Recommended baseline for contributors and CI
@@ -44,7 +44,7 @@ ctest --preset cpu-only-debug
 
 | Resource | Purpose |
 |----------|---------|
-| [GitHub Pages](https://lessup.github.io/heterogeneous-task-scheduler/) | Product overview, architecture, API, and examples |
+| [GitHub Pages](https://aicl-lab.github.io/heterogeneous-task-scheduler/) | Product overview, architecture, API, and examples |
 | [examples/](examples/) | Runnable sample programs |
 | [specs/README.md](specs/README.md) | Durable OpenSpec surface |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Contribution workflow and local guard rails |

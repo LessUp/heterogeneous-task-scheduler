@@ -1,8 +1,8 @@
 # 异构任务调度器（HTS）
 
-[![GitHub Release](https://img.shields.io/github/v/release/LessUp/heterogeneous-task-scheduler?include_prereleases&logo=github)](https://github.com/LessUp/heterogeneous-task-scheduler/releases)
-[![CI](https://img.shields.io/github/actions/workflow/status/LessUp/heterogeneous-task-scheduler/ci.yml?label=CI)](https://github.com/LessUp/heterogeneous-task-scheduler/actions/workflows/ci.yml)
-[![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://lessup.github.io/heterogeneous-task-scheduler/)
+[![GitHub Release](https://img.shields.io/github/v/release/AICL-Lab/heterogeneous-task-scheduler?include_prereleases&logo=github)](https://github.com/AICL-Lab/heterogeneous-task-scheduler/releases)
+[![CI](https://img.shields.io/github/actions/workflow/status/AICL-Lab/heterogeneous-task-scheduler/ci.yml?label=CI)](https://github.com/AICL-Lab/heterogeneous-task-scheduler/actions/workflows/ci.yml)
+[![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://aicl-lab.github.io/heterogeneous-task-scheduler/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://en.cppreference.com/w/cpp/17)
 [![CUDA](https://img.shields.io/badge/CUDA-optional-green.svg)](https://developer.nvidia.com/cuda-toolkit)
@@ -21,7 +21,7 @@
 ## 快速开始
 
 ```bash
-git clone https://github.com/LessUp/heterogeneous-task-scheduler.git
+git clone https://github.com/AICL-Lab/heterogeneous-task-scheduler.git
 cd heterogeneous-task-scheduler
 
 # 贡献者和 CI 的推荐基线
@@ -41,7 +41,7 @@ ctest --preset cpu-only-debug
 
 | 资源 | 用途 |
 |------|------|
-| [GitHub Pages](https://lessup.github.io/heterogeneous-task-scheduler/) | 产品概览、架构、API 与示例 |
+| [GitHub Pages](https://aicl-lab.github.io/heterogeneous-task-scheduler/) | 产品概览、架构、API 与示例 |
 | [examples/](examples/) | 可运行示例 |
 | [specs/README.md](specs/README.md) | 持久 OpenSpec 规范入口 |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | 贡献流程与本地质量门 |

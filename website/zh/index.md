@@ -11,48 +11,26 @@ hero:
     - theme: alt
       text: 架构设计
       link: /zh/guide/architecture
+features:
+  - icon: ⚡
+    title: DAG 优先执行
+    details: 使用 TaskGraph 和 TaskBuilder 构建依赖感知的任务流水线。自动拓扑排序确保正确的执行顺序。
+    link: /zh/guide/architecture
+  - icon: 🖥️
+    title: 异构计算
+    details: 在同一任务图中无缝混合 CPU 和 GPU 任务。CUDA 流和内存池自动管理。
+    link: /zh/guide/scheduling
+  - icon: 🧩
+    title: 内存池
+    details: GPU 内存池减少分配开销。伙伴系统分配器支持自动碎片整理。
+    link: /zh/guide/memory
 ---
-
-<script setup>
-import { VPTeamMembers } from 'vitepress/theme'
-
-const coreFeatures = [
-  {
-    avatar: '/heterogeneous-task-scheduler/logo.svg',
-    name: 'DAG 优先执行',
-    desc: '使用 TaskGraph 和 TaskBuilder 构建依赖感知的任务流水线。自动拓扑排序确保正确的执行顺序。',
-    links: [
-      { icon: 'github', link: '/zh/guide/architecture' }
-    ]
-  },
-  {
-    avatar: '/heterogeneous-task-scheduler/logo.svg',
-    name: '异构计算',
-    desc: '在同一任务图中无缝混合 CPU 和 GPU 任务。CUDA 流和内存池自动管理。',
-    links: [
-      { icon: 'github', link: '/zh/guide/scheduling' }
-    ]
-  },
-  {
-    avatar: '/heterogeneous-task-scheduler/logo.svg',
-    name: '内存池',
-    desc: 'GPU 内存池减少分配开销。伙伴系统分配器支持自动碎片整理。',
-    links: [
-      { icon: 'github', link: '/zh/guide/memory' }
-    ]
-  }
-]
-</script>
-
-## 核心特性
-
-<VPTeamMembers size="small" :members="coreFeatures" />
 
 ## 快速开始
 
 ::: code-group
 ```bash [克隆]
-git clone https://github.com/LessUp/heterogeneous-task-scheduler.git
+git clone https://github.com/AICL-Lab/heterogeneous-task-scheduler.git
 cd heterogeneous-task-scheduler
 ```
 

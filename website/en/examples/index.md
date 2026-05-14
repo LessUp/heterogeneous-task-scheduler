@@ -81,7 +81,7 @@ _Coming Soon:_
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/LessUp/heterogeneous-task-scheduler.git
+git clone https://github.com/AICL-Lab/heterogeneous-task-scheduler.git
 cd heterogeneous-task-scheduler
 ```
 
@@ -125,4 +125,4 @@ examples/
 
 - [Quick Start Guide](/en/guide/quickstart) — Learn the basics
 - [API Reference](/en/api/) — Complete API documentation
-- [GitHub repository](https://github.com/LessUp/heterogeneous-task-scheduler) — Source and issues
+- [GitHub repository](https://github.com/AICL-Lab/heterogeneous-task-scheduler) — Source and issues

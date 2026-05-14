@@ -104,7 +104,7 @@ cmake --build --preset release
 
 ```bash
 # 克隆并构建
-git clone https://github.com/LessUp/heterogeneous-task-scheduler.git
+git clone https://github.com/AICL-Lab/heterogeneous-task-scheduler.git
 cd heterogeneous-task-scheduler
 scripts/build.sh --cpu-only
 

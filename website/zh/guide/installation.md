@@ -122,7 +122,7 @@ brew install llvm
 
 ```bash
 # 克隆仓库
-git clone https://github.com/LessUp/heterogeneous-task-scheduler.git
+git clone https://github.com/AICL-Lab/heterogeneous-task-scheduler.git
 cd heterogeneous-task-scheduler
 
 # 创建构建目录
@@ -139,7 +139,7 @@ make -j$(nproc)
 
 ```powershell
 # 克隆
-git clone https://github.com/LessUp/heterogeneous-task-scheduler.git
+git clone https://github.com/AICL-Lab/heterogeneous-task-scheduler.git
 cd heterogeneous-task-scheduler
 
 # 创建构建目录

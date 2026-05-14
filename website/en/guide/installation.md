@@ -15,7 +15,7 @@ This guide will help you install and set up HTS in your project.
 
 ```bash
 # Clone the repository
-git clone https://github.com/LessUp/heterogeneous-task-scheduler.git
+git clone https://github.com/AICL-Lab/heterogeneous-task-scheduler.git
 cd heterogeneous-task-scheduler
 
 # Create build directory
@@ -48,7 +48,7 @@ make -j$(nproc)
 include(FetchContent)
 FetchContent_Declare(
     hts
-    GIT_REPOSITORY https://github.com/LessUp/heterogeneous-task-scheduler.git
+    GIT_REPOSITORY https://github.com/AICL-Lab/heterogeneous-task-scheduler.git
     GIT_TAG        v1.2.0  # or your preferred version
 )
 FetchContent_MakeAvailable(hts)

@@ -127,7 +127,7 @@ Choose your installation method:
 
 **Build from source:**
 ```bash
-git clone https://github.com/LessUp/heterogeneous-task-scheduler.git
+git clone https://github.com/AICL-Lab/heterogeneous-task-scheduler.git
 cd heterogeneous-task-scheduler
 scripts/build.sh --cpu-only
 scripts/test.sh
@@ -138,7 +138,7 @@ scripts/test.sh
 include(FetchContent)
 FetchContent_Declare(
     hts
-    GIT_REPOSITORY https://github.com/LessUp/heterogeneous-task-scheduler.git
+    GIT_REPOSITORY https://github.com/AICL-Lab/heterogeneous-task-scheduler.git
     GIT_TAG        v1.2.0
 )
 FetchContent_MakeAvailable(hts)
@@ -177,14 +177,14 @@ Browse working examples:
 
 ## Community & Support
 
-- 💬 [GitHub Discussions](https://github.com/LessUp/heterogeneous-task-scheduler/discussions)
-- 🐛 [Report Issues](https://github.com/LessUp/heterogeneous-task-scheduler/issues)
-- 📦 [GitHub Releases](https://github.com/LessUp/heterogeneous-task-scheduler/releases)
-- 📖 [Repository README](https://github.com/LessUp/heterogeneous-task-scheduler#readme)
+- 💬 [GitHub Discussions](https://github.com/AICL-Lab/heterogeneous-task-scheduler/discussions)
+- 🐛 [Report Issues](https://github.com/AICL-Lab/heterogeneous-task-scheduler/issues)
+- 📦 [GitHub Releases](https://github.com/AICL-Lab/heterogeneous-task-scheduler/releases)
+- 📖 [Repository README](https://github.com/AICL-Lab/heterogeneous-task-scheduler#readme)
 
 ## License
 
-HTS is released under the [MIT License](https://github.com/LessUp/heterogeneous-task-scheduler/blob/main/LICENSE).
+HTS is released under the [MIT License](https://github.com/AICL-Lab/heterogeneous-task-scheduler/blob/main/LICENSE).
 
 ---
 

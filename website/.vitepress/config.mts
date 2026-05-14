@@ -213,7 +213,7 @@ export default withMermaid(defineConfig({
   cleanUrls: true,
   lastUpdated: true,
   sitemap: {
-    hostname: 'https://lessup.github.io/heterogeneous-task-scheduler/'
+    hostname: 'https://aicl-lab.github.io/heterogeneous-task-scheduler/'
   },
 
   head: [
@@ -227,6 +227,8 @@ export default withMermaid(defineConfig({
     ['meta', { name: 'apple-mobile-web-app-status-bar-style', content: 'black' }],
     ['meta', { property: 'og:title', content: 'HTS - Heterogeneous Task Scheduler' }],
     ['meta', { property: 'og:description', content: 'C++17 DAG scheduling library for mixed CPU and GPU workloads' }],
+    ['meta', { property: 'og:image', content: 'https://aicl-lab.github.io/heterogeneous-task-scheduler/og-image.png' }],
+    ['meta', { name: 'twitter:image', content: 'https://aicl-lab.github.io/heterogeneous-task-scheduler/og-image.png' }],
   ],
 
   markdown: {
@@ -258,7 +260,7 @@ export default withMermaid(defineConfig({
           { text: 'Design', link: '/en/design/', activeMatch: '/en/design/' },
           { text: 'Benchmarks', link: '/en/benchmarks/', activeMatch: '/en/benchmarks/' },
           { text: 'API', link: '/en/api/', activeMatch: '/en/api/' },
-          { text: 'GitHub', link: 'https://github.com/LessUp/heterogeneous-task-scheduler' }
+          { text: 'GitHub', link: 'https://github.com/AICL-Lab/heterogeneous-task-scheduler' }
         ],
         sidebar: {
           '/en/guide/': sidebarGuideEn(),
@@ -282,7 +284,7 @@ export default withMermaid(defineConfig({
           { text: '设计', link: '/zh/design/', activeMatch: '/zh/design/' },
           { text: '性能', link: '/zh/benchmarks/', activeMatch: '/zh/benchmarks/' },
           { text: 'API', link: '/zh/api/', activeMatch: '/zh/api/' },
-          { text: 'GitHub', link: 'https://github.com/LessUp/heterogeneous-task-scheduler' }
+          { text: 'GitHub', link: 'https://github.com/AICL-Lab/heterogeneous-task-scheduler' }
         ],
         sidebar: {
           '/zh/guide/': sidebarGuideZh(),
@@ -300,7 +302,7 @@ export default withMermaid(defineConfig({
         sidebarMenuLabel: '菜单',
         returnToTopLabel: '返回顶部',
         editLink: {
-          pattern: 'https://github.com/LessUp/heterogeneous-task-scheduler/edit/main/website/:path',
+          pattern: 'https://github.com/AICL-Lab/heterogeneous-task-scheduler/edit/master/website/:path',
           text: '在 GitHub 上编辑此页'
         }
       }
@@ -312,7 +314,7 @@ export default withMermaid(defineConfig({
     siteTitle: 'HTS',
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/LessUp/heterogeneous-task-scheduler' }
+      { icon: 'github', link: 'https://github.com/AICL-Lab/heterogeneous-task-scheduler' }
     ],
 
     footer: {
@@ -328,7 +330,7 @@ export default withMermaid(defineConfig({
     },
 
     editLink: {
-      pattern: 'https://github.com/LessUp/heterogeneous-task-scheduler/edit/main/website/:path',
+      pattern: 'https://github.com/AICL-Lab/heterogeneous-task-scheduler/edit/master/website/:path',
       text: 'Edit this page on GitHub'
     },
 

@@ -11,48 +11,26 @@ hero:
     - theme: alt
       text: Architecture
       link: /en/guide/architecture
+features:
+  - icon: ⚡
+    title: DAG-First Execution
+    details: Build dependency-aware pipelines with TaskGraph and TaskBuilder. Automatic topological ordering ensures correct execution sequence.
+    link: /en/guide/architecture
+  - icon: 🖥️
+    title: Heterogeneous Computing
+    details: Seamlessly mix CPU and GPU tasks in the same graph. CUDA streams and memory pools managed automatically when available.
+    link: /en/guide/scheduling
+  - icon: 🧩
+    title: Memory Pool
+    details: GPU memory pooling reduces allocation overhead. Buddy system allocator with automatic defragmentation.
+    link: /en/guide/memory
 ---
-
-<script setup>
-import { VPTeamMembers } from 'vitepress/theme'
-
-const coreFeatures = [
-  {
-    avatar: '/heterogeneous-task-scheduler/logo.svg',
-    name: 'DAG-First Execution',
-    desc: 'Build dependency-aware pipelines with TaskGraph and TaskBuilder. Automatic topological ordering ensures correct execution sequence.',
-    links: [
-      { icon: 'github', link: '/en/guide/architecture' }
-    ]
-  },
-  {
-    avatar: '/heterogeneous-task-scheduler/logo.svg',
-    name: 'Heterogeneous Computing',
-    desc: 'Seamlessly mix CPU and GPU tasks in the same graph. CUDA streams and memory pools managed automatically when available.',
-    links: [
-      { icon: 'github', link: '/en/guide/scheduling' }
-    ]
-  },
-  {
-    avatar: '/heterogeneous-task-scheduler/logo.svg',
-    name: 'Memory Pool',
-    desc: 'GPU memory pooling reduces allocation overhead. Buddy system allocator with automatic defragmentation.',
-    links: [
-      { icon: 'github', link: '/en/guide/memory' }
-    ]
-  }
-]
-</script>
-
-## Core Features
-
-<VPTeamMembers size="small" :members="coreFeatures" />
 
 ## Quick Start
 
 ::: code-group
 ```bash [Clone]
-git clone https://github.com/LessUp/heterogeneous-task-scheduler.git
+git clone https://github.com/AICL-Lab/heterogeneous-task-scheduler.git
 cd heterogeneous-task-scheduler
 ```
 
