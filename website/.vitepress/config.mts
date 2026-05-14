@@ -90,7 +90,8 @@ function sidebarResearchEn() {
     {
       text: 'Research',
       items: [
-        { text: 'Related Work', link: '/en/research/related-work' }
+        { text: 'Related Work', link: '/en/research/related-work' },
+        { text: 'References', link: '/en/research/references' }
       ]
     }
   ]
@@ -100,12 +101,15 @@ function sidebarWhitepaperEn() {
   return [
     {
       text: 'Whitepaper',
+      collapsed: false,
       items: [
         { text: 'Overview', link: '/en/whitepaper/' },
         { text: 'DAG Scheduling', link: '/en/whitepaper/dag-scheduling' },
         { text: 'Memory Management', link: '/en/whitepaper/memory-management' },
         { text: 'Heterogeneous Execution', link: '/en/whitepaper/heterogeneous-execution' },
-        { text: 'Performance Analysis', link: '/en/whitepaper/performance-analysis' }
+        { text: 'Performance Analysis', link: '/en/whitepaper/performance-analysis' },
+        { text: 'Complexity Analysis', link: '/en/whitepaper/complexity-analysis' },
+        { text: 'Performance Modeling', link: '/en/whitepaper/performance-modeling' }
       ]
     }
   ]
@@ -184,7 +188,8 @@ function sidebarResearchZh() {
     {
       text: '研究',
       items: [
-        { text: '相关工作', link: '/zh/research/related-work' }
+        { text: '相关工作', link: '/zh/research/related-work' },
+        { text: '学术论文引用', link: '/zh/research/references' }
       ]
     }
   ]
@@ -194,12 +199,15 @@ function sidebarWhitepaperZh() {
   return [
     {
       text: '技术白皮书',
+      collapsed: false,
       items: [
         { text: '概述', link: '/zh/whitepaper/' },
         { text: 'DAG 调度', link: '/zh/whitepaper/dag-scheduling' },
         { text: '内存管理', link: '/zh/whitepaper/memory-management' },
         { text: '异构执行', link: '/zh/whitepaper/heterogeneous-execution' },
-        { text: '性能分析', link: '/zh/whitepaper/performance-analysis' }
+        { text: '性能分析', link: '/zh/whitepaper/performance-analysis' },
+        { text: '复杂度分析', link: '/zh/whitepaper/complexity-analysis' },
+        { text: '性能建模', link: '/zh/whitepaper/performance-modeling' }
       ]
     }
   ]

@@ -58,7 +58,41 @@ void process() {
 [____________________24KB________________][__16KB__]  (合并)
 ```
 
-### 2.2 数据结构
+### 2.2 分配流程
+
+```mermaid
+flowchart TB
+    Start[请求 n 字节] --> Round[向上舍入到 2^k]
+    Round --> Search[在层级 k 搜索空闲块]
+    Search --> Found{找到?}
+
+    Found -->|是| Split{块大小合适?}
+    Found -->|否| Larger[从更大层级搜索]
+
+    Split -->|是| Return[返回块地址]
+    Split -->|否| SplitBlock[分割块]
+
+    SplitBlock --> Buddy[保存伙伴到空闲列表]
+    Buddy --> Return
+
+    Larger --> CheckLevel{有更大块?}
+    CheckLevel -->|是| SplitLarger[分割大块]
+    CheckLevel -->|否| Fail[返回 nullptr]
+
+    SplitLarger --> Search
+
+    Return --> Use[任务使用内存]
+    Use --> Free[释放块]
+    Free --> CheckBuddy{伙伴块空闲?}
+    CheckBuddy -->|是| Merge[合并伙伴块]
+    CheckBuddy -->|否| Mark[标记为空闲]
+    Merge --> CheckBuddy2{伙伴块空闲?}
+    CheckBuddy2 -->|是| Merge
+    CheckBuddy2 -->|否| Mark
+    Mark --> End[完成]
+```
+
+### 2.3 数据结构
 
 ```cpp
 class BuddyAllocator {
