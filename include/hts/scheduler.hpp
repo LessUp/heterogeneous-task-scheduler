@@ -1,11 +1,7 @@
 #pragma once
 
-#include "hts/dependency_manager.hpp"
 #include "hts/event_system.hpp"
-#include "hts/execution_engine.hpp"
-#include "hts/memory_pool.hpp"
 #include "hts/profiler.hpp"
-#include "hts/scheduling_policy.hpp"
 #include "hts/task_graph.hpp"
 #include "hts/types.hpp"
 #include <atomic>
@@ -17,6 +13,11 @@
 #include <string>
 
 namespace hts {
+
+class DependencyManager;
+class ExecutionEngine;
+class MemoryPool;
+class SchedulingPolicy;
 
 /// Scheduler coordinates task graph execution across CPU and GPU
 class Scheduler {

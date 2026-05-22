@@ -18,13 +18,18 @@ class GraphSerializer {
         oss << "{\n";
         oss << "  \"version\": \"1.0\",\n";
 
-        const auto &tasks = graph.tasks();
-        if (tasks.empty()) {
+        const auto task_ids = graph.task_ids();
+        const size_t task_count = task_ids.size();
+        if (task_ids.empty()) {
             oss << "  \"tasks\": [],\n";
         } else {
             oss << "  \"tasks\": [\n";
             size_t i = 0;
-            for (const auto &[id, task] : tasks) {
+            for (TaskId id : task_ids) {
+                auto task = graph.get_task(id);
+                if (!task) {
+                    continue;
+                }
                 oss << "    {\n";
                 oss << "      \"id\": " << id << ",\n";
                 oss << "      \"name\": \"" << escape_string(task->name()) << "\",\n";
@@ -36,7 +41,7 @@ class GraphSerializer {
                 oss << "      \"has_gpu\": " << (task->has_gpu_function() ? "true" : "false")
                     << "\n";
                 oss << "    }";
-                if (++i < tasks.size())
+                if (++i < task_count)
                     oss << ",";
                 oss << "\n";
             }
@@ -44,7 +49,7 @@ class GraphSerializer {
         }
 
         std::vector<std::pair<TaskId, TaskId>> deps;
-        for (const auto &[id, task] : tasks) {
+        for (TaskId id : task_ids) {
             auto successors = graph.get_successors(id);
             for (const auto &succ : successors) {
                 deps.push_back({id, succ->id()});
@@ -85,10 +90,14 @@ class GraphSerializer {
         oss << "  rankdir=TB;\n";
         oss << "  node [shape=box, style=filled];\n\n";
 
-        const auto &tasks = graph.tasks();
+        const auto task_ids = graph.task_ids();
 
         // Nodes
-        for (const auto &[id, task] : tasks) {
+        for (TaskId id : task_ids) {
+            auto task = graph.get_task(id);
+            if (!task) {
+                continue;
+            }
             std::string color = "lightblue";
             if (task->preferred_device() == DeviceType::GPU) {
                 color = "lightgreen";
@@ -106,7 +115,7 @@ class GraphSerializer {
         oss << "\n";
 
         // Edges
-        for (const auto &[id, task] : tasks) {
+        for (TaskId id : task_ids) {
             auto successors = graph.get_successors(id);
             for (const auto &succ : successors) {
                 oss << "  task" << id << " -> task" << succ->id() << ";\n";

@@ -77,6 +77,45 @@ TEST(TaskTest, ExecutionTime) {
     EXPECT_EQ(task.execution_time().count(), 1000000);
 }
 
+TEST(TaskTest, DefinitionAndRuntimeStateAreSeparated) {
+    Task task(7, DeviceType::Any);
+    task.set_name("seam-check");
+    task.set_priority(TaskPriority::Critical);
+    task.set_preferred_device(DeviceType::GPU);
+
+    const auto &definition_before = task.definition();
+    EXPECT_EQ(definition_before.id, 7);
+    EXPECT_EQ(definition_before.name, "seam-check");
+    EXPECT_EQ(definition_before.priority, TaskPriority::Critical);
+    EXPECT_EQ(definition_before.preferred_device, DeviceType::GPU);
+
+    task.mark_ready();
+    task.mark_running(DeviceType::CPU);
+    task.mark_completed(std::chrono::nanoseconds(42));
+
+    const auto runtime = task.runtime_state();
+    EXPECT_EQ(runtime.state, TaskState::Completed);
+    EXPECT_EQ(runtime.actual_device, DeviceType::CPU);
+    EXPECT_EQ(runtime.execution_time, std::chrono::nanoseconds(42));
+    EXPECT_FALSE(runtime.cancelled);
+
+    const auto &definition_after = task.definition();
+    EXPECT_EQ(definition_after.id, definition_before.id);
+    EXPECT_EQ(definition_after.name, definition_before.name);
+    EXPECT_EQ(definition_after.priority, definition_before.priority);
+    EXPECT_EQ(definition_after.preferred_device, definition_before.preferred_device);
+}
+
+TEST(TaskTest, MarkCancelledUpdatesRuntimeState) {
+    Task task(8, DeviceType::CPU);
+
+    task.mark_cancelled();
+
+    const auto runtime = task.runtime_state();
+    EXPECT_TRUE(runtime.cancelled);
+    EXPECT_EQ(runtime.state, TaskState::Cancelled);
+}
+
 TEST(TaskContextTest, ErrorReporting) {
     TaskContext ctx;
 

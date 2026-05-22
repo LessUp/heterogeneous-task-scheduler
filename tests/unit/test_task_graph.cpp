@@ -1,4 +1,5 @@
 #include "hts/task_graph.hpp"
+#include <algorithm>
 #include <gtest/gtest.h>
 
 using namespace hts;
@@ -137,6 +138,19 @@ TEST(TaskGraphTest, GetTask) {
 
     auto nonexistent = graph.get_task(999);
     EXPECT_EQ(nonexistent, nullptr);
+}
+
+TEST(TaskGraphTest, TaskIdsEnumerateAllTasks) {
+    TaskGraph graph;
+
+    auto t1 = graph.add_task();
+    auto t2 = graph.add_task();
+
+    auto ids = graph.task_ids();
+
+    ASSERT_EQ(ids.size(), 2);
+    EXPECT_NE(std::find(ids.begin(), ids.end(), t1->id()), ids.end());
+    EXPECT_NE(std::find(ids.begin(), ids.end(), t2->id()), ids.end());
 }
 
 TEST(TaskGraphTest, Clear) {

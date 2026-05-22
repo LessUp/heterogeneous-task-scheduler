@@ -205,3 +205,16 @@ TEST_F(StreamManagerTest, AvailableStreamsTracking) {
     manager_->release_stream(s2);
     EXPECT_EQ(manager_->available_streams(), manager_->num_streams());
 }
+
+TEST_F(StreamManagerTest, RejectsDuplicateRelease) {
+    cudaStream_t stream = manager_->acquire_stream();
+    manager_->release_stream(stream);
+
+    EXPECT_THROW(manager_->release_stream(stream), std::invalid_argument);
+}
+
+TEST_F(StreamManagerTest, RejectsForeignRelease) {
+    cudaStream_t foreign = reinterpret_cast<cudaStream_t>(0x1234);
+
+    EXPECT_THROW(manager_->release_stream(foreign), std::invalid_argument);
+}

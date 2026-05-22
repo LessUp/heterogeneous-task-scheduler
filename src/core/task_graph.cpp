@@ -216,6 +216,17 @@ TaskGraph::TaskPtr TaskGraph::get_task(TaskId id) const {
     return (it != tasks_.end()) ? it->second : nullptr;
 }
 
+std::vector<TaskId> TaskGraph::task_ids() const {
+    std::lock_guard<std::mutex> lock(mutex_);
+
+    std::vector<TaskId> ids;
+    ids.reserve(tasks_.size());
+    for (const auto &[id, _] : tasks_) {
+        ids.push_back(id);
+    }
+    return ids;
+}
+
 void TaskGraph::clear() {
     std::lock_guard<std::mutex> lock(mutex_);
 

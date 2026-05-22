@@ -68,6 +68,9 @@ FetchContent_MakeAvailable(rapidcheck)
 
 # CPU-only sources (always built)
 set(HTS_CPU_SOURCES
+    src/core/execution_engine.cpp
+    src/core/scheduler.cpp
+    src/core/scheduling_policy.cpp
     src/core/task.cpp
     src/core/task_context.cpp
     src/core/task_graph.cpp
@@ -80,8 +83,6 @@ set(HTS_CPU_SOURCES
 set(HTS_CUDA_SOURCES
     src/cuda/memory_pool.cu
     src/cuda/stream_manager.cu
-    src/cuda/execution_engine.cu
-    src/cuda/scheduler.cu
 )
 
 set(HTS_HEADERS

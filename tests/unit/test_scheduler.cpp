@@ -1,4 +1,5 @@
 #include "hts/scheduler.hpp"
+#include "hts/scheduling_policy.hpp"
 #include <atomic>
 #include <chrono>
 #include <gtest/gtest.h>
@@ -24,6 +25,20 @@ class SchedulerTest : public ::testing::Test {
 
     std::unique_ptr<Scheduler> scheduler_;
 };
+
+TEST(SchedulerConfigTest, RejectsZeroCpuThreadCount) {
+    SchedulerConfig config;
+    config.cpu_thread_count = 0;
+
+    EXPECT_THROW((void)Scheduler{config}, std::invalid_argument);
+}
+
+TEST(SchedulerConfigTest, RejectsZeroGpuStreamCount) {
+    SchedulerConfig config;
+    config.gpu_stream_count = 0;
+
+    EXPECT_THROW((void)Scheduler{config}, std::invalid_argument);
+}
 
 // Test 1: Construction and destruction
 TEST_F(SchedulerTest, Construction) {
@@ -223,6 +238,9 @@ TEST_F(SchedulerTest, PolicySetting) {
 
     scheduler_->set_policy(std::make_unique<RoundRobinPolicy>());
     EXPECT_STREQ(scheduler_->policy_name(), "Round-Robin");
+
+    scheduler_->set_policy(std::make_unique<ShortestJobFirstPolicy>());
+    EXPECT_STREQ(scheduler_->policy_name(), "Shortest-Job-First");
 }
 
 // Test 13: Multiple independent tasks
@@ -272,4 +290,19 @@ TEST_F(SchedulerTest, ProfilingToggle) {
     // Should have profiling data
     std::string timeline = scheduler_->generate_timeline_json();
     EXPECT_FALSE(timeline.empty());
+}
+
+TEST_F(SchedulerTest, ConfiguredPolicyStillExecutesGraph) {
+    scheduler_->set_policy(std::make_unique<ShortestJobFirstPolicy>());
+
+    std::atomic<int> completed{0};
+    for (int i = 0; i < 3; ++i) {
+        auto task = scheduler_->graph().add_task(DeviceType::CPU);
+        task->set_priority(i == 0 ? TaskPriority::High : TaskPriority::Normal);
+        task->set_cpu_function([&completed](TaskContext &ctx) { completed++; });
+    }
+
+    scheduler_->execute();
+
+    EXPECT_EQ(completed, 3);
 }

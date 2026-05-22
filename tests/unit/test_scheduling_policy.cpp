@@ -98,3 +98,10 @@ TEST_F(SchedulingPolicyTest, PolicyNames) {
     EXPECT_STREQ(RoundRobinPolicy().name(), "Round-Robin");
     EXPECT_STREQ(ShortestJobFirstPolicy().name(), "Shortest-Job-First");
 }
+
+TEST_F(SchedulingPolicyTest, ShortestJobFirstPolicySelectsByLoadForAnyTask) {
+    ShortestJobFirstPolicy policy;
+
+    EXPECT_EQ(policy.select_device(*any_task, 0.9, 0.1), DeviceType::GPU);
+    EXPECT_EQ(policy.select_device(*any_task, 0.1, 0.9), DeviceType::CPU);
+}

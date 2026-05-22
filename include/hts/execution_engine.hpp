@@ -85,10 +85,12 @@ class ExecutionEngine {
     void cpu_worker_loop();
 
     /// Execute task on CPU
-    void execute_on_cpu(std::shared_ptr<Task> task, std::promise<void> promise);
+    void execute_on_cpu(std::shared_ptr<Task> task,
+                        const std::shared_ptr<std::promise<void>> &promise);
 
     /// Execute task on GPU
-    void execute_on_gpu(std::shared_ptr<Task> task, std::promise<void> promise);
+    void execute_on_gpu(std::shared_ptr<Task> task,
+                        const std::shared_ptr<std::promise<void>> &promise);
 
     /// Get or create task context
     TaskContext &get_context(TaskId id);

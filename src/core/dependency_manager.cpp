@@ -17,13 +17,12 @@ void DependencyManager::init_from_graph(const TaskGraph &graph) {
     blocked_.clear();
 
     // Snapshot successors and compute in-degrees (pending deps).
-    for (const auto &[id, task] : graph.tasks()) {
+    for (TaskId id : graph.task_ids()) {
         successors_[id] = {};
         pending_deps_[id] = 0;
     }
 
-    for (const auto &[from, task_ptr] : graph.tasks()) {
-        (void)task_ptr;
+    for (TaskId from : graph.task_ids()) {
         for (const auto &succ_task : graph.get_successors(from)) {
             TaskId succ = succ_task->id();
             successors_[from].push_back(succ);
