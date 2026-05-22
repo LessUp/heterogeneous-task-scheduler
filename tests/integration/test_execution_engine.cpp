@@ -31,6 +31,11 @@ class ExecutionEngineTest : public ::testing::Test {
     TaskId task_id_counter_{0};
 };
 
+TEST(ExecutionEngineConfigTest, RejectsZeroCpuThreadCount) {
+    MemoryPool pool(1024 * 1024);
+    EXPECT_THROW((void)ExecutionEngine(pool, 0, 1), std::invalid_argument);
+}
+
 // Test 1: Construction
 TEST_F(ExecutionEngineTest, Construction) {
     EXPECT_NE(engine_, nullptr);

@@ -63,9 +63,9 @@ class TaskGraph {
     /// @return Task pointer or nullptr if not found
     TaskPtr get_task(TaskId id) const;
 
-    /// Get all tasks
-    /// @return Map of all tasks
-    const std::unordered_map<TaskId, TaskPtr> &tasks() const { return tasks_; }
+    /// Get all task IDs
+    /// @return Snapshot of task IDs currently in the graph
+    std::vector<TaskId> task_ids() const;
 
     /// Get number of tasks
     size_t size() const { return tasks_.size(); }

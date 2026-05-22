@@ -63,6 +63,8 @@ class StreamManager {
   private:
     std::vector<cudaStream_t> streams_;
     std::queue<cudaStream_t> available_streams_;
+    std::unordered_set<cudaStream_t> leased_streams_;
+    std::unordered_set<cudaStream_t> owned_streams_;
     std::unordered_set<cudaEvent_t> events_;
 
     mutable std::mutex mutex_;

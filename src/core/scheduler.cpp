@@ -1,21 +1,49 @@
 #include "hts/scheduler.hpp"
-#include <algorithm>
+
+#include "hts/dependency_manager.hpp"
+#include "hts/execution_engine.hpp"
+#include "hts/memory_pool.hpp"
+#include "hts/scheduling_policy.hpp"
+
 #include <iomanip>
 #include <sstream>
+#include <stdexcept>
+#include <thread>
+#include <unordered_map>
 
 namespace hts {
 
+namespace {
+
+void validate_scheduler_config(const SchedulerConfig &config) {
+    if (config.cpu_thread_count == 0) {
+        throw std::invalid_argument("Scheduler requires at least one CPU worker thread");
+    }
+    if (config.gpu_stream_count == 0) {
+        throw std::invalid_argument("Scheduler requires at least one GPU stream");
+    }
+}
+
+struct ExecutionResetGuard {
+    explicit ExecutionResetGuard(std::atomic<bool> &flag) : flag_(flag) {}
+    ~ExecutionResetGuard() { flag_ = false; }
+
+    std::atomic<bool> &flag_;
+};
+
+} // namespace
+
 Scheduler::Scheduler(const SchedulerConfig &config)
     : config_(config), policy_(std::make_unique<DefaultSchedulingPolicy>()) {
+    validate_scheduler_config(config_);
+
     memory_pool_ =
         std::make_unique<MemoryPool>(config.memory_pool_size, config.allow_memory_growth);
-
     engine_ = std::make_unique<ExecutionEngine>(*memory_pool_, config.cpu_thread_count,
                                                 config.gpu_stream_count);
 }
 
 Scheduler::~Scheduler() {
-    // Wait for any ongoing execution
     if (executing_) {
         engine_->wait_all();
     }
@@ -23,7 +51,7 @@ Scheduler::~Scheduler() {
 
 void Scheduler::execute() {
     auto future = execute_async();
-    future.get(); // Block until complete
+    future.get();
 }
 
 std::future<void> Scheduler::execute_async() {
@@ -38,24 +66,19 @@ void Scheduler::execute_internal() {
     }
 
     executing_ = true;
+    ExecutionResetGuard reset_guard(executing_);
 
-    // Emit graph start event if profiling is enabled
     if (profiling_enabled_) {
         event_system_.graph_started();
     }
 
-    // Initialize dependency manager
     dep_manager_ = std::make_unique<DependencyManager>(graph_);
-
-    // Reset stats
     stats_ = ExecutionStats{};
     timeline_ = ExecutionTimeline{};
     timeline_.graph_start = std::chrono::high_resolution_clock::now();
 
-    // Track pending futures
     std::unordered_map<TaskId, std::future<void>> task_futures;
 
-    // Initial scheduling of root tasks
     auto ready = dep_manager_->get_ready_tasks();
     std::vector<std::shared_ptr<Task>> ready_tasks;
     ready_tasks.reserve(ready.size());
@@ -68,28 +91,22 @@ void Scheduler::execute_internal() {
     policy_->prioritize(ready_tasks);
     for (auto &task : ready_tasks) {
         DeviceType device = select_device(*task);
-
         if (profiling_enabled_) {
             event_system_.task_started(task->id(), device, task->name());
         }
-
         task_futures[task->id()] = engine_->execute_task(task, device);
     }
 
-    // Process until all tasks complete
     while (!task_futures.empty()) {
-        // Check for completed tasks
         std::vector<TaskId> completed;
 
         for (auto &[id, future] : task_futures) {
             if (future.wait_for(std::chrono::milliseconds(1)) == std::future_status::ready) {
                 auto task = graph_.get_task(id);
-
                 try {
-                    future.get(); // May throw if task failed
+                    future.get();
                     on_task_completed(id);
 
-                    // Record timeline
                     if (task) {
                         auto end = std::chrono::high_resolution_clock::now();
                         auto start = end - task->execution_time();
@@ -119,12 +136,10 @@ void Scheduler::execute_internal() {
             }
         }
 
-        // Remove completed futures
         for (TaskId id : completed) {
             task_futures.erase(id);
         }
 
-        // Schedule newly ready tasks
         auto newly_ready = dep_manager_->get_ready_tasks();
         std::vector<std::shared_ptr<Task>> newly_ready_tasks;
         newly_ready_tasks.reserve(newly_ready.size());
@@ -140,35 +155,28 @@ void Scheduler::execute_internal() {
         policy_->prioritize(newly_ready_tasks);
         for (auto &task : newly_ready_tasks) {
             DeviceType device = select_device(*task);
-
             if (profiling_enabled_) {
                 event_system_.task_started(task->id(), device, task->name());
             }
-
             task_futures[task->id()] = engine_->execute_task(task, device);
         }
 
-        // Small sleep to avoid busy waiting
-        if (task_futures.empty())
+        if (task_futures.empty()) {
             break;
+        }
         std::this_thread::sleep_for(std::chrono::microseconds(100));
     }
 
     timeline_.graph_end = std::chrono::high_resolution_clock::now();
     stats_.total_time = std::chrono::duration_cast<std::chrono::nanoseconds>(timeline_.graph_end -
                                                                              timeline_.graph_start);
-
-    // Calculate utilization (simplified)
     stats_.cpu_utilization = engine_->get_cpu_load();
     stats_.gpu_utilization = engine_->get_gpu_load();
     stats_.memory_stats = memory_pool_->get_stats();
 
-    // Emit graph completion event if profiling is enabled
     if (profiling_enabled_) {
         event_system_.graph_completed();
     }
-
-    executing_ = false;
 }
 
 DeviceType Scheduler::select_device(const Task &task) {
@@ -180,7 +188,7 @@ void Scheduler::on_task_completed(TaskId id) {
     for (TaskId ready_id : newly_ready) {
         auto task = graph_.get_task(ready_id);
         if (task) {
-            task->set_state(TaskState::Ready);
+            task->mark_ready();
         }
     }
 }
@@ -190,7 +198,7 @@ void Scheduler::on_task_failed(TaskId id, const std::string &error) {
     for (TaskId blocked_id : blocked) {
         auto task = graph_.get_task(blocked_id);
         if (task) {
-            task->set_state(TaskState::Blocked);
+            task->mark_blocked();
         }
     }
 
@@ -244,14 +252,14 @@ std::string Scheduler::generate_timeline_json() const {
         oss << "      \"end_ms\": " << to_ms(event.end_time) << ",\n";
         oss << "      \"state\": \"" << static_cast<int>(event.final_state) << "\"\n";
         oss << "    }";
-        if (i < timeline_.events.size() - 1)
+        if (i < timeline_.events.size() - 1) {
             oss << ",";
+        }
         oss << "\n";
     }
 
     oss << "  ]\n";
     oss << "}\n";
-
     return oss.str();
 }
 
@@ -264,8 +272,9 @@ const char *Scheduler::policy_name() const {
 }
 
 void Scheduler::set_profiling(bool enabled) {
-    if (enabled == profiling_enabled_)
+    if (enabled == profiling_enabled_) {
         return;
+    }
 
     profiling_enabled_ = enabled;
     if (enabled) {

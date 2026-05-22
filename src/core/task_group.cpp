@@ -73,7 +73,7 @@ void TaskGroup::set_device(DeviceType device) {
 
 void TaskGroup::cancel() {
     for (auto &task : tasks_) {
-        task->cancel();
+        task->mark_cancelled();
     }
 }
 

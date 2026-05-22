@@ -5,6 +5,10 @@
 namespace hts {
 
 StreamManager::StreamManager(size_t num_streams) {
+    if (num_streams == 0) {
+        throw std::invalid_argument("StreamManager requires at least one stream");
+    }
+
     streams_.reserve(num_streams);
 
     for (size_t i = 0; i < num_streams; ++i) {
@@ -19,6 +23,7 @@ StreamManager::StreamManager(size_t num_streams) {
                                      std::string(cudaGetErrorString(err)));
         }
         streams_.push_back(stream);
+        owned_streams_.insert(stream);
         available_streams_.push(stream);
     }
 }
@@ -43,6 +48,7 @@ cudaStream_t StreamManager::acquire_stream() {
 
     cudaStream_t stream = available_streams_.front();
     available_streams_.pop();
+    leased_streams_.insert(stream);
 
     return stream;
 }
@@ -50,6 +56,14 @@ cudaStream_t StreamManager::acquire_stream() {
 void StreamManager::release_stream(cudaStream_t stream) {
     std::lock_guard<std::mutex> lock(mutex_);
 
+    if (!owned_streams_.count(stream)) {
+        throw std::invalid_argument("Cannot release foreign CUDA stream");
+    }
+    if (!leased_streams_.count(stream)) {
+        throw std::invalid_argument("Cannot release CUDA stream that is not currently leased");
+    }
+
+    leased_streams_.erase(stream);
     available_streams_.push(stream);
     cv_.notify_one();
 }
