@@ -1,426 +1,180 @@
 # Contributing to Heterogeneous Task Scheduler (HTS)
 
-感谢你对 HTS 项目的关注！我们欢迎各种形式的贡献。
-
 [English](#english) | [中文](#中文)
 
 ---
 
 ## English
 
-### Table of Contents
+### Principles
 
-- [Code of Conduct](#code-of-conduct)
-- [Spec-Driven Development](#spec-driven-development)
-- [Development Setup](#development-setup)
-- [Code Style](#code-style)
-- [Commit Convention](#commit-convention)
-- [Pull Request Process](#pull-request-process)
-- [Reporting Bugs](#reporting-bugs)
-- [Feature Requests](#feature-requests)
+- Favor simplification, correctness, and maintenance reduction over feature sprawl.
+- Keep public claims in sync across code, README, GitHub Pages, and `CHANGELOG.md`.
+- Preserve unrelated work when preparing a change.
 
-### Spec-Driven Development
-
-This project uses [OpenSpec](https://github.com/Fission-AI/OpenSpec) as the contract for material
-repository changes.
-
-| Path | Purpose |
-|------|---------|
-| `openspec/specs/` | Durable capability specs archived into the main repo state |
-| `openspec/changes/` | Active proposals, design docs, delta specs, and task lists |
-| `specs` | Compatibility symlink to `openspec/specs` |
-
-**Before contributing material changes:**
-
-1. Use `/opsx:explore` if scope or design is unclear
-2. Use `/opsx:propose "<change-name>"` for non-trivial code, docs, workflow, or product-surface work
-3. Refine `proposal.md`, `design.md`, `specs/`, and `tasks.md`
-4. Use `/opsx:apply <change-name>` to implement tasks in order
-5. Use `/review` at major milestones
-6. Use `/opsx:archive <change-name>` only after validation and repo alignment
-
-See [AGENTS.md](AGENTS.md) for the HTS-specific closeout workflow.
-
-### Code of Conduct
-
-This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md). By participating, you agree to uphold this code.
-
-### Development Setup
+### Development setup
 
 #### Requirements
 
 | Requirement | Version |
 |-------------|---------|
 | CMake | >= 3.18 |
-| CUDA Toolkit | >= 11.0 |
+| CUDA Toolkit | >= 11.0 (optional for CPU-only development) |
 | C++ Compiler | GCC 8+, Clang 7+, or MSVC 2019+ |
-| Git | Any recent version |
+| Node.js | 20.x for the docs site |
 
-#### Build Steps
+#### Recommended baseline
 
 ```bash
-# Clone the repository
-git clone https://github.com/LessUp/heterogeneous-task-scheduler.git
+git clone https://github.com/AICL-Lab/heterogeneous-task-scheduler.git
 cd heterogeneous-task-scheduler
 
-# Default validation path
 scripts/build.sh --cpu-only
 scripts/test.sh
+scripts/format.sh --check
+scripts/analyze.sh
+cd website && npm run docs:build
 ```
 
-#### Optional local guards
+For a local workspace with compile commands:
 
 ```bash
-scripts/install-hooks.sh
+cmake --preset cpu-only-debug
+cmake --build --preset cpu-only-debug
+ctest --preset cpu-only-debug
 ```
 
-Use `/review` before opening a PR for broad governance, workflow, documentation, or multi-file code
-refactors.
+### Code style
 
-#### Run Examples
+| Area | Rule |
+|------|------|
+| Naming | PascalCase for types, snake_case for functions and variables |
+| Formatting | 4 spaces, K&R braces, line width 100 |
+| Public APIs | Use Doxygen-style comments when documentation adds real value |
 
-```bash
-./build/simple_dag
-./build/parallel_pipeline
-./build/fluent_api
-./build/advanced_features
-```
+Prefer focused edits, explicit invariants, and tests that cover real behavior rather than mocks.
 
-### Code Style
+### Documentation expectations
 
-#### C++ Naming Conventions
+- Update `README.md` / `README.zh-CN.md` when contributor-facing guidance changes.
+- Update GitHub Pages content when public behavior or examples change.
+- Keep release history only in the root `CHANGELOG.md`.
 
-| Type | Convention | Example |
-|------|------------|---------|
-| Classes | PascalCase | `TaskGraph`, `MemoryPool` |
-| Functions | snake_case | `add_task()`, `get_stats()` |
-| Variables | snake_case | `task_id`, `memory_pool` |
-| Constants | UPPER_SNAKE_CASE | `MAX_THREADS`, `MIN_BLOCK_SIZE` |
-| Private members | trailing underscore | `id_`, `state_` |
-| Namespaces | lowercase | `hts` |
+### Pull requests
 
-#### Formatting
+Before opening a PR:
 
-- **Indentation**: 4 spaces (no tabs)
-- **Line width**: 100 characters
-- **Braces**: K&R style (opening brace on same line)
+1. Keep the change scoped to one coherent problem.
+2. Add or update tests for code changes.
+3. Run the validation baseline.
+4. Update documentation when behavior or workflows change.
+5. Use a clear Conventional Commit-style subject line when committing.
 
-#### Header File Guidelines
+#### PR checklist
 
-```cpp
-#pragma once
+- [ ] Build and tests pass
+- [ ] Formatting and analysis pass
+- [ ] Docs updated when needed
+- [ ] `CHANGELOG.md` updated when needed
 
-// 1. Project headers
-#include "hts/types.hpp"
+### Reporting bugs
 
-// 2. C standard library
-#include <cstdint>
+Please include:
 
-// 3. C++ standard library
-#include <memory>
-#include <string>
-#include <vector>
+- OS, compiler, CUDA version, and build mode
+- Reproduction steps
+- Expected behavior and actual behavior
+- Minimal code sample when possible
 
-// 4. Third-party libraries
-// (rarely needed in headers)
+### Feature requests
 
-namespace hts {
-
-/// @brief Brief description of the class
-/// @details Detailed description if needed
-class ExampleClass {
-public:
-    /// @brief Brief description of the method
-    /// @param param_name Description of parameter
-    /// @return Description of return value
-    /// @throws ExceptionType When this exception is thrown
-    void method(int param_name);
-
-private:
-    int private_member_;
-};
-
-} // namespace hts
-```
-
-#### Documentation Comments
-
-Use Doxygen-style comments for all public APIs:
-
-```cpp
-/// @brief Add a new task to the graph
-/// @param device Preferred execution device (CPU, GPU, or Any)
-/// @return Shared pointer to the created task
-/// @note The task is not scheduled until execute() is called
-TaskPtr add_task(DeviceType device = DeviceType::Any);
-```
-
-### Commit Convention
-
-We follow [Conventional Commits](https://www.conventionalcommits.org/):
-
-```
-<type>(<scope>): <description>
-
-[optional body]
-
-[optional footer(s)]
-```
-
-#### Types
-
-| Type | Description |
-|------|-------------|
-| `feat` | New feature |
-| `fix` | Bug fix |
-| `docs` | Documentation changes |
-| `style` | Code style changes (formatting, no logic change) |
-| `refactor` | Code refactoring |
-| `perf` | Performance improvements |
-| `test` | Adding or modifying tests |
-| `chore` | Build process or tooling changes |
-
-#### Examples
-
-```
-feat(scheduler): add support for task priorities
-
-Add TaskPriority enum and priority-based scheduling.
-Tasks with higher priority are executed first when
-multiple tasks are ready.
-
-Closes #123
-```
-
-```
-fix(memory-pool): fix memory leak in block coalescing
-
-The coalesce_blocks() function was not properly merging
-adjacent free blocks, causing memory fragmentation.
-```
-
-### Pull Request Process
-
-1. **Fork** the repository and create your branch:
-
-   ```bash
-   git checkout -b feature/your-feature-name
-   # or
-   git checkout -b fix/your-bug-fix
-   ```
-
-2. **Make changes** and ensure:
-   - Code follows style guidelines
-   - All tests pass
-   - New features have tests
-   - Documentation is updated
-
-3. **Commit** with conventional commit messages:
-
-   ```bash
-   git add .
-   git commit -m "feat(component): description"
-   ```
-
-4. **Push** to your fork:
-
-   ```bash
-   git push origin feature/your-feature-name
-   ```
-
-5. **Create Pull Request** on GitHub
-
-#### PR Checklist
-
-- [ ] Code follows project style guidelines
-- [ ] All tests pass (`ctest --output-on-failure`)
-- [ ] New features have corresponding tests
-- [ ] Documentation updated (if applicable)
-- [ ] CHANGELOG.md updated (if applicable)
-- [ ] Commit messages follow Conventional Commits
-
-### Reporting Bugs
-
-Before reporting, please:
-
-1. Search existing issues
-2. Verify the issue is reproducible
-
-Include in your report:
-
-- **Environment**: OS, compiler, CUDA version
-- **Steps to reproduce**: Detailed instructions
-- **Expected behavior**: What should happen
-- **Actual behavior**: What actually happens
-- **Minimal code example**: If possible
-
-### Feature Requests
-
-We welcome feature suggestions! Please:
-
-1. Search existing issues first
-2. Describe the use case and problem to solve
-3. Propose a solution if you have one in mind
+Describe the problem first, then the proposed change. Requests that simplify the codebase,
+maintenance flow, or documentation surface are preferred over speculative expansion.
 
 ---
 
 ## 中文
 
-### 目录
+### 基本原则
 
-- [行为准则](#行为准则)
-- [规范驱动开发](#规范驱动开发)
-- [开发环境设置](#开发环境设置)
-- [代码风格](#代码风格)
-- [提交规范](#提交规范)
-- [Pull Request 流程](#pull-request-流程)
-- [报告 Bug](#报告-bug)
-- [功能建议](#功能建议)
+- 优先选择简化、正确性和低维护成本，而不是继续堆叠功能。
+- 保持代码、README、GitHub Pages 与 `CHANGELOG.md` 的公开描述一致。
+- 提交改动时保留与本任务无关的已有工作。
 
-### 规范驱动开发
-
-本项目使用 [OpenSpec](https://github.com/Fission-AI/OpenSpec) 作为重大仓库变更的契约来源。
-
-| 路径 | 用途 |
-|------|------|
-| `openspec/specs/` | 归档到主仓库状态中的持久 capability specs |
-| `openspec/changes/` | 活跃 proposal、design、delta specs 与 tasks |
-| `specs` | 指向 `openspec/specs` 的兼容性符号链接 |
-
-**提交重大变更前：**
-
-1. 范围或设计不清晰时，先运行 `/opsx:explore`
-2. 对非平凡代码、文档、workflow 或项目展示面改动，运行 `/opsx:propose "<change-name>"`
-3. 完善 `proposal.md`、`design.md`、`specs/` 与 `tasks.md`
-4. 运行 `/opsx:apply <change-name>` 按任务顺序实现
-5. 在关键里程碑运行 `/review`
-6. 仅在验证通过且仓库状态完成对齐后运行 `/opsx:archive <change-name>`
-
-查看 [AGENTS.md](AGENTS.md) 了解 HTS 的收尾型 OpenSpec 工作流。
-
-### 行为准则
-
-参与本项目即表示你同意遵守我们的 [行为准则](CODE_OF_CONDUCT.md)。
-
-### 开发环境设置
+### 开发环境
 
 #### 依赖要求
 
 | 依赖 | 版本 |
 |------|------|
 | CMake | >= 3.18 |
-| CUDA Toolkit | >= 11.0 |
-| C++ 编译器 | GCC 8+, Clang 7+, 或 MSVC 2019+ |
-| Git | 任意较新版本 |
+| CUDA Toolkit | >= 11.0（CPU-only 开发可选） |
+| C++ 编译器 | GCC 8+、Clang 7+ 或 MSVC 2019+ |
+| Node.js | 文档站点使用 20.x |
 
-#### 构建步骤
+#### 推荐验证基线
 
 ```bash
-# 克隆仓库
-git clone https://github.com/LessUp/heterogeneous-task-scheduler.git
+git clone https://github.com/AICL-Lab/heterogeneous-task-scheduler.git
 cd heterogeneous-task-scheduler
 
-# 创建构建目录
-mkdir build && cd build
+scripts/build.sh --cpu-only
+scripts/test.sh
+scripts/format.sh --check
+scripts/analyze.sh
+cd website && npm run docs:build
+```
 
-# 配置（Debug 模式用于开发）
-cmake .. -DCMAKE_BUILD_TYPE=Debug
+如需本地 compile commands 工作区：
 
-# 构建
-cmake --build . -j$(nproc)
-
-# 运行测试
-ctest --output-on-failure
+```bash
+cmake --preset cpu-only-debug
+cmake --build --preset cpu-only-debug
+ctest --preset cpu-only-debug
 ```
 
 ### 代码风格
 
-#### 命名约定
-
-| 类型 | 约定 | 示例 |
-|------|------|------|
-| 类名 | PascalCase | `TaskGraph`, `MemoryPool` |
-| 函数名 | snake_case | `add_task()`, `get_stats()` |
-| 变量名 | snake_case | `task_id`, `memory_pool` |
-| 常量 | UPPER_SNAKE_CASE | `MAX_THREADS` |
-| 私有成员 | 后缀下划线 | `id_`, `state_` |
-
-#### 格式化
-
-- **缩进**：4 个空格
-- **行宽**：100 字符
-- **大括号**：K&R 风格
-
-#### 文档注释
-
-使用 Doxygen 风格注释：
-
-```cpp
-/// @brief 向图中添加新任务
-/// @param device 首选执行设备
-/// @return 创建的任务的共享指针
-TaskPtr add_task(DeviceType device = DeviceType::Any);
-```
-
-### 提交规范
-
-遵循 [Conventional Commits](https://www.conventionalcommits.org/)：
-
-```
-<类型>(<范围>): <描述>
-```
-
-#### 类型
-
-| 类型 | 描述 |
+| 范围 | 规则 |
 |------|------|
-| `feat` | 新功能 |
-| `fix` | Bug 修复 |
-| `docs` | 文档更新 |
-| `style` | 代码格式 |
-| `refactor` | 重构 |
-| `perf` | 性能优化 |
-| `test` | 测试相关 |
-| `chore` | 构建/工具 |
+| 命名 | 类型用 PascalCase，函数和变量用 snake_case |
+| 格式 | 4 空格缩进、K&R 大括号、100 列行宽 |
+| 公共 API | 只有在确实能帮助理解时才补充 Doxygen 风格注释 |
 
-### Pull Request 流程
+优先做聚焦的小改动，显式表达约束，并让测试覆盖真实行为而不是 mock 本身。
 
-1. **Fork** 仓库并创建分支
-2. **编写代码**，确保测试通过
-3. **提交** 遵循提交规范
-4. **推送** 到你的 Fork
-5. **创建 PR** 并填写模板
+### 文档要求
+
+- 贡献者入口变化时更新 `README.md` / `README.zh-CN.md`
+- 公共行为或示例变化时更新 GitHub Pages 内容
+- 变更历史只保留在根目录 `CHANGELOG.md`
+
+### Pull Request
+
+发起 PR 前请确认：
+
+1. 改动只解决一个清晰的问题。
+2. 涉及代码时补充或更新测试。
+3. 运行完整验证基线。
+4. 行为或流程变化时同步更新文档。
+5. 提交信息使用清晰的 Conventional Commit 风格主题。
 
 #### PR 检查清单
 
-- [ ] 代码遵循项目风格
-- [ ] 所有测试通过
-- [ ] 新功能有对应测试
-- [ ] 文档已更新
+- [ ] 构建与测试通过
+- [ ] 格式检查与分析通过
+- [ ] 需要时已更新文档
+- [ ] 需要时已更新 `CHANGELOG.md`
 
 ### 报告 Bug
 
-请先搜索现有 Issue，报告时包含：
+请尽量包含：
 
-- 环境信息（OS、编译器、CUDA 版本）
+- 操作系统、编译器、CUDA 版本与构建模式
 - 复现步骤
-- 预期行为 vs 实际行为
-- 最小代码示例
+- 预期行为与实际行为
+- 可最小复现的代码示例
 
 ### 功能建议
 
-欢迎功能建议！请描述：
-
-- 问题背景
-- 建议方案
-- 使用场景
-
----
-
-## Getting Help
-
-- 📖 [README](README.md) and examples
-- 🐛 [GitHub Issues](https://github.com/LessUp/heterogeneous-task-scheduler/issues)
-- 📚 [API Documentation](https://lessup.github.io/heterogeneous-task-scheduler/)
-
-感谢你的贡献！🎉
+先说明问题，再说明建议方案。相比继续膨胀功能，更欢迎能简化代码、流程或文档面的改动。

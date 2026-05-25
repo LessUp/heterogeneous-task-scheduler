@@ -12,10 +12,10 @@ A clear description of the problem you're trying to solve.
 
 _Example: I'm always frustrated when [...]_
 
-## OpenSpec Fit
+## Maintenance Fit
 
-Describe the capability, workflow, or closeout problem this request changes. Material requests for
-HTS are expected to become an OpenSpec change before implementation.
+Describe the runtime, documentation, workflow, or project-presentation problem this request
+changes. Focus on long-term value and the smallest credible scope.
 
 ## Proposed Solution
 

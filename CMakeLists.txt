@@ -158,6 +158,7 @@ if(HTS_BUILD_TESTS)
         tests/unit/test_event_system.cpp
         tests/unit/test_resource_limiter.cpp
         tests/unit/test_retry_policy.cpp
+        tests/unit/test_repository_surface.cpp
         tests/unit/test_cuda_utils.cpp
         tests/unit/test_memory_pool.cpp
         tests/unit/test_stream_manager.cpp

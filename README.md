@@ -4,22 +4,17 @@
 [![CI](https://github.com/AICL-Lab/heterogeneous-task-scheduler/actions/workflows/ci.yml/badge.svg)](https://github.com/AICL-Lab/heterogeneous-task-scheduler/actions/workflows/ci.yml)
 [![Docs](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://aicl-lab.github.io/heterogeneous-task-scheduler/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://en.cppreference.com/w/cpp/17)
-[![CUDA](https://img.shields.io/badge/CUDA-optional-green.svg)](https://developer.nvidia.com/cuda-toolkit)
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-> C++17 task-scheduler library for DAG-shaped workloads across CPU and GPU, with CPU-only fallback
-> for local development and CI.
+> C++17 DAG scheduler for CPU/GPU workloads, with a CPU-only path for local development and CI.
 
 ## What HTS provides
 
-- **DAG-first scheduling** with `TaskGraph`, dependency tracking, and pluggable scheduling policies
-- **Mixed CPU/GPU execution** through CPU tasks, CUDA-backed execution paths, and CPU-only stubs
-- **Runtime utilities** including task barriers, futures, retries, events, resource limiting, and
-  profiling
-- **A practical engineering surface** with CPU-only validation scripts, GitHub Pages docs, and
-  OpenSpec-driven change management
+- DAG-first task orchestration with `TaskGraph`, dependency tracking, and pluggable scheduling policy
+- CPU and CUDA execution paths with CPU-only stubs for environments without CUDA hardware
+- Runtime utilities such as task barriers, futures, retries, profiling, events, and resource limits
+- A lightweight contributor workflow centered on local validation and factual documentation
 
 ## Quick start
 
@@ -27,12 +22,11 @@
 git clone https://github.com/AICL-Lab/heterogeneous-task-scheduler.git
 cd heterogeneous-task-scheduler
 
-# Recommended baseline for contributors and CI
 scripts/build.sh --cpu-only
 scripts/test.sh
 ```
 
-For a local workspace setup with compile commands, use the `cpu-only-debug` preset:
+For a compile-commands workspace, use the CPU-only preset:
 
 ```bash
 cmake --preset cpu-only-debug
@@ -40,28 +34,7 @@ cmake --build --preset cpu-only-debug
 ctest --preset cpu-only-debug
 ```
 
-## Learn more
-
-| Resource | Purpose |
-|----------|---------|
-| [GitHub Pages](https://aicl-lab.github.io/heterogeneous-task-scheduler/) | Product overview, architecture, API, and examples |
-| [examples/](examples/) | Runnable sample programs |
-| [specs/README.md](specs/README.md) | Durable OpenSpec surface |
-| [CONTRIBUTING.md](CONTRIBUTING.md) | Contribution workflow and local guard rails |
-
-## Repository layout
-
-| Path | Purpose |
-|------|---------|
-| `include/hts/` | Public headers |
-| `src/core/` | Core scheduler and graph primitives |
-| `src/cuda/` | CUDA implementation and CPU-only stubs |
-| `tests/` | Unit and integration tests |
-| `scripts/` | Build, test, formatting, analysis, and hook installation entry points |
-| `website/` | VitePress site for GitHub Pages |
-| `openspec/` | Active changes and durable specs |
-
-## Validation commands
+## Validation baseline
 
 ```bash
 scripts/build.sh --cpu-only
@@ -71,19 +44,31 @@ scripts/analyze.sh
 cd website && npm run docs:build
 ```
 
+## Repository layout
+
+| Path | Purpose |
+|------|---------|
+| `include/hts/` | Public headers |
+| `src/core/` | Shared scheduler, graph, and runtime primitives |
+| `src/cuda/` | CUDA implementations and CPU-only stubs |
+| `tests/` | Unit and integration coverage |
+| `examples/` | Runnable sample programs |
+| `scripts/` | Build, test, format, analysis, and helper entry points |
+| `docs/adr/` | Architecture decision records |
+| `website/` | VitePress source for GitHub Pages |
+| `CHANGELOG.md` | Single project changelog |
+
+## Documentation
+
+- **GitHub Pages:** architecture, API, examples, and user-facing guidance
+- **`CONTRIBUTING.md`:** contributor workflow and review expectations
+- **`CHANGELOG.md`:** release history and notable changes
+- **`docs/adr/`:** durable architectural decisions
+
 ## Contributing
 
-Material changes to code, docs, workflows, or public project surfaces are expected to go through an
-active OpenSpec change. Start with:
-
-1. `/opsx:explore` if scope is unclear
-2. `/opsx:propose "<change-name>"`
-3. `/opsx:apply <change-name>`
-4. `/review` at major milestones
-5. `/opsx:archive <change-name>` after validation
-
-See [AGENTS.md](AGENTS.md), [CLAUDE.md](CLAUDE.md), and [CONTRIBUTING.md](CONTRIBUTING.md) for the
-project-specific workflow.
+Keep changes small, factual, and easy to maintain. Update docs when behavior changes, add or adjust
+tests when code changes, and run the validation baseline before opening a pull request.
 
 ## License
 

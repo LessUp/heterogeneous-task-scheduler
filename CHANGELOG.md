@@ -7,6 +7,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) 
 
 ## [Unreleased]
 
+### Changed
+
+- Removed repository-local AI governance scaffolding and workflow-specific control files
+- Rewrote contributor-facing docs around a single lightweight validation workflow
+- Simplified the GitHub Pages navigation and site entry page to focus on maintained docs
+
+### Removed
+
+- Published changelog copy from the GitHub Pages artifact
+- AI-oriented docs discovery plugin from the VitePress toolchain
+
 ## [1.3.0] - 2026-04-27
 
 ### Changed
@@ -19,12 +30,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) 
 ### Removed
 
 - Historical build directories (`build-closeout/`, `build-plan-baseline/`)
-- Legacy `specs.backup/` directory (replaced by `openspec/specs/`)
+- Legacy `specs.backup/` directory after the spec surface consolidation
 
 ### Added
 
 - Test coverage script (`scripts/coverage.sh`) using gcovr
-- OpenSpec change record for closeout cleanup
+- Repository change record for closeout cleanup
 - Chinese documentation in `website/zh-CN/` with proper navigation
 
 ### Fixed

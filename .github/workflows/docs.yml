@@ -53,7 +53,6 @@ jobs:
       - name: Copy additional files
         run: |
           cp README.md website/.vitepress/dist/README.md
-          cp CHANGELOG.md website/.vitepress/dist/CHANGELOG.md
           cp LICENSE website/.vitepress/dist/LICENSE
 
       - name: Upload artifact
