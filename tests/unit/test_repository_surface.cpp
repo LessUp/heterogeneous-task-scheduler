@@ -66,3 +66,36 @@ TEST(RepositorySurfaceTest, PagesWorkflowPublishesOnlyStableProjectFiles) {
     EXPECT_EQ(workflow.find("cp CHANGELOG.md website/.vitepress/dist/CHANGELOG.md"),
               std::string::npos);
 }
+
+TEST(RepositorySurfaceTest, DocsSiteDoesNotShipSpeculativeSections) {
+    const auto root = repo_root();
+    const std::vector<std::filesystem::path> forbidden_paths = {
+        root / "website" / "en" / "benchmarks",
+        root / "website" / "en" / "design",
+        root / "website" / "en" / "research",
+        root / "website" / "en" / "whitepaper",
+        root / "website" / "zh" / "benchmarks",
+        root / "website" / "zh" / "design",
+        root / "website" / "zh" / "research",
+        root / "website" / "zh" / "whitepaper",
+    };
+
+    for (const auto &path : forbidden_paths) {
+        EXPECT_FALSE(std::filesystem::exists(path)) << path.string();
+    }
+}
+
+TEST(RepositorySurfaceTest, DocsSiteToolchainStaysLean) {
+    const auto root = repo_root();
+    const std::string package_json = read_text(root / "website" / "package.json");
+    const std::vector<std::string> forbidden_tokens = {
+        "markdown-it-footnote",
+        "markdown-it-mathjax3",
+        "vitepress-plugin-mermaid",
+    };
+
+    for (const auto &token : forbidden_tokens) {
+        EXPECT_EQ(package_json.find(token), std::string::npos)
+            << "Found forbidden toolchain token '" << token << "' in website/package.json";
+    }
+}

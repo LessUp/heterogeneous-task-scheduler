@@ -1,138 +1,64 @@
 # Installation
 
-This guide will help you install and set up HTS in your project.
+The repository supports two practical build modes:
 
-## System Requirements
+1. **CPU-only** for local development, CI, and most documentation work.
+2. **CUDA-enabled** when `nvcc` is available and you need the real GPU path.
 
-- **C++17** compatible compiler (GCC 7+, Clang 5+, MSVC 2017+)
-- **CMake** 3.18 or higher
-- **CUDA Toolkit** 11.0+ (optional, for GPU support)
-- **Linux** (recommended), **Windows**, or **macOS**
+## Requirements
 
-## Installation Methods
+| Requirement | Notes |
+|-------------|-------|
+| CMake >= 3.18 | Required by the top-level `CMakeLists.txt` |
+| C++17 compiler | GCC 8+, Clang 7+, or MSVC 2019+ is the documented baseline |
+| CUDA Toolkit | Optional; required only for non-CPU-only builds |
+| Node.js 20.x | Needed only for the VitePress docs site under `website/` |
 
-### Option 1: Build from Source (Recommended)
+## Recommended contributor setup
 
 ```bash
-# Clone the repository
 git clone https://github.com/AICL-Lab/heterogeneous-task-scheduler.git
 cd heterogeneous-task-scheduler
 
-# Create build directory
-mkdir build && cd build
-
-# Configure with CMake
-cmake .. -DCMAKE_BUILD_TYPE=Release
-
-# Build the library
-make -j$(nproc)
-
-# Optional: Install to system
-sudo make install
-```
-
-### Option 2: CPU-Only Build
-
-If you don't have CUDA or want to build without GPU support:
-
-```bash
-cmake .. -DCMAKE_BUILD_TYPE=Release -DHTS_CPU_ONLY=ON
-make -j$(nproc)
-```
-
-### Option 3: Using as Dependency
-
-#### With CMake (FetchContent)
-
-```cmake
-include(FetchContent)
-FetchContent_Declare(
-    hts
-    GIT_REPOSITORY https://github.com/AICL-Lab/heterogeneous-task-scheduler.git
-    GIT_TAG        v1.2.0  # or your preferred version
-)
-FetchContent_MakeAvailable(hts)
-
-# Link to your target
-target_link_libraries(your_target PRIVATE hts_lib)
-```
-
-#### With CMake (find_package)
-
-After installing HTS to your system:
-
-```cmake
-find_package(hts REQUIRED)
-target_link_libraries(your_target PRIVATE hts_lib)
-```
-
-## Build Options
-
-HTS provides several CMake options for customization:
-
-| Option | Description | Default |
-|--------|-------------|---------|
-| `HTS_BUILD_TESTS` | Build unit and integration tests | `ON` |
-| `HTS_BUILD_EXAMPLES` | Build example programs | `ON` |
-| `HTS_CPU_ONLY` | Build without CUDA support | `OFF` |
-| `HTS_ENABLE_COVERAGE` | Enable code coverage | `OFF` |
-| `CMAKE_CUDA_ARCHITECTURES` | Target CUDA architecture | `70` |
-
-### Example Configurations
-
-**Full CUDA build with tests:**
-```bash
-cmake .. -DCMAKE_BUILD_TYPE=Release \
-         -DHTS_BUILD_TESTS=ON \
-         -DCMAKE_CUDA_ARCHITECTURES=80
-```
-
-**Minimal CPU-only build:**
-```bash
-cmake .. -DCMAKE_BUILD_TYPE=Release \
-         -DHTS_CPU_ONLY=ON \
-         -DHTS_BUILD_TESTS=OFF \
-         -DHTS_BUILD_EXAMPLES=OFF
-```
-
-## Verify Installation
-
-After building, you can run the tests to verify everything works:
-
-```bash
-cd build
-ctest --output-on-failure
-```
-
-You should see all tests passing:
-
-```
-100% tests passed, 0 tests failed out of 45
-```
-
-## Using the Scripts
-
-HTS includes helpful automation scripts in the `scripts/` directory:
-
-```bash
-# Build with default options
-scripts/build.sh
-
-# CPU-only build
 scripts/build.sh --cpu-only
-
-# Run tests
 scripts/test.sh
-
-# Format code
-scripts/format.sh
-
-# Static analysis
-scripts/analyze.sh
 ```
 
-## Next Steps
+This produces the library, examples, and tests in `build/` without requiring CUDA hardware.
 
-- [Quick Start](/en/guide/quickstart) — Build your first DAG
-- [Architecture](/en/guide/architecture) — Understand HTS internals
-- [Examples](/en/examples/) — Browse example projects
+## Full validation baseline
+
+```bash
+scripts/build.sh --cpu-only
+scripts/test.sh
+scripts/format.sh --check
+scripts/analyze.sh
+cd website && npm run docs:build
+```
+
+## Direct CMake workflow
+
+If you want compile commands or tighter IDE integration, use the preset documented in the README:
+
+```bash
+cmake --preset cpu-only-debug
+cmake --build --preset cpu-only-debug
+ctest --preset cpu-only-debug
+```
+
+## CUDA build
+
+When CUDA is installed and `nvcc` is on `PATH`, build without `--cpu-only`:
+
+```bash
+scripts/build.sh
+```
+
+The top-level `CMakeLists.txt` will fail fast if CUDA is missing and the build is not explicitly set to
+CPU-only mode.
+
+## Notes
+
+- `scripts/build.sh` builds tests and examples by default.
+- `scripts/test.sh` expects the chosen build directory to exist already.
+- The docs site is intentionally independent from the C++ build; it only depends on Node packages under `website/`.

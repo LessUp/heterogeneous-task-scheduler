@@ -1,5 +1,4 @@
 import { defineConfig } from 'vitepress'
-import { withMermaid } from 'vitepress-plugin-mermaid'
 
 const rawBase = process.env.VITEPRESS_BASE
 const base = rawBase
@@ -11,17 +10,13 @@ const base = rawBase
 function guideSidebarEn() {
   return [
     {
-      text: 'Getting Started',
+      text: 'Guide',
       collapsed: false,
       items: [
-        { text: 'Introduction', link: '/en/guide/' },
+        { text: 'Overview', link: '/en/guide/' },
         { text: 'Installation', link: '/en/guide/installation' },
         { text: 'Quick Start', link: '/en/guide/quickstart' },
-        { text: 'Architecture', link: '/en/guide/architecture' },
-        { text: 'Task Graph', link: '/en/guide/task-graph' },
-        { text: 'Scheduling', link: '/en/guide/scheduling' },
-        { text: 'Memory', link: '/en/guide/memory' },
-        { text: 'Error Handling', link: '/en/guide/error-handling' }
+        { text: 'Architecture', link: '/en/guide/architecture' }
       ]
     }
   ]
@@ -32,10 +27,7 @@ function apiSidebarEn() {
     {
       text: 'API',
       items: [
-        { text: 'Overview', link: '/en/api/' },
-        { text: 'Scheduler', link: '/en/api/scheduler' },
-        { text: 'TaskGraph', link: '/en/api/task-graph' },
-        { text: 'TaskBuilder', link: '/en/api/task-builder' }
+        { text: 'Overview', link: '/en/api/' }
       ]
     }
   ]
@@ -46,9 +38,7 @@ function examplesSidebarEn() {
     {
       text: 'Examples',
       items: [
-        { text: 'Overview', link: '/en/examples/' },
-        { text: 'Simple DAG', link: '/en/examples/simple-dag' },
-        { text: 'Pipeline', link: '/en/examples/pipeline' }
+        { text: 'Overview', link: '/en/examples/' }
       ]
     }
   ]
@@ -57,15 +47,13 @@ function examplesSidebarEn() {
 function guideSidebarZh() {
   return [
     {
-      text: '入门指南',
+      text: '指南',
       collapsed: false,
       items: [
-        { text: '简介', link: '/zh/guide/' },
+        { text: '概览', link: '/zh/guide/' },
         { text: '安装', link: '/zh/guide/installation' },
-        { text: '架构', link: '/zh/guide/architecture' },
-        { text: '调度', link: '/zh/guide/scheduling' },
-        { text: '内存', link: '/zh/guide/memory' },
-        { text: '错误处理', link: '/zh/guide/error-handling' }
+        { text: '快速开始', link: '/zh/guide/quickstart' },
+        { text: '架构', link: '/zh/guide/architecture' }
       ]
     }
   ]
@@ -76,7 +64,7 @@ function apiSidebarZh() {
     {
       text: 'API',
       items: [
-        { text: '概述', link: '/zh/api/' }
+        { text: '概览', link: '/zh/api/' }
       ]
     }
   ]
@@ -87,13 +75,13 @@ function examplesSidebarZh() {
     {
       text: '示例',
       items: [
-        { text: '概述', link: '/zh/examples/' }
+        { text: '概览', link: '/zh/examples/' }
       ]
     }
   ]
 }
 
-export default withMermaid(defineConfig({
+export default defineConfig({
   base,
   title: 'HTS',
   titleTemplate: ':title | Heterogeneous Task Scheduler',
@@ -120,11 +108,7 @@ export default withMermaid(defineConfig({
       light: 'github-light',
       dark: 'github-dark'
     },
-    lineNumbers: true,
-    math: true
-  },
-  mermaid: {
-    theme: 'default'
+    lineNumbers: true
   },
   locales: {
     root: {
@@ -207,4 +191,4 @@ export default withMermaid(defineConfig({
     returnToTopLabel: 'Return to top',
     externalLinkIcon: true
   }
-}))
+})

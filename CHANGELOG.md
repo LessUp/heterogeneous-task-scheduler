@@ -12,11 +12,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) 
 - Removed repository-local AI governance scaffolding and workflow-specific control files
 - Rewrote contributor-facing docs around a single lightweight validation workflow
 - Simplified the GitHub Pages navigation and site entry page to focus on maintained docs
+- Reduced GitHub Pages to maintained guide, API overview, and example pages backed by current code
+- Dropped VitePress-only rendering dependencies that existed solely for removed speculative pages
 
 ### Removed
 
 - Published changelog copy from the GitHub Pages artifact
 - AI-oriented docs discovery plugin from the VitePress toolchain
+- Unmaintained whitepaper, research, design, benchmark, and stale API detail pages from `website/`
 
 ## [1.3.0] - 2026-04-27
 
@@ -64,8 +67,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) 
 - Initial DAG-based scheduler, dependency management, CUDA execution path, memory pool, and core
   examples.
 
-[Unreleased]: https://github.com/LessUp/heterogeneous-task-scheduler/compare/v1.3.0...HEAD
-[1.3.0]: https://github.com/LessUp/heterogeneous-task-scheduler/compare/v1.2.0...v1.3.0
-[1.2.0]: https://github.com/LessUp/heterogeneous-task-scheduler/releases/tag/v1.2.0
-[1.1.0]: https://github.com/LessUp/heterogeneous-task-scheduler/releases/tag/v1.1.0
-[1.0.0]: https://github.com/LessUp/heterogeneous-task-scheduler/releases/tag/v1.0.0
+[Unreleased]: https://github.com/AICL-Lab/heterogeneous-task-scheduler/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/AICL-Lab/heterogeneous-task-scheduler/compare/v1.2.0...v1.3.0
+[1.2.0]: https://github.com/AICL-Lab/heterogeneous-task-scheduler/releases/tag/v1.2.0
+[1.1.0]: https://github.com/AICL-Lab/heterogeneous-task-scheduler/releases/tag/v1.1.0
+[1.0.0]: https://github.com/AICL-Lab/heterogeneous-task-scheduler/releases/tag/v1.0.0
