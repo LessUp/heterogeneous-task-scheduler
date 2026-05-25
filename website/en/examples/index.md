@@ -1,128 +1,37 @@
 # Examples
 
-Browse through example projects demonstrating various HTS features and use cases.
+These are the example programs that actually exist under `examples/` and are built by default.
 
-## Getting Started Examples
-
-### [Simple DAG](/en/examples/simple-dag)
-
-A basic Directed Acyclic Graph example showing:
-- Creating CPU and GPU tasks
-- Setting up dependencies
-- Executing a linear pipeline
-- Collecting execution statistics
-
-**Perfect for:** Understanding the basics of HTS
-
-## Intermediate Examples
-
-### [Pipeline](/en/examples/pipeline)
-
-A production-ready ML inference pipeline showing:
-- Complex DAG with parallel branches
-- Error handling and retry policies
-- Failure callbacks
-- Load-based scheduling
-- Production configuration
-
-**Perfect for:** Building real-world applications
-
-## Advanced Examples
-
-_Coming Soon:_
-
-### Memory Pool Management
-- Manual memory allocation
-- Pool configuration
-- Defragmentation strategies
-- Memory monitoring
-
-### Custom Scheduling Policies
-- Implementing custom policies
-- Policy benchmarking
-- Dynamic policy switching
-
-### Event System
-- Task lifecycle events
-- Progress monitoring
-- Real-time statistics
-
-### Error Recovery
-- Retry strategies
-- Fallback execution
-- Graceful degradation
-- Error propagation control
-
-## Example Projects
-
-_Coming Soon:_
-
-### Image Processing Pipeline
-- Load images from disk
-- Preprocess on CPU
-- Run inference on GPU
-- Post-process results
-- Save outputs
-
-### Data Parallelism
-- Split data across multiple GPU tasks
-- Parallel execution
-- Result aggregation
-- Load balancing
-
-### Stream Processing
-- Continuous task generation
-- Dynamic DAG updates
-- Real-time processing
-- Backpressure handling
-
-## Running Examples
-
-### Clone the Repository
+## Build
 
 ```bash
-git clone https://github.com/AICL-Lab/heterogeneous-task-scheduler.git
-cd heterogeneous-task-scheduler
+scripts/build.sh --cpu-only
 ```
 
-### Build with Examples
+Executables are emitted into `build/`.
 
-```bash
-mkdir build && cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release -DHTS_BUILD_EXAMPLES=ON
-make -j$(nproc)
-```
+## CPU-only examples
 
-### Run an Example
+| File | Binary | Purpose |
+|------|--------|---------|
+| `examples/simple_dag.cpp` | `./build/simple_dag` | Small fork-join DAG with stats output |
+| `examples/parallel_pipeline.cpp` | `./build/parallel_pipeline` | Load/process/aggregate pipeline with parallel middle stage |
+| `examples/error_handling.cpp` | `./build/error_handling` | Failure callback flow |
+| `examples/fluent_api.cpp` | `./build/fluent_api` | `TaskBuilder` usage |
+| `examples/task_groups.cpp` | `./build/task_groups` | Grouped task construction |
+| `examples/profiling.cpp` | `./build/profiling` | Scheduler profiling and report generation |
+| `examples/scheduling_policies.cpp` | `./build/scheduling_policies` | Built-in policy selection |
+| `examples/graph_visualization.cpp` | `./build/graph_visualization` | JSON and DOT export |
+| `examples/advanced_features.cpp` | `./build/advanced_features` | Barriers, futures, events, and resource limiting |
 
-```bash
-cd examples
-./simple_dag
-./pipeline_example
-```
+## CUDA-only example
 
-## Contributing Examples
+| File | Binary | Notes |
+|------|--------|-------|
+| `examples/gpu_computation.cu` | `./build/gpu_computation` | Requires a CUDA-enabled build (`scripts/build.sh` without `--cpu-only`) |
 
-We welcome example contributions! Please follow these guidelines:
+## Suggested order
 
-1. **Location**: Place examples in `examples/` directory
-2. **Naming**: Use `snake_case` for example names
-3. **Documentation**: Include a README.md in each example directory
-4. **Build System**: Add to CMakeLists.txt
-5. **Quality**: Follow project coding standards
-
-### Example Template
-
-```
-examples/
-└── your_example/
-    ├── README.md          # Description and instructions
-    ├── CMakeLists.txt     # Build configuration
-    └── main.cpp           # Example code
-```
-
-## Next Steps
-
-- [Quick Start Guide](/en/guide/quickstart) — Learn the basics
-- [API Reference](/en/api/) — Complete API documentation
-- [GitHub repository](https://github.com/AICL-Lab/heterogeneous-task-scheduler) — Source and issues
+1. Start with `simple_dag`.
+2. Move to `parallel_pipeline`.
+3. Use the focused examples (`profiling`, `scheduling_policies`, `graph_visualization`) as lookup material for specific utilities.

@@ -1,191 +1,40 @@
-# Introduction
+# Guide
 
-Welcome to **HTS (Heterogeneous Task Scheduler)** — a C++ library for building and executing task DAGs across CPU and GPU devices.
+This site now documents only the maintained workflow: build, validate, understand the runtime layout,
+and run the checked-in examples. Anything speculative or not backed by the current repository surface
+was removed.
 
-## What is HTS?
+## Development baseline
 
-HTS enables efficient parallel execution of complex task dependencies across heterogeneous computing environments. It provides:
-
-- **DAG-based task management** with automatic dependency resolution
-- **Intelligent scheduling** that optimizes CPU/GPU utilization
-- **Reusable memory pooling** for GPU allocations
-- **Comprehensive observability** with built-in profiling and metrics
-- **Production-ready error handling** with retry policies and graceful degradation
-
-## Core Features
-
-### ⚡ Practical runtime focus
-
-HTS combines DAG orchestration, scheduling policy selection, device services, and profiling in one library surface.
-
-### 🔄 DAG Execution
-
-Automatic cycle detection, topological sorting, and dependency tracking for complex task graphs with thousands of tasks.
-
-### 🎯 Smart Scheduling
-
-Pluggable scheduling policies:
-- **GPU-First**: Prioritize GPU tasks for compute-heavy workloads
-- **CPU-First**: Keep CPU busy for preprocessing pipelines
-- **Round-Robin**: Balanced CPU/GPU utilization
-- **Load-Based**: Dynamic selection based on current utilization
-
-### 💾 Memory Pool
-
-Buddy system allocator eliminates `cudaMalloc`/`cudaFree` overhead:
-- O(log n) allocation time
-- Automatic defragmentation
-- Runtime statistics for fragmentation and allocation behavior
-
-### 📊 Performance Insights
-
-Built-in profiler with:
-- Execution timeline export to Chrome tracing
-- Device utilization metrics
-- Parallelism analysis
-- Memory usage statistics
-
-### 🛡️ Production Ready
-
-- Comprehensive error codes and exception safety
-- Configurable retry policies with exponential backoff
-- Task fallback functions for graceful degradation
-- Detailed logging and monitoring support
-
-## Core Architecture
-
-```
-User Application
-       ↓
-  TaskGraph Builder API
-       ↓
-    Scheduler
-       ↓
-Execution Engine (CPU Threads + GPU Streams)
-       ↓
-   Memory Pool (GPU)
-```
-
-### Key Components
-
-| Component | Description | Documentation |
-|-----------|-------------|---------------|
-| **TaskGraph** | DAG management and dependency tracking | [Guide](/en/guide/task-graph) · [API](/en/api/task-graph) |
-| **Scheduler** | Core execution orchestration | [Guide](/en/guide/scheduling) · [API](/en/api/scheduler) |
-| **TaskBuilder** | Fluent API for task creation | [API](/en/api/task-builder) |
-| **MemoryPool** | GPU memory management | [Guide](/en/guide/memory) |
-| **Profiler** | Performance monitoring | Built-in to Scheduler |
-
-## Quick Example
-
-```cpp
-#include <hts/heterogeneous_task_scheduler.hpp>
-
-using namespace hts;
-
-int main() {
-    // Create task graph
-    TaskGraph graph;
-    TaskBuilder builder(graph);
-    
-    // Create CPU task
-    auto cpu_task = builder
-        .create_task("PreprocessData")
-        .device(DeviceType::CPU)
-        .cpu_func([](TaskContext& ctx) {
-            std::cout << "Preprocessing on CPU..." << std::endl;
-        })
-        .build();
-    
-    // Create GPU task
-    auto gpu_task = builder
-        .create_task("GPUCompute")
-        .device(DeviceType::GPU)
-        .gpu_func([](TaskContext& ctx, cudaStream_t stream) {
-            std::cout << "Computing on GPU..." << std::endl;
-            my_kernel<<<256, 128, 0, stream>>>(data);
-            cudaStreamSynchronize(stream);
-        })
-        .build();
-    
-    // Set dependency: CPU task must complete before GPU task
-    graph.add_dependency(cpu_task->id(), gpu_task->id());
-    
-    // Execute
-    Scheduler scheduler;
-    scheduler.execute();
-    
-    return 0;
-}
-```
-
-## Getting Started
-
-### 1. Installation
-
-Choose your installation method:
-
-**Build from source:**
 ```bash
-git clone https://github.com/AICL-Lab/heterogeneous-task-scheduler.git
-cd heterogeneous-task-scheduler
 scripts/build.sh --cpu-only
 scripts/test.sh
+scripts/format.sh --check
+scripts/analyze.sh
+cd website && npm run docs:build
 ```
 
-**Or use in your CMake project:**
-```cmake
-include(FetchContent)
-FetchContent_Declare(
-    hts
-    GIT_REPOSITORY https://github.com/AICL-Lab/heterogeneous-task-scheduler.git
-    GIT_TAG        v1.2.0
-)
-FetchContent_MakeAvailable(hts)
-```
+Use this CPU-first baseline for local work and CI-style validation. CUDA-specific testing is additive,
+not the default contributor path.
 
-→ [Full Installation Guide](/en/guide/installation)
+## Stable concepts
 
-### 2. Learn the Basics
+| Concept | What it does | Primary files |
+|--------|---------------|---------------|
+| `TaskGraph` | Stores tasks and dependencies as a DAG | `include/hts/task_graph.hpp`, `src/core/task_graph.cpp` |
+| `TaskBuilder` | Fluent task creation on top of `TaskGraph` | `include/hts/task_builder.hpp` |
+| `Scheduler` | Validates the graph, schedules ready tasks, records stats and timeline data | `include/hts/scheduler.hpp`, `src/core/scheduler.cpp` |
+| `ExecutionEngine` | Dispatches work to CPU workers and CUDA streams | `include/hts/execution_engine.hpp`, `src/core/execution_engine.cpp` |
+| `MemoryPool` / `StreamManager` | GPU services with CPU-only stubs available for validation | `include/hts/memory_pool.hpp`, `include/hts/stream_manager.hpp`, `src/cuda/` |
 
-Follow our step-by-step guides:
+## Documentation boundaries
 
-- [**Quick Start**](/en/guide/quickstart) — Build your first DAG (5 minutes)
-- [**Architecture**](/en/guide/architecture) — Understand HTS internals
-- [**Task Graph**](/en/guide/task-graph) — Master DAG creation
-- [**Scheduling**](/en/guide/scheduling) — Optimize task execution
+- The public API overview intentionally mirrors the headers under `include/hts/`.
+- The examples page documents only the programs that actually exist under `examples/`.
+- Release history lives only in the root [`CHANGELOG.md`](https://github.com/AICL-Lab/heterogeneous-task-scheduler/blob/main/CHANGELOG.md).
 
-### 3. Explore Examples
+## Continue with
 
-Browse working examples:
-
-- [**Simple DAG**](/en/examples/simple-dag) — Basic pipeline (beginner)
-- [**Pipeline**](/en/examples/pipeline) — Complex DAG with error handling (intermediate)
-
-## Operational focus
-
-- Use the CPU-only path for contributor and CI validation.
-- Use profiling output and runtime statistics to understand scheduler behavior in your own workload.
-- See the memory guide for pool configuration and observability patterns.
-
-## System Requirements
-
-- **C++17** compatible compiler (GCC 7+, Clang 5+, MSVC 2017+)
-- **CMake** 3.18 or higher
-- **CUDA Toolkit** 11.0+ (optional, for GPU support)
-- **Linux** (recommended), **Windows**, or **macOS**
-
-## Community & Support
-
-- 💬 [GitHub Discussions](https://github.com/AICL-Lab/heterogeneous-task-scheduler/discussions)
-- 🐛 [Report Issues](https://github.com/AICL-Lab/heterogeneous-task-scheduler/issues)
-- 📦 [GitHub Releases](https://github.com/AICL-Lab/heterogeneous-task-scheduler/releases)
-- 📖 [Repository README](https://github.com/AICL-Lab/heterogeneous-task-scheduler#readme)
-
-## License
-
-HTS is released under the [MIT License](https://github.com/AICL-Lab/heterogeneous-task-scheduler/blob/main/LICENSE).
-
----
-
-**Ready to start?** → [Quick Start Guide](/en/guide/quickstart)
+1. [Installation](/en/guide/installation) for build modes and prerequisites.
+2. [Quick Start](/en/guide/quickstart) for a minimal CPU-only DAG.
+3. [Architecture](/en/guide/architecture) for the execution flow and file layout.

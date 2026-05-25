@@ -247,7 +247,7 @@ void MemoryPool::reset() {
     cv_.notify_all();
 }
 
-void MemoryPool::update_fragmentation() {
+void MemoryPool::update_fragmentation() const {
     if (stats_.total_bytes == 0) {
         stats_.fragmentation_ratio = 0.0;
         return;

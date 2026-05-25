@@ -1,18 +1,17 @@
-# Quick Start
+# 快速开始
 
-Use the CPU-only path first. It exercises the real scheduler, task graph, examples, and tests without
-requiring CUDA hardware.
+先走 CPU-only 路径。这样可以在没有 CUDA 硬件的情况下验证真实的调度器、任务图、示例和测试。
 
-## Build and run the checked-in example
+## 先运行仓库自带示例
 
 ```bash
 scripts/build.sh --cpu-only
 ./build/simple_dag
 ```
 
-The corresponding source is [`examples/simple_dag.cpp`](https://github.com/AICL-Lab/heterogeneous-task-scheduler/blob/main/examples/simple_dag.cpp).
+对应源码是 [`examples/simple_dag.cpp`](https://github.com/AICL-Lab/heterogeneous-task-scheduler/blob/main/examples/simple_dag.cpp)。
 
-## Minimal DAG with the real API
+## 使用真实 API 的最小 DAG
 
 ```cpp
 #include <hts/heterogeneous_task_scheduler.hpp>
@@ -52,15 +51,15 @@ int main() {
 }
 ```
 
-## What this does
+## 这段代码做了什么
 
-1. Creates a `Scheduler`, which owns the working `TaskGraph`.
-2. Uses `TaskBuilder` to define three CPU tasks.
-3. Expresses dependencies with `.after(...)`.
-4. Executes the graph and lets the scheduler validate ordering before dispatch.
+1. 创建 `Scheduler`，它内部持有当前工作用的 `TaskGraph`。
+2. 使用 `TaskBuilder` 定义三个 CPU 任务。
+3. 用 `.after(...)` 表达依赖关系。
+4. 调用 `scheduler.execute()`，由调度器先校验图，再完成分发执行。
 
-## Useful next steps
+## 下一步
 
-- [Installation](/en/guide/installation) for build modes and validation commands.
-- [Architecture](/en/guide/architecture) for how `Scheduler`, `TaskGraph`, and the execution engine fit together.
-- [Examples](/en/examples/) for the runnable programs already shipped in the repository.
+- [安装](./installation) 查看构建模式与验证命令。
+- [架构](./architecture) 了解 `Scheduler`、`TaskGraph` 与执行引擎之间的关系。
+- [示例](../examples/) 查看仓库内真实存在的可运行程序。

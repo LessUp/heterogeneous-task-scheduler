@@ -1,212 +1,58 @@
-# API Reference
+# API Overview
 
-Complete API documentation for the Heterogeneous Task Scheduler library.
+The authoritative API is the public header set under `include/hts/`. This page keeps a small map of the
+stable surface instead of duplicating every signature in a second, drift-prone format.
 
-## Core Components
+## Primary headers
 
-HTS provides a modular API for DAG-based task scheduling across CPU and GPU devices.
+| Header | Main types | Common entry points |
+|--------|------------|---------------------|
+| `hts/heterogeneous_task_scheduler.hpp` | Umbrella include | Pulls in the public library surface |
+| `hts/scheduler.hpp` | `Scheduler` | `graph()`, `execute()`, `execute_async()`, `set_policy()`, `set_error_callback()`, `get_stats()`, `generate_timeline_json()` |
+| `hts/task_graph.hpp` | `TaskGraph` | `add_task()`, `add_dependency()`, `validate()`, `topological_sort()`, `get_task()`, `clear()` |
+| `hts/task_builder.hpp` | `TaskBuilder` | `name()`, `device()`, `priority()`, `cpu()`, `gpu()`, `after()`, `build()` |
+| `hts/task.hpp` | `Task` | `set_name()`, `set_priority()`, `set_cpu_function()`, `set_gpu_function()` |
+| `hts/task_context.hpp` | `TaskContext` | `allocate_gpu_memory()`, `free_gpu_memory()`, `set_output()`, `get_input()`, `report_error()` |
 
-### Main Classes
+## Scheduling policies
 
-| Class | Description | Documentation |
-|-------|-------------|---------------|
-| **Scheduler** | Main entry point for executing task graphs | [Guide](/en/guide/scheduling) · [API](/en/api/scheduler) |
-| **TaskGraph** | DAG management and dependency tracking | [Guide](/en/guide/task-graph) · [API](/en/api/task-graph) |
-| **TaskBuilder** | Fluent API for creating and configuring tasks | [API](/en/api/task-builder) |
-| **Task** | Represents a unit of work | [Guide](/en/guide/task-graph) |
-| **TaskContext** | Execution context provided to tasks | [Guide](/en/guide/task-graph) |
+`include/hts/scheduling_policy.hpp` provides the built-in policies currently implemented by the runtime:
 
-## Supporting Classes
+- `DefaultSchedulingPolicy`
+- `GpuFirstPolicy`
+- `CpuFirstPolicy`
+- `RoundRobinPolicy`
+- `ShortestJobFirstPolicy`
 
-### Scheduling Policies
+## Runtime utilities
 
-| Class | Strategy | Use Case |
-|-------|----------|----------|
-| **GPUPriorityPolicy** | Prefer GPU tasks | GPU-heavy workloads |
-| **CPUPriorityPolicy** | Prefer CPU tasks | CPU preprocessing pipelines |
-| **RoundRobinPolicy** | Alternate CPU/GPU | Balanced workloads |
-| **LoadBasedPolicy** | Select by device load | Dynamic workloads |
+Additional public headers expose focused helpers that are tested independently:
 
-[Learn more about scheduling →](/en/guide/scheduling)
+- `hts/profiler.hpp`
+- `hts/graph_serializer.hpp`
+- `hts/retry_policy.hpp`
+- `hts/event_system.hpp`
+- `hts/resource_limiter.hpp`
+- `hts/task_barrier.hpp`
+- `hts/task_future.hpp`
+- `hts/task_group.hpp`
 
-### Memory Management
-
-| Class | Description |
-|-------|-------------|
-| **MemoryPool** | Buddy system allocator for GPU memory |
-| **MemoryPoolConfig** | Pool configuration (size, block sizes, defrag) |
-
-[Learn more about memory pools →](/en/guide/memory)
-
-### Error Handling
-
-| Class | Description |
-|-------|-------------|
-| **Error** | Error code and message wrapper |
-| **RetryPolicy** | Automatic retry configuration |
-| **ErrorCode** | Enumeration of all error codes |
-
-[Learn more about error handling →](/en/guide/error-handling)
-
-## Quick Start API
-
-### 1. Create Tasks
+## Minimal usage sketch
 
 ```cpp
-#include <hts/task_builder.hpp>
+#include <hts/heterogeneous_task_scheduler.hpp>
 
-using namespace hts;
+int main() {
+    hts::Scheduler scheduler;
+    auto task = scheduler.graph().add_task(hts::DeviceType::CPU);
+    task->set_name("hello");
+    task->set_cpu_function([](hts::TaskContext &) {});
 
-TaskGraph graph;
-TaskBuilder builder(graph);
-
-auto cpu_task = builder
-    .create_task("CPU_Work")
-    .device(DeviceType::CPU)
-    .cpu_func([](TaskContext& ctx) {
-        // CPU work here
-    })
-    .priority(10)
-    .build();
-
-auto gpu_task = builder
-    .create_task("GPU_Work")
-    .device(DeviceType::GPU)
-    .gpu_func([](TaskContext& ctx, cudaStream_t stream) {
-        // GPU work here
-    })
-    .memory(256 * 1024 * 1024)  // 256 MB
-    .build();
-```
-
-### 2. Set Dependencies
-
-```cpp
-// gpu_task depends on cpu_task
-graph.add_dependency(cpu_task->id(), gpu_task->id());
-```
-
-### 3. Execute
-
-```cpp
-Scheduler scheduler;
-scheduler.init(&graph);
-scheduler.execute();
-scheduler.wait_for_completion();
-```
-
-## API Categories
-
-### Task Management
-
-- [TaskGraph API](/en/api/task-graph) — Complete TaskGraph reference
-- [TaskBuilder API](/en/api/task-builder) — Fluent task creation
-- [Task](/en/guide/task-graph) — Task properties and lifecycle
-
-### Execution
-
-- [Scheduler API](/en/api/scheduler) — Scheduler configuration and execution
-- [Execution Engine](/en/guide/architecture) — CPU thread pool and GPU streams
-
-### Optimization
-
-- [Scheduling Policies](/en/guide/scheduling) — Policy selection and customization
-- [Memory Pool](/en/guide/memory) — GPU memory management
-- [Profiler](/en/guide/architecture#profiler) — Performance monitoring
-
-### Reliability
-
-- [Error Handling](/en/guide/error-handling) — Error codes and recovery
-- [Retry Policies](/en/guide/error-handling#retry-policies) — Automatic retry
-- [Task Fallbacks](/en/guide/error-handling#fallback-tasks) — Graceful degradation
-
-## Namespaces
-
-All HTS classes are in the `hts` namespace:
-
-```cpp
-using namespace hts;
-
-// Or prefix explicitly
-hts::Scheduler scheduler;
-hts::TaskGraph graph;
-hts::TaskBuilder builder(graph);
-```
-
-## Error Handling
-
-Most HTS functions return an `Error` object:
-
-```cpp
-Error err = scheduler.init(&graph);
-if (!err.ok()) {
-    std::cerr << "Failed: " << err.message() << std::endl;
-    return 1;
+    scheduler.execute();
+    return 0;
 }
 ```
 
-Exceptions are thrown for critical errors (e.g., cycle detection):
+## When in doubt
 
-```cpp
-try {
-    graph.add_dependency(A->id(), B->id());
-    graph.add_dependency(B->id(), A->id());  // Creates cycle
-} catch (const CycleDetectedError& e) {
-    std::cerr << "Cycle: " << e.what() << std::endl;
-}
-```
-
-## Threading Model
-
-HTS is thread-safe for concurrent access:
-
-- **TaskGraph**: Thread-safe reads during execution
-- **Scheduler**: Thread-safe execution
-- **TaskContext**: Thread-safe within task execution
-- **MemoryPool**: Thread-safe concurrent allocations
-
-## Performance Considerations
-
-### Minimize Scheduling Overhead
-
-```cpp
-// Good: Batch small tasks
-for (int i = 0; i < 100; ++i) {
-    tasks.push_back(builder.create_task(...).build());
-}
-
-// Avoid: Excessive synchronization
-// HTS minimizes locks internally
-```
-
-### Configure for Your Workload
-
-```cpp
-SchedulerConfig config;
-config.cpu_thread_count = 8;      // Match your CPU cores
-config.gpu_stream_count = 4;      // Adjust for your GPU
-config.enable_profiling = true;    // Enable for production monitoring
-scheduler.configure(config);
-```
-
-### Monitor Performance
-
-```cpp
-const auto& stats = scheduler.get_stats();
-std::cout << "Parallelism: " << stats.parallelism_factor << "x" << std::endl;
-std::cout << "Total time: " << stats.total_time_ms << " ms" << std::endl;
-```
-
-## Version Information
-
-Current version: **v1.3.0**
-
-Release history is tracked on [GitHub Releases](https://github.com/AICL-Lab/heterogeneous-task-scheduler/releases).
-
-## Next Steps
-
-- [Quick Start Guide](/en/guide/quickstart) — Build your first DAG
-- [Scheduler API](/en/api/scheduler) — Detailed scheduler reference
-- [TaskGraph API](/en/api/task-graph) — TaskGraph reference
-- [TaskBuilder API](/en/api/task-builder) — Fluent API reference
-- [Examples](/en/examples/) — Working code examples
+Read the headers first. They are small, tested, and more reliable than a long prose API mirror.
